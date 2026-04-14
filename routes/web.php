@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformasiSiaranController;
 use App\Http\Controllers\NarasumberByPhoneController;
+use App\Http\Controllers\NarasumberTalkshowController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -20,9 +21,82 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//admin
-Route::group(['middleware' => 'isGatekeeper'], function () {
-    
+/*
+|--------------------------------------------------------------------------
+| GATEKEEPER
+| Akses: Informasi Siaran + Narasumber Byphone
+|--------------------------------------------------------------------------
+*/
+Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 'gatekeeper.'], function () {
+ 
+    // Dashboard terpadu gatekeeper
+    Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardGatekeeper'])
+        ->name('dashboard');
+ 
+    // ── Informasi Siaran ─────────────────────────────────────────────
+    Route::get('/siaran/search',  [InformasiSiaranController::class, 'search'])->name('siaran.search');
+    Route::post('/siaran',        [InformasiSiaranController::class, 'store'])->name('siaran.store');
+    Route::get('/siaran/{id}',    [InformasiSiaranController::class, 'show'])->name('siaran.show');
+    Route::put('/siaran/{id}',    [InformasiSiaranController::class, 'update'])->name('siaran.update');
+    Route::delete('/siaran/{id}', [InformasiSiaranController::class, 'destroy'])->name('siaran.destroy');
+ 
+    // ── Narasumber Byphone ───────────────────────────────────────────
+    Route::get('/narasumber-byphone/search',   [NarasumberByphoneController::class, 'search'])->name('byphone.search');
+    Route::get('/narasumber-byphone/instansi', [NarasumberByphoneController::class, 'instansiList'])->name('byphone.instansi');
+    Route::post('/narasumber-byphone',         [NarasumberByphoneController::class, 'store'])->name('byphone.store');
+    Route::get('/narasumber-byphone/{id}',     [NarasumberByphoneController::class, 'show'])->name('byphone.show');
+    Route::put('/narasumber-byphone/{id}',     [NarasumberByphoneController::class, 'update'])->name('byphone.update');
+    Route::delete('/narasumber-byphone/{id}',  [NarasumberByphoneController::class, 'destroy'])->name('byphone.destroy');
+});
+ 
+/*
+|--------------------------------------------------------------------------
+| PENYIAR
+| Akses: Narasumber Byphone + Narasumber Talkshow
+|--------------------------------------------------------------------------
+*/
+Route::group(['middleware' => 'isPenyiar', 'prefix' => 'penyiar', 'as' => 'penyiar.'], function () {
+ 
+    // Dashboard terpadu penyiar
+    Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardPenyiar'])
+        ->name('dashboard');
+ 
+    // ── Narasumber Byphone ───────────────────────────────────────────
+    Route::get('/narasumber-byphone/search',   [NarasumberByphoneController::class, 'search'])->name('byphone.search');
+    Route::get('/narasumber-byphone/instansi', [NarasumberByphoneController::class, 'instansiList'])->name('byphone.instansi');
+    Route::post('/narasumber-byphone',         [NarasumberByphoneController::class, 'store'])->name('byphone.store');
+    Route::get('/narasumber-byphone/{id}',     [NarasumberByphoneController::class, 'show'])->name('byphone.show');
+    Route::put('/narasumber-byphone/{id}',     [NarasumberByphoneController::class, 'update'])->name('byphone.update');
+    Route::delete('/narasumber-byphone/{id}',  [NarasumberByphoneController::class, 'destroy'])->name('byphone.destroy');
+ 
+    // ── Narasumber Talkshow ──────────────────────────────────────────
+    Route::get('/narasumber-talkshow/search',   [NarasumberTalkshowController::class, 'search'])->name('talkshow.search');
+    Route::get('/narasumber-talkshow/instansi', [NarasumberTalkshowController::class, 'instansiList'])->name('talkshow.instansi');
+    Route::post('/narasumber-talkshow',         [NarasumberTalkshowController::class, 'store'])->name('talkshow.store');
+    Route::get('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'show'])->name('talkshow.show');
+    Route::put('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'update'])->name('talkshow.update');
+    Route::delete('/narasumber-talkshow/{id}',  [NarasumberTalkshowController::class, 'destroy'])->name('talkshow.destroy');
+});
+ 
+/*
+|--------------------------------------------------------------------------
+| PJ PROGRAM
+| Akses: Narasumber Talkshow saja
+|--------------------------------------------------------------------------
+*/
+Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
+ 
+    // Dashboard pj_program
+    Route::get('/dashboard', [NarasumberTalkshowController::class, 'dashboardPjProgram'])
+        ->name('dashboard');
+ 
+    // ── Narasumber Talkshow ──────────────────────────────────────────
+    Route::get('/narasumber-talkshow/search',   [NarasumberTalkshowController::class, 'search'])->name('talkshow.search');
+    Route::get('/narasumber-talkshow/instansi', [NarasumberTalkshowController::class, 'instansiList'])->name('talkshow.instansi');
+    Route::post('/narasumber-talkshow',         [NarasumberTalkshowController::class, 'store'])->name('talkshow.store');
+    Route::get('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'show'])->name('talkshow.show');
+    Route::put('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'update'])->name('talkshow.update');
+    Route::delete('/narasumber-talkshow/{id}',  [NarasumberTalkshowController::class, 'destroy'])->name('talkshow.destroy');
 });
 
 require __DIR__.'/auth.php';

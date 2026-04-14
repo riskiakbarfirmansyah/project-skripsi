@@ -11,21 +11,10 @@
     <div id="wrapper" class="flex h-screen bg-gray-50">
         <!-- Sidebar -->
         <ul class="navbar-nav sidebar sidebar-dark accordion" style="background-color: #9b8af4;" id="accordionSidebar"> 
-
-
+            
         </ul>
     </div>
     <!-- End of Content Wrapper -->
 
-    <!-- JavaScript untuk toggle menu -->
-    <script>
-        function toggleAccessMenu() {
-            const menu = document.getElementById('accessMenu');
-            const icon = document.getElementById('accessMenuIcon');
-            
-            menu.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
-        }
-    </script>
 </body>
 </html>
