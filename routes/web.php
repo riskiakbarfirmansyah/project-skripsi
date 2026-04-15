@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
 | Akses: Manajemen user (gatekeeper, penyiar, pj_program)
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'IsAdmin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::group(['middleware' => 'isAdmin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
  
     // Dashboard admin
     Route::get('/dashboard', [AdminController::class, 'index'])
@@ -68,7 +68,7 @@ Route::group(['middleware' => 'IsAdmin', 'prefix' => 'admin', 'as' => 'admin.'],
 | Akses: Informasi Siaran + Narasumber Byphone
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'IsGatekeeper', 'prefix' => 'gatekeeper', 'as' => 'gatekeeper.'], function () {
+Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 'gatekeeper.'], function () {
  
     // Dashboard terpadu gatekeeper
     Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardGatekeeper'])
@@ -96,7 +96,7 @@ Route::group(['middleware' => 'IsGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
 | Akses: Narasumber Byphone + Narasumber Talkshow
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'IsPenyiar', 'prefix' => 'penyiar', 'as' => 'penyiar.'], function () {
+Route::group(['middleware' => 'isPenyiar', 'prefix' => 'penyiar', 'as' => 'penyiar.'], function () {
  
     // Dashboard terpadu penyiar
     Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardPenyiar'])
@@ -125,7 +125,7 @@ Route::group(['middleware' => 'IsPenyiar', 'prefix' => 'penyiar', 'as' => 'penyi
 | Akses: Narasumber Talkshow saja
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'IsPjProgram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
+Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
  
     // Dashboard pj_program
     Route::get('/dashboard', [NarasumberTalkshowController::class, 'dashboardPjProgram'])
