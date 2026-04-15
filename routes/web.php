@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformasiSiaranController;
 use App\Http\Controllers\NarasumberByphoneController;
 use App\Http\Controllers\NarasumberTalkshowController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,7 +14,19 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = Auth::user();
+    if (! $user) {
+        return redirect()->route('login');
+    } elseif ($user->is_admin == 1) {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->is_gatekeeper == 1) {
+        return redirect()->route('gatekeeper.dashboard');
+    } elseif ($user->is_penyiar == 1) {
+        return redirect()->route('penyiar.dashboard');
+    } elseif ($user->is_pjprogram == 1) {
+        return redirect()->route('pj_program.dashboard');
+    }
+    return redirect('/');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
