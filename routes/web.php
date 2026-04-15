@@ -15,10 +15,17 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    if ($user->is_admin == 1)      return redirect()->route('admin.dashboard');
-    if ($user->is_gatekeeper == 1) return redirect()->route('gatekeeper.dashboard');
-    if ($user->is_penyiar == 1)    return redirect()->route('penyiar.dashboard');
-    if ($user->is_pjprogram == 1)  return redirect()->route('pj_program.dashboard');
+    if (! $user) {
+        return redirect()->route('login');
+    } elseif ($user->is_admin == 1) {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->is_gatekeeper == 1) {
+        return redirect()->route('gatekeeper.dashboard');
+    } elseif ($user->is_penyiar == 1) {
+        return redirect()->route('penyiar.dashboard');
+    } elseif ($user->is_pjprogram == 1) {
+        return redirect()->route('pj_program.dashboard');
+    }
     return redirect('/');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
