@@ -250,4 +250,43 @@ class AdminController extends Controller
             'message' => "Password akun {$user->name} berhasil direset.",
         ]);
     }
+
+    /**
+     * Tampilkan daftar permintaan perubahan password.
+     *
+     * Route: GET /admin/password-requests
+     */
+    public function passwordRequests(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data'    => [],
+        ]);
+    }
+
+    /**
+     * Setujui permintaan perubahan password.
+     *
+     * Route: POST /admin/users/{id}/verify-password
+     */
+    public function verifyPasswordChange(Request $request, string $id): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Permintaan password disetujui.',
+        ]);
+    }
+
+    /**
+     * Tolak permintaan perubahan password.
+     *
+     * Route: POST /admin/users/{id}/reject-password
+     */
+    public function rejectPasswordChange(Request $request, string $id): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Permintaan password ditolak.',
+        ]);
+    }
 }

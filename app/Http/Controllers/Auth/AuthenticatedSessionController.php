@@ -28,14 +28,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (Auth::user()->is_admin == 1) {
-            return redirect()->intended(route('dashboard', absolute: false));
-        } elseif (Auth::user()->is_penyiar == 1) {
-            return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+        if ($user->is_admin == 1) {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
         } elseif (Auth::user()->is_gatekeeper == 1) {
             return redirect()->intended(route('gatekeeper.dashboard', absolute: false));
-        } elseif (Auth::user()->is_pjprogram == 1) {
-            return redirect()->intended(route('dashboard', absolute: false));
+        } elseif ($user->is_penyiar == 1) {
+            return redirect()->intended(route('penyiar.dashboard', absolute: false));
+        } elseif ($user->is_pjprogram == 1) {
+            return redirect()->intended(route('pj_program.dashboard', absolute: false));
         }
 
         return redirect()->intended(route('dashboard', absolute: false));
