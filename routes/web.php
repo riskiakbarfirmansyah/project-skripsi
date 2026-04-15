@@ -21,13 +21,40 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+| Akses: Manajemen user (gatekeeper, penyiar, pj_program)
+|--------------------------------------------------------------------------
+*/
+Route::group(['middleware' => 'IsAdmin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
+ 
+    // Dashboard admin
+    Route::get('/dashboard', [AdminController::class, 'index'])
+        ->name('dashboard');
+ 
+    // ── Manajemen User ───────────────────────────────────────────────
+    Route::get('/users/search',  [AdminController::class, 'search'])->name('users.search');
+    Route::post('/users',        [AdminController::class, 'store'])->name('users.store');
+    Route::get('/users/{id}',    [AdminController::class, 'show'])->name('users.show');
+    Route::put('/users/{id}',    [AdminController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
+ 
+    // ── Manajemen Password ───────────────────────────────────────────
+    Route::get('/password-requests',               [AdminController::class, 'passwordRequests'])->name('password.requests');
+    Route::post('/users/{id}/verify-password',     [AdminController::class, 'verifyPasswordChange'])->name('users.verify-password');
+    Route::post('/users/{id}/reject-password',     [AdminController::class, 'rejectPasswordChange'])->name('users.reject-password');
+    Route::post('/users/{id}/reset-password',      [AdminController::class, 'resetPassword'])->name('users.reset-password');
+});
+
 /*
 |--------------------------------------------------------------------------
 | GATEKEEPER
 | Akses: Informasi Siaran + Narasumber Byphone
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 'gatekeeper.'], function () {
+Route::group(['middleware' => 'IsGatekeeper', 'prefix' => 'gatekeeper', 'as' => 'gatekeeper.'], function () {
  
     // Dashboard terpadu gatekeeper
     Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardGatekeeper'])
@@ -55,7 +82,7 @@ Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
 | Akses: Narasumber Byphone + Narasumber Talkshow
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'isPenyiar', 'prefix' => 'penyiar', 'as' => 'penyiar.'], function () {
+Route::group(['middleware' => 'IsPenyiar', 'prefix' => 'penyiar', 'as' => 'penyiar.'], function () {
  
     // Dashboard terpadu penyiar
     Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardPenyiar'])
@@ -84,7 +111,7 @@ Route::group(['middleware' => 'isPenyiar', 'prefix' => 'penyiar', 'as' => 'penyi
 | Akses: Narasumber Talkshow saja
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
+Route::group(['middleware' => 'IsPjProgram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
  
     // Dashboard pj_program
     Route::get('/dashboard', [NarasumberTalkshowController::class, 'dashboardPjProgram'])
