@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformasiSiaranController;
-use App\Http\Controllers\NarasumberByPhoneController;
+use App\Http\Controllers\NarasumberByphoneController;
 use App\Http\Controllers\NarasumberTalkshowController;
 use Illuminate\Support\Facades\Route;
 
