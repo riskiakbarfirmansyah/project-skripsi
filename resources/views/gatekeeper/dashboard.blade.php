@@ -227,7 +227,10 @@
 {{-- ════════════════════ MODALS SIARAN ════════════════════ --}}
 <div class="mbg" id="m-siaran-add">
     <div class="modal">
-        <div class="mttl">Tambah Data Siaran <button class="bcn" style="padding:2px 8px;" onclick="closeModal('m-siaran-add')">×</button></div>
+        <div class="mttl">
+            Tambah Data Siaran
+            <button class="mclose" onclick="closeModal('m-siaran-add')">×</button>
+        </div>
         <form onsubmit="submitSiaranAdd(event)">
             <div class="frow">
                 <div class="fg">
@@ -253,7 +256,10 @@
 
 <div class="mbg" id="m-siaran-edit">
     <div class="modal">
-        <div class="mttl">Edit Data Siaran <button class="bcn" style="padding:2px 8px;" onclick="closeModal('m-siaran-edit')">×</button></div>
+        <div class="mttl">
+            Edit Data Siaran
+            <button class="mclose" onclick="closeModal('m-siaran-edit')">×</button>
+        </div>
         <form onsubmit="submitSiaranEdit(event)">
             <input type="hidden" id="se-id">
             <div class="frow">
@@ -280,7 +286,10 @@
 
 <div class="mbg" id="m-siaran-view">
     <div class="modal">
-        <div class="mttl">Detail Siaran <button class="bcn" style="padding:2px 8px;" onclick="closeModal('m-siaran-view')">×</button></div>
+        <div class="mttl">
+            Detail Siaran
+            <button class="mclose" onclick="closeModal('m-siaran-view')">×</button>
+        </div>
         <div class="dr"><span class="dl">Tanggal</span><span class="dv" id="sv-tanggal">—</span></div>
         <div class="dr"><span class="dl">Waktu</span><span class="dv" id="sv-waktu">—</span></div>
         <div class="dr" style="flex-direction:column;">
@@ -294,7 +303,10 @@
 {{-- ════════════════════ MODALS NARASUMBER ════════════════════ --}}
 <div class="mbg" id="m-nr-add">
     <div class="modal">
-        <div class="mttl">Tambah Narasumber Byphone <button class="bcn" style="padding:2px 8px;" onclick="closeModal('m-nr-add')">×</button></div>
+        <div class="mttl">
+            Tambah Narasumber Byphone
+            <button class="mclose" onclick="closeModal('m-nr-add')">×</button>
+        </div>
         <form onsubmit="submitNrAdd(event)">
             <div class="frow">
                 <div class="fg">
@@ -334,7 +346,10 @@
 
 <div class="mbg" id="m-nr-edit">
     <div class="modal">
-        <div class="mttl">Edit Narasumber Byphone <button class="bcn" style="padding:2px 8px;" onclick="closeModal('m-nr-edit')">×</button></div>
+        <div class="mttl">
+            Edit Narasumber Byphone
+            <button class="mclose" onclick="closeModal('m-nr-edit')">×</button>
+        </div>
         <form onsubmit="submitNrEdit(event)">
             <input type="hidden" id="ne-id">
             <div class="frow">
@@ -375,7 +390,10 @@
 
 <div class="mbg" id="m-nr-view">
     <div class="modal">
-        <div class="mttl">Detail Narasumber Byphone <button class="bcn" style="padding:2px 8px;" onclick="closeModal('m-nr-view')">×</button></div>
+        <div class="mttl">
+            Detail Narasumber Byphone
+            <button class="mclose" onclick="closeModal('m-nr-view')">×</button>
+        </div>
         <div class="dr"><span class="dl">Nama</span><span class="dv" id="nv-nama">—</span></div>
         <div class="dr"><span class="dl">Instansi</span><span class="dv" id="nv-instansi">—</span></div>
         <div class="dr"><span class="dl">Nomor Telepon</span><span class="dv" id="nv-nomor">—</span></div>

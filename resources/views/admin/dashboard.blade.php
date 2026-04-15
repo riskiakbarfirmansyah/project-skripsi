@@ -119,14 +119,18 @@
                                     <path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-                            <button class="bico" title="Reset Password" onclick="resetPasswordUser({{ $u->id }}, '{{ addslashes($u->name) }}')">
+                            <button class="bico" title="Reset Password"
+                                    data-id="{{ $u->id }}" data-name="{{ $u->name }}"
+                                    onclick="resetPasswordUser(this.dataset.id, this.dataset.name)">
                                 <svg viewBox="0 0 15 15" fill="none">
                                     <path d="M2 7.5C2 4.5 4.5 2 7.5 2c2 0 3.7 1 4.7 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                                     <path d="M13 7.5c0 3-2.5 5.5-5.5 5.5-2 0-3.7-1-4.7-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                                     <path d="M10.5 2l2 2.5-2.5.5M4.5 13l-2-2.5 2.5-.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-                            <button class="bico del" title="Hapus" onclick="deleteUser({{ $u->id }}, '{{ addslashes($u->name) }}')">
+                            <button class="bico del" title="Hapus"
+                                    data-id="{{ $u->id }}" data-name="{{ $u->name }}"
+                                    onclick="deleteUser(this.dataset.id, this.dataset.name)">
                                 <svg viewBox="0 0 15 15" fill="none">
                                     <path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
@@ -324,10 +328,14 @@ function renderRows(users) {
                     <button class="bico" title="Edit" onclick="editUser(${u.id})">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
                     </button>
-                    <button class="bico" title="Reset Password" onclick="resetPasswordUser(${u.id}, '${u.name.replace(/'/g,'\\\'').replace(/"/g,'&quot;')}')">
+                    <button class="bico" title="Reset Password"
+                            data-id="${u.id}" data-name="${u.name}"
+                            onclick="resetPasswordUser(this.dataset.id, this.dataset.name)">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5C2 4.5 4.5 2 7.5 2c2 0 3.7 1 4.7 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13 7.5c0 3-2.5 5.5-5.5 5.5-2 0-3.7-1-4.7-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10.5 2l2 2.5-2.5.5M4.5 13l-2-2.5 2.5-.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
-                    <button class="bico del" title="Hapus" onclick="deleteUser(${u.id}, '${u.name.replace(/'/g,'\\\'').replace(/"/g,'&quot;')}')">
+                    <button class="bico del" title="Hapus"
+                            data-id="${u.id}" data-name="${u.name}"
+                            onclick="deleteUser(this.dataset.id, this.dataset.name)">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                 </div>
