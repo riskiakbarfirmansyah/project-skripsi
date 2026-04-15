@@ -125,7 +125,7 @@ Route::group(['middleware' => 'isPenyiar', 'prefix' => 'penyiar', 'as' => 'penyi
 | Akses: Narasumber Talkshow saja
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'isPjprogram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
+Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => 'pj_program.'], function () {
  
     // Dashboard pj_program
     Route::get('/dashboard', [NarasumberTalkshowController::class, 'dashboardPjProgram'])
