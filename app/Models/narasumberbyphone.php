@@ -9,7 +9,7 @@ class narasumberbyphone extends Model
 {
     use HasFactory;
 
-    protected $table = 'narasumber_byphone';
+    protected $table = 'narasumber_byphones';
     protected $primaryKey = 'byphoneID';
 
     protected $fillable = [

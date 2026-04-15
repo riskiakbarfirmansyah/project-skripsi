@@ -9,7 +9,7 @@ class narasumbertalkshow extends Model
 {
     use HasFactory;
 
-    protected $table = 'narasumber_talkshow';
+    protected $table = 'narasumber_talkshows';
     protected $primaryKey = 'talkshowID';
 
     protected $fillable = [
