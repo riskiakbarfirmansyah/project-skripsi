@@ -440,6 +440,13 @@ function showFlash(msg, type = 'success') {
     setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
+function showTab(name) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.getElementById('tab-' + name + '-btn').classList.add('active');
+}
+
 function openModal(id) {
     document.getElementById(id).classList.add('open');
     document.body.style.overflow = 'hidden';
