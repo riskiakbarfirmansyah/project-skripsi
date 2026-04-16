@@ -266,11 +266,11 @@
                 <button type="submit" class="btn-login">Masuk</button>
             </form>
 
-            @if (Route::has('register'))
+            <!-- @if (Route::has('register'))
                 <div class="card-footer">
                     Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
                 </div>
-            @endif
+            @endif -->
         </div>
     </div>
 </body>
