@@ -427,6 +427,22 @@ function apiFetch(url, method = 'GET', body = null) {
     if (body) opts.body = JSON.stringify(body);
     return fetch(url, opts).then(r => r.json());
 }
+
+function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Close modal when clicking backdrop
+document.querySelectorAll('.mbg').forEach(bg => {
+    bg.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+    });
+});
 </script>
 @stack('scripts')
 </body>
