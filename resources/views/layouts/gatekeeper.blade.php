@@ -72,6 +72,13 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 10px; font-weight: 700; color: #1d4ed8; flex-shrink: 0;
         }
+        .logout-btn {
+            margin-left: auto; background: none; border: none;
+            cursor: pointer; color: #94a3b8; padding: 4px;
+            border-radius: 6px; transition: color .15s, background .15s;
+        }
+        .logout-btn:hover { color: #ef4444; background: #fef2f2; }
+        .logout-btn svg { width: 14px; height: 14px; }
 
         /* ── Main ─────────────────────────────────────── */
         .main { margin-left: 224px; min-height: 100vh; }
@@ -210,6 +217,7 @@
             border: 1px solid #cbd5e1; border-radius: 7px; outline: none; color: #0f172a;
         }
         .fi:focus { border-color: #93c5fd; box-shadow: 0 0 0 3px #eff6ff; }
+        .fi.is-invalid { border-color: #f87171; }
         textarea.fi { resize: vertical; }
         .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .mft { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
@@ -304,13 +312,23 @@
     </div>
 
     <div class="sb-foot">
-        <div class="av">GK</div>
-        <div>
-            <div style="font-size:12px;font-weight:700;color:#0f172a">
+        <div class="av">{{ strtoupper(substr(auth()->user()->name ?? 'GK', 0, 2)) }}</div>
+        <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                 {{ auth()->user()->name ?? 'Gatekeeper' }}
             </div>
-            <div style="font-size:10px;color:#94a3b8">isGatekeeper</div>
+            <div style="font-size:10px;color:#94a3b8">Gatekeeper</div>
         </div>
+        <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+            @csrf
+            <button type="submit" class="logout-btn" title="Logout">
+                <svg viewBox="0 0 15 15" fill="none">
+                    <path d="M9 2H11.5C12.3 2 13 2.7 13 3.5v8c0 .8-.7 1.5-1.5 1.5H9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    <path d="M6 10l3-2.5L6 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="9" y1="7.5" x2="2" y2="7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </form>
     </div>
 </div>
 
@@ -323,7 +341,28 @@
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
             <div style="font-size:12px;color:#64748b;" id="clk"></div>
-            <div class="av">{{ strtoupper(substr(auth()->user()->name ?? 'GK', 0, 2)) }}</div>
+            <div style="position:relative;" id="tb-profile-wrap">
+                <div class="av" style="cursor:pointer;" onclick="toggleTbMenu()" title="Menu Profil">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'GK', 0, 2)) }}
+                </div>
+                <div id="tb-profile-menu" style="display:none;position:absolute;right:0;top:38px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:4px;min-width:175px;box-shadow:0 4px 16px rgba(15,23,42,.12);z-index:300;">
+                    <div style="padding:8px 10px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;">
+                        <div style="font-size:12px;font-weight:700;color:#0f172a;">{{ auth()->user()->name }}</div>
+                        <div style="font-size:11px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->email }}</div>
+                    </div>
+                    <a href="{{ route('profile.edit') }}" style="display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:6px;font-size:12px;color:#374151;text-decoration:none;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                        <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                        Profile
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+                        @csrf
+                        <button type="submit" style="display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:6px;font-size:12px;color:#ef4444;background:none;border:none;cursor:pointer;width:100%;text-align:left;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                            <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M9 2H11.5C12.3 2 13 2.7 13 3.5v8c0 .8-.7 1.5-1.5 1.5H9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 10l3-2.5L6 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="7.5" x2="2" y2="7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -350,6 +389,18 @@
 </div>
 
 <script>
+function toggleTbMenu() {
+    const m = document.getElementById('tb-profile-menu');
+    m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+    const w = document.getElementById('tb-profile-wrap');
+    if (w && !w.contains(e.target)) {
+        const m = document.getElementById('tb-profile-menu');
+        if (m) m.style.display = 'none';
+    }
+});
+
 function clock() {
     const now = new Date();
     document.getElementById('clk').textContent =

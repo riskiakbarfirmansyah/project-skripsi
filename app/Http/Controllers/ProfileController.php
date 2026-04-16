@@ -16,8 +16,20 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+
+        if ($user->is_admin) {
+            return view('admin.profile', ['user' => $user]);
+        } elseif ($user->is_gatekeeper) {
+            return view('gatekeeper.profile', ['user' => $user]);
+        } elseif ($user->is_penyiar) {
+            return view('penyiar.profile', ['user' => $user]);
+        } elseif ($user->is_pjprogram) {
+            return view('pj_program.profile', ['user' => $user]);
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
