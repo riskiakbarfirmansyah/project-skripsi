@@ -18,6 +18,7 @@ class narasumberbyphone extends Model
         'nomor_telp',
         'tema_wawancara',
         'waktu_wawancara',
-        'draft_pertanyaan'
+        'draft_pertanyaan',
+        'is_self_registered',
     ];
 }
