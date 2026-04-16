@@ -21,6 +21,7 @@
 .tab-btn.active { color: #1e40af; border-bottom-color: #1e40af; }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
+.mttl { display: flex; justify-content: space-between; align-items: center; }
 .mclose {
     background: none; border: none; cursor: pointer;
     color: #94a3b8; font-size: 18px; padding: 0; line-height: 1;
