@@ -89,15 +89,15 @@ class NarasumberByphoneController extends Controller
             'instansi'         => 'required|string|max:150',
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
-            'waktu_wawancara'  => 'required|date',
+            'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
             'draft_pertanyaan' => 'nullable|string',
         ], [
-            'nama.required'            => 'Nama narasumber wajib diisi.',
-            'instansi.required'        => 'Instansi wajib diisi.',
-            'nomor_telp.required'      => 'Nomor telepon wajib diisi.',
-            'tema_wawancara.required'  => 'Tema wawancara wajib diisi.',
-            'waktu_wawancara.required' => 'Waktu wawancara wajib diisi.',
-            'waktu_wawancara.date'     => 'Format waktu wawancara tidak valid.',
+            'nama.required'                   => 'Nama narasumber wajib diisi.',
+            'instansi.required'               => 'Instansi wajib diisi.',
+            'nomor_telp.required'             => 'Nomor telepon wajib diisi.',
+            'tema_wawancara.required'         => 'Tema wawancara wajib diisi.',
+            'waktu_wawancara.required'        => 'Waktu wawancara wajib diisi.',
+            'waktu_wawancara.date_format'     => 'Format waktu wawancara tidak valid (gunakan format YYYY-MM-DD HH:MM).',
         ]);
 
         $narasumber = narasumberbyphone::create($validated);
@@ -134,15 +134,15 @@ class NarasumberByphoneController extends Controller
             'instansi'         => 'required|string|max:150',
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
-            'waktu_wawancara'  => 'required|date',
+            'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
             'draft_pertanyaan' => 'nullable|string',
         ], [
-            'nama.required'            => 'Nama narasumber wajib diisi.',
-            'instansi.required'        => 'Instansi wajib diisi.',
-            'nomor_telp.required'      => 'Nomor telepon wajib diisi.',
-            'tema_wawancara.required'  => 'Tema wawancara wajib diisi.',
-            'waktu_wawancara.required' => 'Waktu wawancara wajib diisi.',
-            'waktu_wawancara.date'     => 'Format waktu wawancara tidak valid.',
+            'nama.required'                   => 'Nama narasumber wajib diisi.',
+            'instansi.required'               => 'Instansi wajib diisi.',
+            'nomor_telp.required'             => 'Nomor telepon wajib diisi.',
+            'tema_wawancara.required'         => 'Tema wawancara wajib diisi.',
+            'waktu_wawancara.required'        => 'Waktu wawancara wajib diisi.',
+            'waktu_wawancara.date_format'     => 'Format waktu wawancara tidak valid (gunakan format YYYY-MM-DD HH:MM).',
         ]);
 
         $narasumber->update($validated);

@@ -786,6 +786,11 @@
         clearErrors();
 
         var data = new FormData(form);
+        // datetime-local input sends "YYYY-MM-DDTHH:MM"; normalise to "YYYY-MM-DD HH:MM"
+        var waktuField = document.getElementById('fieldWaktu');
+        if (waktuField && waktuField.value) {
+            data.set('waktu_wawancara', waktuField.value.replace('T', ' '));
+        }
         btnSubmit.disabled = true;
         btnSubmit.textContent = 'Mengirim…';
 
