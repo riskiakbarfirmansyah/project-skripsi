@@ -308,6 +308,160 @@
             border-top: 1px solid rgba(255,255,255,0.5);
         }
 
+        /* ── Secondary CTA (Daftar Narasumber) ── */
+        .hero-cta-secondary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.78rem 1.8rem; border-radius: 12px;
+            font-family: inherit; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; text-decoration: none; border: 2px solid rgba(124,108,224,0.45);
+            background: rgba(255,255,255,0.55);
+            color: var(--accent);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(124,108,224,0.12);
+            transition: transform 0.18s, box-shadow 0.2s, background 0.2s;
+            margin-top: 0.75rem;
+            animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .hero-cta-secondary:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.78);
+            box-shadow: 0 8px 24px rgba(124,108,224,0.22);
+        }
+        .hero-cta-secondary svg { width: 16px; height: 16px; }
+
+        /* ── Modal Overlay ── */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(45, 42, 69, 0.45);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 1rem;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .modal-overlay.active {
+            opacity: 1; pointer-events: all;
+        }
+        .modal-box {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(28px) saturate(1.8);
+            border: 1.5px solid rgba(255,255,255,0.85);
+            border-radius: 24px;
+            padding: 2rem 2.2rem;
+            width: 100%; max-width: 520px;
+            box-shadow: 0 16px 60px rgba(120,100,200,0.18), 0 2px 0 rgba(255,255,255,0.9) inset;
+            transform: translateY(24px) scale(0.97);
+            transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
+        }
+        .modal-overlay.active .modal-box {
+            transform: translateY(0) scale(1);
+        }
+        .modal-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            margin-bottom: 1.4rem;
+        }
+        .modal-title {
+            font-size: 1.15rem; font-weight: 800; color: var(--text-dark);
+        }
+        .modal-subtitle {
+            font-size: 0.82rem; color: var(--text-soft); margin-top: 0.2rem;
+        }
+        .modal-close {
+            background: none; border: none; cursor: pointer;
+            color: var(--text-soft); padding: 0.2rem;
+            line-height: 1; font-size: 1.4rem;
+            transition: color 0.15s;
+        }
+        .modal-close:hover { color: var(--text-dark); }
+
+        /* Tabs */
+        .modal-tabs {
+            display: flex; gap: 0.4rem;
+            background: rgba(124,108,224,0.07);
+            border-radius: 12px; padding: 0.3rem;
+            margin-bottom: 1.4rem;
+        }
+        .modal-tab {
+            flex: 1; padding: 0.55rem 0.5rem;
+            border: none; border-radius: 9px;
+            font-family: inherit; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; background: transparent;
+            color: var(--text-soft);
+            transition: background 0.18s, color 0.18s;
+        }
+        .modal-tab.active {
+            background: #fff;
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(124,108,224,0.15);
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;
+        }
+        .form-field { display: flex; flex-direction: column; gap: 0.3rem; }
+        .form-field.full { grid-column: 1 / -1; }
+        .form-label {
+            font-size: 0.78rem; font-weight: 600; color: var(--text-mid);
+        }
+        .form-input, .form-textarea {
+            padding: 0.6rem 0.85rem;
+            border: 1.5px solid rgba(124,108,224,0.2);
+            border-radius: 10px;
+            font-family: inherit; font-size: 0.88rem; color: var(--text-dark);
+            background: rgba(255,255,255,0.7);
+            transition: border-color 0.18s, box-shadow 0.18s;
+            outline: none;
+        }
+        .form-input:focus, .form-textarea:focus {
+            border-color: rgba(124,108,224,0.55);
+            box-shadow: 0 0 0 3px rgba(124,108,224,0.1);
+        }
+        .form-textarea { resize: vertical; min-height: 72px; }
+        .form-error { font-size: 0.75rem; color: #e05252; }
+
+        .btn-submit {
+            width: 100%; margin-top: 1.2rem;
+            padding: 0.82rem; border-radius: 12px; border: none;
+            font-family: inherit; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #9b8af4 0%, #7ab3f5 100%);
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(140,110,240,0.3);
+            transition: transform 0.18s, box-shadow 0.2s;
+        }
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(140,110,240,0.38);
+        }
+        .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+
+        /* Success state */
+        .modal-success {
+            display: none; flex-direction: column; align-items: center;
+            text-align: center; padding: 1rem 0;
+        }
+        .modal-success.show { display: flex; }
+        .success-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, #a8f0c6 0%, #6ee0b5 100%);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 20px rgba(100,210,170,0.35);
+        }
+        .success-icon svg { width: 28px; height: 28px; color: #1a7a56; }
+        .success-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.4rem; }
+        .success-msg { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+        .btn-close-success {
+            margin-top: 1.2rem;
+            padding: 0.65rem 2rem; border-radius: 10px; border: none;
+            font-family: inherit; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #9b8af4 0%, #7ab3f5 100%);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(140,110,240,0.28);
+        }
+
         /* ── Responsive ── */
         @media (max-width: 768px) {
             .hero { flex-direction: column-reverse; text-align: center; padding: 2.5rem 1.5rem 2rem; gap: 2rem; }
@@ -316,6 +470,7 @@
             .features-grid { grid-template-columns: 1fr; }
             .features { padding: 0 1.5rem; }
             .navbar { padding: 0.9rem 1.2rem; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -377,6 +532,12 @@
                 </svg>
                 Masuk ke Sistem
             </a>
+            <button type="button" class="hero-cta-secondary" id="btnDaftarNarasumber">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                Daftar Sebagai Narasumber
+            </button>
         </div>
 
         {{-- Radio visual: microphone + pulsing rings + sound wave bars --}}
@@ -475,6 +636,203 @@
     </footer>
 
 </div>
+
+{{-- ── Modal Pendaftaran Narasumber ── --}}
+<div class="modal-overlay" id="modalNarasumber" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+
+        {{-- Header --}}
+        <div class="modal-header">
+            <div>
+                <div class="modal-title" id="modalTitle">Daftar Sebagai Narasumber</div>
+                <div class="modal-subtitle">Isi data di bawah untuk mendaftar sebagai narasumber siaran</div>
+            </div>
+            <button class="modal-close" id="btnCloseModal" aria-label="Tutup">&times;</button>
+        </div>
+
+        {{-- Success State --}}
+        <div class="modal-success" id="modalSuccess">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <div class="success-title">Pendaftaran Berhasil!</div>
+            <div class="success-msg" id="successMsg">Data Anda telah diterima dan akan segera diproses oleh tim kami.</div>
+            <button type="button" class="btn-close-success" id="btnCloseSuccess">Tutup</button>
+        </div>
+
+        {{-- Form --}}
+        <div id="modalFormWrapper">
+            {{-- Tabs --}}
+            <div class="modal-tabs" role="tablist">
+                <button type="button" class="modal-tab active" id="tabByphone" role="tab" aria-selected="true" data-tipe="byphone">
+                    📞 Narasumber Byphone
+                </button>
+                <button type="button" class="modal-tab" id="tabTalkshow" role="tab" aria-selected="false" data-tipe="talkshow">
+                    🎙️ Narasumber Talkshow
+                </button>
+            </div>
+
+            {{-- Form Fields --}}
+            <form id="formDaftarNarasumber" novalidate>
+                @csrf
+                <input type="hidden" name="tipe" id="fieldTipe" value="byphone">
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="form-label" for="fieldNama">Nama Lengkap <span style="color:#e05252">*</span></label>
+                        <input type="text" class="form-input" id="fieldNama" name="nama" placeholder="Nama lengkap Anda" maxlength="150">
+                        <span class="form-error" id="errNama"></span>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="fieldInstansi">Instansi / Organisasi <span style="color:#e05252">*</span></label>
+                        <input type="text" class="form-input" id="fieldInstansi" name="instansi" placeholder="Nama instansi Anda" maxlength="150">
+                        <span class="form-error" id="errInstansi"></span>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="fieldTelp">Nomor Telepon <span style="color:#e05252">*</span></label>
+                        <input type="tel" class="form-input" id="fieldTelp" name="nomor_telp" placeholder="08xxxxxxxxxx" maxlength="20">
+                        <span class="form-error" id="errTelp"></span>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="fieldTema">Tema Wawancara <span style="color:#e05252">*</span></label>
+                        <input type="text" class="form-input" id="fieldTema" name="tema_wawancara" placeholder="Topik yang akan dibahas" maxlength="255">
+                        <span class="form-error" id="errTema"></span>
+                    </div>
+                    <div class="form-field full">
+                        <label class="form-label" for="fieldWaktu">Waktu Wawancara <span style="color:#e05252">*</span></label>
+                        <input type="datetime-local" class="form-input" id="fieldWaktu" name="waktu_wawancara">
+                        <span class="form-error" id="errWaktu"></span>
+                    </div>
+                    <div class="form-field full">
+                        <label class="form-label" for="fieldDraft">Draft Pertanyaan <span style="font-weight:400;color:var(--text-soft)">(opsional)</span></label>
+                        <textarea class="form-textarea" id="fieldDraft" name="draft_pertanyaan" placeholder="Tuliskan poin-poin pertanyaan yang ingin dibahas..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-error" id="errGeneral" style="margin-top:0.5rem;text-align:center;"></div>
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    Kirim Pendaftaran
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    const overlay      = document.getElementById('modalNarasumber');
+    const btnOpen      = document.getElementById('btnDaftarNarasumber');
+    const btnClose     = document.getElementById('btnCloseModal');
+    const btnCloseSucc = document.getElementById('btnCloseSuccess');
+    const form         = document.getElementById('formDaftarNarasumber');
+    const fieldTipe    = document.getElementById('fieldTipe');
+    const formWrapper  = document.getElementById('modalFormWrapper');
+    const successPanel = document.getElementById('modalSuccess');
+    const successMsg   = document.getElementById('successMsg');
+    const btnSubmit    = document.getElementById('btnSubmit');
+
+    function openModal() {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        clearErrors();
+        successPanel.classList.remove('show');
+        formWrapper.style.display = '';
+        form.reset();
+        fieldTipe.value = 'byphone';
+        setActiveTab('byphone');
+    }
+
+    function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function clearErrors() {
+        ['errNama','errInstansi','errTelp','errTema','errWaktu','errGeneral'].forEach(function(id){
+            var el = document.getElementById(id);
+            if (el) el.textContent = '';
+        });
+        form.querySelectorAll('.form-input,.form-textarea').forEach(function(el){
+            el.style.borderColor = '';
+        });
+    }
+
+    function setActiveTab(tipe) {
+        document.querySelectorAll('.modal-tab').forEach(function(tab){
+            tab.classList.toggle('active', tab.dataset.tipe === tipe);
+            tab.setAttribute('aria-selected', tab.dataset.tipe === tipe ? 'true' : 'false');
+        });
+        fieldTipe.value = tipe;
+    }
+
+    // Tab click
+    document.querySelectorAll('.modal-tab').forEach(function(tab){
+        tab.addEventListener('click', function(){ setActiveTab(tab.dataset.tipe); });
+    });
+
+    // Open / Close
+    btnOpen.addEventListener('click', openModal);
+    btnClose.addEventListener('click', closeModal);
+    btnCloseSucc.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
+
+    // Form Submit
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        clearErrors();
+
+        var data = new FormData(form);
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = 'Mengirim…';
+
+        fetch('{{ route('narasumber.self-register') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                'Accept': 'application/json',
+            },
+            body: data,
+        })
+        .then(function(res){ return res.json().then(function(json){ return { ok: res.ok, status: res.status, json: json }; }); })
+        .then(function(result){
+            if (result.ok && result.json.success) {
+                successMsg.textContent = result.json.message;
+                formWrapper.style.display = 'none';
+                successPanel.classList.add('show');
+            } else if (result.status === 422 && result.json.errors) {
+                var map = {
+                    'nama': 'errNama', 'instansi': 'errInstansi',
+                    'nomor_telp': 'errTelp', 'tema_wawancara': 'errTema',
+                    'waktu_wawancara': 'errWaktu',
+                };
+                Object.keys(result.json.errors).forEach(function(field){
+                    var errId = map[field];
+                    if (errId) {
+                        var el = document.getElementById(errId);
+                        if (el) el.textContent = result.json.errors[field][0];
+                    } else {
+                        var gen = document.getElementById('errGeneral');
+                        if (gen) gen.textContent = result.json.errors[field][0];
+                    }
+                });
+            } else {
+                document.getElementById('errGeneral').textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+            }
+        })
+        .catch(function(){
+            document.getElementById('errGeneral').textContent = 'Koneksi bermasalah. Silakan coba lagi.';
+        })
+        .finally(function(){
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = 'Kirim Pendaftaran';
+        });
+    });
+})();
+</script>
 
 </body>
 </html>

@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InformasiSiaranController;
 use App\Http\Controllers\NarasumberByphoneController;
 use App\Http\Controllers\NarasumberTalkshowController;
+use App\Http\Controllers\NarasumberSelfRegistrationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+/*
+|--------------------------------------------------------------------------
+| NARASUMBER SELF-REGISTRATION (Public — no login required)
+|--------------------------------------------------------------------------
+*/
+Route::post('/daftar-narasumber', [NarasumberSelfRegistrationController::class, 'store'])
+    ->name('narasumber.self-register');
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
