@@ -69,6 +69,18 @@ class AdminController extends Controller
     }
 
     /**
+     * Kembalikan nilai boolean fields berdasarkan role yang dipilih.
+     */
+    private function roleFlagAttributes(string $role): array
+    {
+        return [
+            'is_gatekeeper' => $role === 'gatekeeper' ? 1 : 0,
+            'is_penyiar'    => $role === 'penyiar'    ? 1 : 0,
+            'is_pjprogram'  => $role === 'pj_program' ? 1 : 0,
+        ];
+    }
+
+    /**
      * Buat akun user baru (gatekeeper / penyiar / pj_program).
      *
      * Route: POST /admin/users
@@ -96,7 +108,7 @@ class AdminController extends Controller
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role'     => $validated['role'],
-        ]);
+        ] + $this->roleFlagAttributes($validated['role']));
 
         return response()->json([
             'success' => true,
@@ -146,6 +158,7 @@ class AdminController extends Controller
         $user->name  = $validated['name'];
         $user->email = $validated['email'];
         $user->role  = $validated['role'];
+        $user->fill($this->roleFlagAttributes($validated['role']));
 
         if ($request->filled('password')) {
             $user->password = Hash::make($validated['password']);
