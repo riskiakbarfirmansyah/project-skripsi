@@ -5,11 +5,15 @@ if (! function_exists('format_phone_number')) {
      * Format a phone number to Indonesian international format (without leading +).
      * Strips non-digits, converts leading 0 to country code 62 (Indonesia).
      *
-     * @param  string  $phone
+     * @param  string|null  $phone
      * @return string  e.g. 6281234567890
      */
-    function format_phone_number(string $phone): string
+    function format_phone_number(?string $phone): string
     {
+        if (! $phone) {
+            return '';
+        }
+
         $num = preg_replace('/\D/', '', $phone);
 
         if (str_starts_with($num, '0')) {
@@ -26,11 +30,17 @@ if (! function_exists('wa_link')) {
     /**
      * Generate a WhatsApp API URL from a phone number.
      *
-     * @param  string  $phone
-     * @return string  https://wa.me/{number}
+     * @param  string|null  $phone
+     * @return string  https://wa.me/{number} or '#' if phone is empty
      */
-    function wa_link(string $phone): string
+    function wa_link(?string $phone): string
     {
-        return 'https://wa.me/' . format_phone_number($phone);
+        $formatted = format_phone_number($phone);
+
+        if (! $formatted) {
+            return '#';
+        }
+
+        return 'https://wa.me/' . $formatted;
     }
 }
