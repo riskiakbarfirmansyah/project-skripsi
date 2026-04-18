@@ -95,6 +95,65 @@ class InformasiSiaranController extends Controller
     }
 
     /**
+     * Mulai siaran – ubah status menjadi active.
+     */
+    public function startSiaran(string $id): JsonResponse
+    {
+        $siaran = informasisiaran::findOrFail($id);
+
+        if ($siaran->status === 'completed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Siaran ini sudah selesai.',
+            ], 422);
+        }
+
+        if ($siaran->status === 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Siaran sudah sedang berlangsung.',
+            ], 422);
+        }
+
+        $siaran->update([
+            'status'     => 'active',
+            'started_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Siaran dimulai.',
+            'data'    => $siaran->fresh(),
+        ]);
+    }
+
+    /**
+     * Akhiri siaran – ubah status menjadi completed.
+     */
+    public function endSiaran(string $id): JsonResponse
+    {
+        $siaran = informasisiaran::findOrFail($id);
+
+        if ($siaran->status !== 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Siaran belum dimulai atau sudah selesai.',
+            ], 422);
+        }
+
+        $siaran->update([
+            'status'   => 'completed',
+            'ended_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Siaran telah selesai.',
+            'data'    => $siaran->fresh(),
+        ]);
+    }
+
+    /**
      * Cari & filter siaran (AJAX).
      */
     public function search(Request $request): JsonResponse

@@ -17,5 +17,13 @@ class informasisiaran extends Model
         'tanggal',
         'waktu',
         'keterangan',
+        'status',
+        'started_at',
+        'ended_at',
+    ];
+
+    protected $casts = [
+        'started_at' => 'datetime',
+        'ended_at'   => 'datetime',
     ];
 }

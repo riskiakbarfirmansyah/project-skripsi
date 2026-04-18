@@ -85,11 +85,13 @@ Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
         ->name('dashboard');
  
     // ── Informasi Siaran ─────────────────────────────────────────────
-    Route::get('/siaran/search',  [InformasiSiaranController::class, 'search'])->name('siaran.search');
-    Route::post('/siaran',        [InformasiSiaranController::class, 'store'])->name('siaran.store');
-    Route::get('/siaran/{id}',    [InformasiSiaranController::class, 'show'])->name('siaran.show');
-    Route::put('/siaran/{id}',    [InformasiSiaranController::class, 'update'])->name('siaran.update');
-    Route::delete('/siaran/{id}', [InformasiSiaranController::class, 'destroy'])->name('siaran.destroy');
+    Route::get('/siaran/search',       [InformasiSiaranController::class, 'search'])->name('siaran.search');
+    Route::post('/siaran',             [InformasiSiaranController::class, 'store'])->name('siaran.store');
+    Route::get('/siaran/{id}',         [InformasiSiaranController::class, 'show'])->name('siaran.show');
+    Route::put('/siaran/{id}',         [InformasiSiaranController::class, 'update'])->name('siaran.update');
+    Route::delete('/siaran/{id}',      [InformasiSiaranController::class, 'destroy'])->name('siaran.destroy');
+    Route::post('/siaran/{id}/start',  [InformasiSiaranController::class, 'startSiaran'])->name('siaran.start');
+    Route::post('/siaran/{id}/end',    [InformasiSiaranController::class, 'endSiaran'])->name('siaran.end');
  
     // ── Narasumber Byphone ───────────────────────────────────────────
     Route::get('/narasumber-byphone/search',   [NarasumberByphoneController::class, 'search'])->name('byphone.search');
