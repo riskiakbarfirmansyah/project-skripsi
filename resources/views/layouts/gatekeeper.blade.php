@@ -246,14 +246,47 @@
             white-space: pre-wrap; margin-top: 5px;
         }
 
-        /* ── Alert flash ─────────────────────────────── */
+        /* ── Alert / Toast ────────────────────────────── */
         .alert {
-            padding: 11px 16px; border-radius: 8px;
-            font-size: 13px; margin-bottom: 16px;
-            display: flex; align-items: center; gap: 8px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 300;
+            animation: slideIn .3s ease-out;
+            max-width: 400px;
+            min-width: 260px;
         }
-        .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert.hide {
+            animation: slideOut .3s ease-in forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(440px); opacity: 0; }
+            to   { transform: translateX(0);     opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0);     opacity: 1; }
+            to   { transform: translateX(440px); opacity: 0; }
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #166534;
+            border-left-color: #10b981;
+        }
+        .alert-error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #991b1b;
+            border-left-color: #ef4444;
+        }
+        .alert svg { width: 18px; height: 18px; flex-shrink: 0; }
     </style>
     @stack('styles')
 </head>
@@ -370,21 +403,42 @@
 
     <div class="content">
         @if(session('success'))
-            <div class="alert alert-success">
-                <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
-                    <path d="M12.5 4.5l-7 7-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <div class="alert alert-success" id="session-flash-success">
+                <svg viewBox="0 0 18 18" fill="none">
+                    <circle cx="9" cy="9" r="8" stroke="#059669" stroke-width="1.5"/>
+                    <path d="M5.5 9l2.5 2.5 4.5-5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 {{ session('success') }}
             </div>
+            <script>
+                (function(){
+                    var el = document.getElementById('session-flash-success');
+                    setTimeout(function(){
+                        el.classList.add('hide');
+                        setTimeout(function(){ el.style.display='none'; }, 300);
+                    }, 4000);
+                })();
+            </script>
         @endif
         @if(session('error'))
-            <div class="alert alert-error">
-                <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
-                    <path d="M7.5 1v7M7.5 11v1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <div class="alert alert-error" id="session-flash-error">
+                <svg viewBox="0 0 18 18" fill="none">
+                    <circle cx="9" cy="9" r="8" stroke="#dc2626" stroke-width="1.5"/>
+                    <path d="M9 5.5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
                 {{ session('error') }}
             </div>
+            <script>
+                (function(){
+                    var el = document.getElementById('session-flash-error');
+                    setTimeout(function(){
+                        el.classList.add('hide');
+                        setTimeout(function(){ el.style.display='none'; }, 300);
+                    }, 4000);
+                })();
+            </script>
         @endif
+        <div id="flash-gk" style="display:none;"></div>
 
         @yield('content')
     </div>

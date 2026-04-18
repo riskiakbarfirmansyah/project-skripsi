@@ -40,10 +40,55 @@
     70%  { box-shadow:0 0 0 5px rgba(239,68,68,0); }
     100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
 }
-.btn-mulai   { padding:4px 10px;font-size:11px;font-weight:600;border-radius:6px;border:none;cursor:pointer;color:#fff;background:#059669;transition:opacity .15s; }
-.btn-mulai:hover   { opacity:.85; }
-.btn-selesai-s { padding:4px 10px;font-size:11px;font-weight:600;border-radius:6px;border:none;cursor:pointer;color:#fff;background:#dc2626;transition:opacity .15s; }
-.btn-selesai-s:hover { opacity:.85; }
+.btn-mulai {
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #10b981, #059669);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+}
+.btn-mulai:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.35);
+    filter: brightness(1.05);
+}
+.btn-mulai:active { transform: translateY(0); }
+
+.btn-selesai-s {
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+    animation: pulseRed 1.5s ease-in-out infinite;
+}
+.btn-selesai-s:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+    animation: none;
+    filter: brightness(1.05);
+}
+.btn-selesai-s:active { transform: translateY(0); }
+@keyframes pulseRed {
+    0%, 100% { box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 2px 12px rgba(239, 68, 68, 0.4); }
+}
 </style>
 @endpush
 
@@ -162,9 +207,15 @@
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                                 </button>
                                 @if($s->status === 'pending')
-                                <button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran({{ $s->siaranID }})">▶ Mulai</button>
+                                <button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran({{ $s->siaranID }})">
+                                    <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg>
+                                    Mulai Siaran
+                                </button>
                                 @elseif($s->status === 'active')
-                                <button class="btn-selesai-s" title="Siaran Selesai" onclick="selesaiSiaran({{ $s->siaranID }})">⏹ Selesai</button>
+                                <button class="btn-selesai-s" title="Siaran Selesai" onclick="selesaiSiaran({{ $s->siaranID }})">
+                                    <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg>
+                                    Selesai Siaran
+                                </button>
                                 @endif
                                 <button class="bico" title="Edit" onclick="editSiaran({{ $s->siaranID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
@@ -462,14 +513,21 @@ function showTab(name) {
 }
 
 function showFlash(msg, type = 'success') {
-    const existing = document.getElementById('flash-gk');
-    if (existing) existing.remove();
-    const el = document.createElement('div');
-    el.id = 'flash-gk';
+    const el = document.getElementById('flash-gk');
+    const iconSuccess = '<svg viewBox="0 0 18 18" fill="none" width="18" height="18"><circle cx="9" cy="9" r="8" stroke="#059669" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const iconError   = '<svg viewBox="0 0 18 18" fill="none" width="18" height="18"><circle cx="9" cy="9" r="8" stroke="#dc2626" stroke-width="1.5"/><path d="M9 5.5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>';
     el.className = 'alert alert-' + type;
-    el.textContent = msg;
-    document.querySelector('.content').insertBefore(el, document.querySelector('.content').firstChild);
-    setTimeout(() => el.remove(), 4000);
+    el.classList.remove('hide');
+    el.style.display = 'flex';
+    el.innerHTML = type === 'success' ? iconSuccess : iconError;
+    const txt = document.createElement('span');
+    txt.textContent = msg;
+    el.appendChild(txt);
+    clearTimeout(el._hideTimer);
+    el._hideTimer = setTimeout(() => {
+        el.classList.add('hide');
+        setTimeout(() => { el.style.display = 'none'; }, 300);
+    }, 4000);
 }
 
 function debounce(fn, delay) {
@@ -498,8 +556,8 @@ function siaranStatusBadge(status) {
     return '<span class="bdg-pending">⏰ Dijadwalkan</span>';
 }
 function siaranActionBtn(s) {
-    if (s.status === 'pending')   return `<button class="btn-mulai" onclick="mulaiSiaran(${s.siaranID})">▶ Mulai</button>`;
-    if (s.status === 'active')    return `<button class="btn-selesai-s" onclick="selesaiSiaran(${s.siaranID})">⏹ Selesai</button>`;
+    if (s.status === 'pending')   return `<button class="btn-mulai" onclick="mulaiSiaran(${s.siaranID})"><svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg> Mulai Siaran</button>`;
+    if (s.status === 'active')    return `<button class="btn-selesai-s" onclick="selesaiSiaran(${s.siaranID})"><svg width="12" height="12" viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg> Selesai Siaran</button>`;
     return '';
 }
 
@@ -624,14 +682,12 @@ function deleteSiaran(id) {
     });
 }
 function mulaiSiaran(id) {
-    if (!confirm('Mulai siaran ini sekarang?')) return;
     apiFetch(RSIARAN_START(id), 'POST').then(d => {
         if (d.success) { showFlash(d.message); doSearchSiaran(); }
         else showFlash(d.message || 'Gagal memulai siaran.', 'error');
     });
 }
 function selesaiSiaran(id) {
-    if (!confirm('Tandai siaran ini sebagai selesai?')) return;
     apiFetch(RSIARAN_END(id), 'POST').then(d => {
         if (d.success) { showFlash(d.message); doSearchSiaran(); }
         else showFlash(d.message || 'Gagal mengakhiri siaran.', 'error');
