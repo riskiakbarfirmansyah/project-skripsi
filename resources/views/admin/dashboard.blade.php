@@ -446,11 +446,17 @@ function submitEdit(e) {
 
 // ── Delete User ───────────────────────────────────────
 function deleteUser(id, name) {
-    if (!confirm('Hapus akun "' + name + '"? Tindakan ini tidak bisa dibatalkan.')) return;
-    apiFetch(ROUTES.delete + '/' + id, 'DELETE').then(d => {
-        if (d.success) { showFlash(d.message); doSearch(); }
-        else showFlash(d.message || 'Gagal menghapus.', 'error');
-    });
+    showDeleteConfirm(
+        'Hapus Akun Pengguna',
+        'Apakah Anda yakin ingin menghapus akun "' + name + '"? Tindakan ini tidak dapat dibatalkan.',
+        function(done) {
+            apiFetch(ROUTES.delete + '/' + id, 'DELETE').then(d => {
+                done();
+                if (d.success) { showFlash(d.message); doSearch(); }
+                else showFlash(d.message || 'Gagal menghapus.', 'error');
+            }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
+        }
+    );
 }
 
 // ── Reset Password ────────────────────────────────────

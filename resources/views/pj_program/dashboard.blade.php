@@ -351,11 +351,17 @@ function submitEdit(e) {
     });
 }
 function deleteTs(id) {
-    if (!confirm('Hapus data narasumber talkshow ini?')) return;
-    apiFetch(RTALKSHOW + '/' + id, 'DELETE').then(d => {
-        if (d.success) { showFlash(d.message); doSearch(); }
-        else showFlash(d.message || 'Gagal menghapus.', 'error');
-    });
+    showDeleteConfirm(
+        'Hapus Data Narasumber Talkshow',
+        'Apakah Anda yakin ingin menghapus data narasumber talkshow ini? Tindakan ini tidak dapat dibatalkan.',
+        function(done) {
+            apiFetch(RTALKSHOW + '/' + id, 'DELETE').then(d => {
+                done();
+                if (d.success) { showFlash(d.message); doSearch(); }
+                else showFlash(d.message || 'Gagal menghapus.', 'error');
+            }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
+        }
+    );
 }
 
 function formatDateTime(d) {
