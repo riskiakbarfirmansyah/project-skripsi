@@ -523,8 +523,8 @@ function showFlash(msg, type = 'success') {
     const txt = document.createElement('span');
     txt.textContent = msg;
     el.appendChild(txt);
-    clearTimeout(el._hideTimer);
-    el._hideTimer = setTimeout(() => {
+    clearTimeout(showFlash._timer);
+    showFlash._timer = setTimeout(() => {
         el.classList.add('hide');
         setTimeout(() => { el.style.display = 'none'; }, 300);
     }, 4000);
