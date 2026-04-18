@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\narasumberbyphone;
 use App\Models\narasumbertalkshow;
 use App\Models\informasisiaran;
+use App\Models\BroadcastSession;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class NarasumberByphoneController extends Controller
@@ -69,12 +71,22 @@ class NarasumberByphoneController extends Controller
             'talkshow_hari_ini'   => narasumbertalkshow::whereDate('waktu_wawancara', today())->count(),
         ];
 
+        // ── Siaran aktif ──────────────────────────────────────────────
+        $activeBroadcast = BroadcastSession::where('penyiar_id', Auth::id())
+            ->where('status', 'active')
+            ->first();
+
+        if ($activeBroadcast) {
+            $activeBroadcast->narasumber_detail = $activeBroadcast->narasumber;
+        }
+
         return view('penyiar.dashboard', compact(
             'byphoneList',
             'byphoneRecent',
             'talkshowList',
             'talkshowRecent',
-            'stats'
+            'stats',
+            'activeBroadcast'
         ));
     }
 
