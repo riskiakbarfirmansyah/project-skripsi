@@ -8,10 +8,148 @@
 <style>
 .wa-link { display:inline-flex; align-items:center; gap:4px; color:#16a34a; text-decoration:none; font-weight:500; transition:color .15s; }
 .wa-link:hover { color:#15803d; text-decoration:underline; }
+
+/* ── Broadcast card ── */
+.bc-card {
+    background:#fff; border-radius:10px; border:1px solid #e2e8f0;
+    padding:20px 24px; margin-bottom:24px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.bc-card.on-air {
+    border-color:#059669; background:#f0fdf4;
+}
+.bc-status-dot {
+    width:10px; height:10px; border-radius:50%; background:#94a3b8; flex-shrink:0;
+}
+.bc-status-dot.live {
+    background:#ef4444;
+    box-shadow:0 0 0 0 rgba(239,68,68,.4);
+    animation:pulse-dot 1.4s infinite;
+}
+@keyframes pulse-dot {
+    0%   { box-shadow:0 0 0 0 rgba(239,68,68,.4); }
+    70%  { box-shadow:0 0 0 8px rgba(239,68,68,0); }
+    100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+}
+.bc-info { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.bc-label { font-size:13px; font-weight:700; color:#0f172a; }
+.bc-sub   { font-size:12px; color:#64748b; margin-top:2px; }
+.bc-timer { font-size:20px; font-weight:700; color:#059669; letter-spacing:.04em; font-family:'Courier New',monospace; }
+.btn-siap {
+    padding:9px 20px; font-size:13px; font-weight:600;
+    border-radius:8px; border:none; cursor:pointer; color:#fff;
+    background:#059669; transition:opacity .15s;
+}
+.btn-siap:hover { opacity:.88; }
+.btn-selesai {
+    padding:9px 20px; font-size:13px; font-weight:600;
+    border-radius:8px; border:none; cursor:pointer; color:#fff;
+    background:#dc2626; transition:opacity .15s;
+}
+.btn-selesai:hover { opacity:.88; }
+
+/* ── Live broadcast detail block ── */
+.bc-detail {
+    background:#fff; border-radius:10px; border:2px solid #059669;
+    padding:20px 24px; margin-bottom:24px; display:none;
+}
+.bc-detail.visible { display:block; }
+.bc-detail-head {
+    display:flex; align-items:center; gap:10px; margin-bottom:16px;
+}
+.live-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:#fef2f2; color:#dc2626;
+    font-size:11px; font-weight:700; padding:3px 10px;
+    border-radius:20px; letter-spacing:.04em;
+}
+.bc-narasumber-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    margin-bottom:16px;
+}
+.bc-ng-item {
+    background:#f8fafc; border-radius:8px; padding:10px 14px;
+}
+.bc-ng-lbl { font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+.bc-ng-val { font-size:13px; color:#0f172a; font-weight:600; }
+.bc-draft-box {
+    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px;
+    padding:14px 16px; font-size:13px; color:#374151;
+    line-height:1.7; white-space:pre-wrap; max-height:260px; overflow-y:auto;
+}
+.bc-draft-title {
+    font-size:12px; font-weight:700; color:#065f46;
+    text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;
+}
+
+/* ── Notes modal ── */
+.notes-ta {
+    width:100%; padding:9px 12px; font-size:13px;
+    border:1px solid #cbd5e1; border-radius:7px; outline:none;
+    resize:vertical; min-height:80px; color:#0f172a;
+}
+.notes-ta:focus { border-color:#6ee7b7; box-shadow:0 0 0 3px #ecfdf5; }
+.done-check {
+    width:52px; height:52px; border-radius:50%; background:#d1fae5;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 12px;
+}
 </style>
 @endpush
 
 @section('content')
+
+{{-- ════════════════════ BROADCAST STATUS CARD ════════════════════ --}}
+@php $isOnAir = isset($activeBroadcast) && $activeBroadcast !== null; @endphp
+
+<div class="bc-card {{ $isOnAir ? 'on-air' : '' }}" id="bc-card">
+    <div class="bc-info">
+        <div class="bc-status-dot {{ $isOnAir ? 'live' : '' }}" id="bc-dot"></div>
+        <div>
+            <div class="bc-label" id="bc-label">{{ $isOnAir ? '🔴 Sedang Siaran' : 'Siap Siaran' }}</div>
+            <div class="bc-sub" id="bc-sub">
+                @if($isOnAir)
+                    {{ $activeBroadcast->narasumber_detail?->nama ?? '—' }} &middot;
+                    {{ $activeBroadcast->narasumber_detail?->tema_wawancara ?? '—' }}
+                @else
+                    Tekan tombol untuk memulai siaran
+                @endif
+            </div>
+        </div>
+    </div>
+    @if($isOnAir)
+        <div class="bc-timer" id="bc-timer">00:00:00</div>
+        <button class="btn-selesai" onclick="openEndModal()">Siaran Selesai</button>
+    @else
+        <button class="btn-siap" id="btn-siap" onclick="openStartModal()">Siap Siaran</button>
+    @endif
+</div>
+
+{{-- ── Live detail block ── --}}
+<div class="bc-detail {{ $isOnAir ? 'visible' : '' }}" id="bc-detail">
+    <div class="bc-detail-head">
+        <span class="live-badge">
+            <span style="width:7px;height:7px;border-radius:50%;background:#dc2626;display:inline-block;"></span>
+            ON AIR
+        </span>
+        <span style="font-size:14px;font-weight:700;color:#0f172a;">Informasi Narasumber</span>
+    </div>
+    <div class="bc-narasumber-grid" id="bc-nar-grid">
+        <div class="bc-ng-item">
+            <div class="bc-ng-lbl">Nama</div>
+            <div class="bc-ng-val" id="bc-nar-nama">{{ $isOnAir ? ($activeBroadcast->narasumber_detail?->nama ?? '—') : '—' }}</div>
+        </div>
+        <div class="bc-ng-item">
+            <div class="bc-ng-lbl">Instansi</div>
+            <div class="bc-ng-val" id="bc-nar-instansi">{{ $isOnAir ? ($activeBroadcast->narasumber_detail?->instansi ?? '—') : '—' }}</div>
+        </div>
+        <div class="bc-ng-item">
+            <div class="bc-ng-lbl">Tema Wawancara</div>
+            <div class="bc-ng-val" id="bc-nar-tema">{{ $isOnAir ? ($activeBroadcast->narasumber_detail?->tema_wawancara ?? '—') : '—' }}</div>
+        </div>
+    </div>
+    <div class="bc-draft-title">Draft Pertanyaan</div>
+    <div class="bc-draft-box" id="bc-draft">{{ $isOnAir ? ($activeBroadcast->narasumber_detail?->draft_pertanyaan ?? '(Tidak ada draft pertanyaan)') : '—' }}</div>
+</div>
 
 {{-- ── Stats ── --}}
 <div class="sg">
@@ -227,6 +365,72 @@
     </div>
 </div>
 
+{{-- ════════════════════ MODAL MULAI SIARAN ════════════════════ --}}
+<div class="mbg" id="m-bc-start">
+    <div class="modal">
+        <div class="mttl">
+            Siap Siaran
+            <button class="mclose" onclick="closeModal('m-bc-start')">×</button>
+        </div>
+        <div class="fg">
+            <label class="fl">Jenis Narasumber</label>
+            <select class="fi" id="bc-type" onchange="loadNarasumberOptions()">
+                <option value="byphone">Narasumber Byphone</option>
+                <option value="talkshow">Narasumber Talkshow</option>
+            </select>
+        </div>
+        <div class="fg">
+            <label class="fl">Pilih Narasumber</label>
+            <select class="fi" id="bc-narasumber">
+                <option value="">— Pilih narasumber —</option>
+            </select>
+        </div>
+        <div id="bc-preview" style="display:none;background:#f8fafc;border-radius:8px;padding:12px 14px;margin-bottom:13px;font-size:13px;">
+            <div style="font-weight:600;color:#0f172a;margin-bottom:4px;" id="bc-prev-nama">—</div>
+            <div style="color:#64748b;font-size:12px;" id="bc-prev-tema">—</div>
+        </div>
+        <div class="mft">
+            <button class="bcn" onclick="closeModal('m-bc-start')">Batal</button>
+            <button class="bsv" onclick="startBroadcast()">Mulai Siaran</button>
+        </div>
+    </div>
+</div>
+
+{{-- ════════════════════ MODAL SELESAI SIARAN ════════════════════ --}}
+<div class="mbg" id="m-bc-end">
+    <div class="modal">
+        <div class="mttl">
+            Akhiri Siaran
+            <button class="mclose" onclick="closeModal('m-bc-end')">×</button>
+        </div>
+        <p style="font-size:13px;color:#64748b;margin-bottom:14px;">Apakah Anda yakin ingin mengakhiri siaran?</p>
+        <div class="fg">
+            <label class="fl">Catatan Siaran <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
+            <textarea class="notes-ta" id="bc-notes" placeholder="Tambahkan catatan siaran…"></textarea>
+        </div>
+        <div class="mft">
+            <button class="bcn" onclick="closeModal('m-bc-end')">Batal</button>
+            <button class="btn-selesai" onclick="endBroadcast()">Ya, Akhiri Siaran</button>
+        </div>
+    </div>
+</div>
+
+{{-- ════════════════════ MODAL SIARAN SELESAI ════════════════════ --}}
+<div class="mbg" id="m-bc-done">
+    <div class="modal" style="text-align:center;">
+        <div class="done-check">
+            <svg width="22" height="22" viewBox="0 0 15 15" fill="none">
+                <path d="M12.5 4.5l-7 7-3-3" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px;">Siaran Telah Selesai!</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:18px;" id="bc-done-summary">—</div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+            <button class="bsv" onclick="closeDoneModal()">Selesai</button>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -342,6 +546,170 @@ function formatDateTime(d) {
     const dt = new Date(d.replace(' ', 'T'));
     return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
         + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ══════════════════════════════════════════════════════
+// BROADCAST
+// ══════════════════════════════════════════════════════
+const RBROADCAST_START   = '{{ route('penyiar.broadcast.start') }}';
+const RBROADCAST_END     = '{{ route('penyiar.broadcast.end') }}';
+const RBROADCAST_CURRENT = '{{ route('penyiar.broadcast.current') }}';
+const RBSEARCH_BP        = '{{ route('penyiar.byphone.search') }}';
+const RBSEARCH_TS        = '{{ route('penyiar.talkshow.search') }}';
+
+// Storage for narasumber options by type
+let bcNarasumberData = { byphone: [], talkshow: [] };
+
+// Timer
+let bcTimerInterval = null;
+let bcStartedAt     = null;
+
+@if($isOnAir)
+bcStartedAt = new Date('{{ $activeBroadcast->started_at->toIso8601String() }}');
+startBroadcastTimer();
+@endif
+
+function startBroadcastTimer() {
+    if (bcTimerInterval) clearInterval(bcTimerInterval);
+    updateBroadcastTimer();
+    bcTimerInterval = setInterval(updateBroadcastTimer, 1000);
+}
+
+function updateBroadcastTimer() {
+    if (!bcStartedAt) return;
+    const elapsed = Math.floor((Date.now() - bcStartedAt.getTime()) / 1000);
+    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    const el = document.getElementById('bc-timer');
+    if (el) el.textContent = `${h}:${m}:${s}`;
+}
+
+function formatDuration(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h} jam ${m} menit ${s} detik`;
+    if (m > 0) return `${m} menit ${s} detik`;
+    return `${s} detik`;
+}
+
+// Load narasumber dropdown options
+function loadNarasumberOptions() {
+    const type  = document.getElementById('bc-type').value;
+    const sel   = document.getElementById('bc-narasumber');
+    sel.innerHTML = '<option value="">— Memuat… —</option>';
+    document.getElementById('bc-preview').style.display = 'none';
+
+    if (bcNarasumberData[type].length > 0) {
+        populateNarasumberSelect(bcNarasumberData[type]);
+        return;
+    }
+
+    const url = type === 'byphone' ? RBSEARCH_BP : RBSEARCH_TS;
+    fetch(url, { headers: { Accept: 'application/json' } })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                bcNarasumberData[type] = d.data;
+                populateNarasumberSelect(d.data);
+            }
+        });
+}
+
+function populateNarasumberSelect(data) {
+    const sel = document.getElementById('bc-narasumber');
+    sel.innerHTML = '<option value="">— Pilih narasumber —</option>';
+    data.forEach(n => {
+        const idKey = n.byphoneID !== undefined ? n.byphoneID : n.talkshowID;
+        const opt   = document.createElement('option');
+        opt.value   = idKey;
+        opt.textContent = `${n.nama} — ${n.instansi}`;
+        opt.dataset.nama  = n.nama;
+        opt.dataset.tema  = n.tema_wawancara;
+        sel.appendChild(opt);
+    });
+    sel.onchange = () => {
+        const opt = sel.options[sel.selectedIndex];
+        if (opt.value) {
+            document.getElementById('bc-prev-nama').textContent = opt.dataset.nama;
+            document.getElementById('bc-prev-tema').textContent = opt.dataset.tema;
+            document.getElementById('bc-preview').style.display = 'block';
+        } else {
+            document.getElementById('bc-preview').style.display = 'none';
+        }
+    };
+}
+
+// Open start broadcast modal – pre-load byphone
+function openStartModal() {
+    document.getElementById('bc-type').value = 'byphone';
+    document.getElementById('bc-preview').style.display = 'none';
+    loadNarasumberOptions();
+    openModal('m-bc-start');
+}
+
+// Start broadcast
+function startBroadcast() {
+    const type = document.getElementById('bc-type').value;
+    const id   = document.getElementById('bc-narasumber').value;
+    if (!id) { showFlash('Pilih narasumber terlebih dahulu.', 'error'); return; }
+
+    apiFetch(RBROADCAST_START, 'POST', { narasumber_type: type, narasumber_id: parseInt(id) })
+        .then(d => {
+            if (!d.success) { showFlash(d.message || 'Gagal memulai siaran.', 'error'); return; }
+            closeModal('m-bc-start');
+            const sess = d.data;
+            const nar  = sess.narasumber || {};
+            bcStartedAt = new Date(sess.started_at);
+            renderOnAir(sess);
+            startBroadcastTimer();
+            showFlash('Siaran dimulai!');
+        })
+        .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
+}
+
+function renderOnAir(sess) {
+    const nar = sess.narasumber || {};
+    // card
+    const card = document.getElementById('bc-card');
+    card.classList.add('on-air');
+    document.getElementById('bc-dot').classList.add('live');
+    document.getElementById('bc-label').textContent = '🔴 Sedang Siaran';
+    document.getElementById('bc-sub').textContent   = (nar.nama || '—') + ' · ' + (nar.tema_wawancara || '—');
+
+    // Replace button area — remove siap button, add timer + selesai button
+    // The easiest way after an AJAX start: reload page
+    location.reload();
+}
+
+// Open end modal
+function openEndModal() {
+    document.getElementById('bc-notes').value = '';
+    openModal('m-bc-end');
+}
+
+// End broadcast
+function endBroadcast() {
+    const notes = document.getElementById('bc-notes').value;
+    apiFetch(RBROADCAST_END, 'POST', { notes })
+        .then(d => {
+            if (!d.success) { showFlash(d.message || 'Gagal mengakhiri siaran.', 'error'); return; }
+            closeModal('m-bc-end');
+            if (bcTimerInterval) clearInterval(bcTimerInterval);
+            const sess = d.data;
+            const nar  = sess.narasumber || {};
+            const dur  = formatDuration(sess.duration_seconds || 0);
+            document.getElementById('bc-done-summary').textContent =
+                `Narasumber: ${nar.nama || '—'} · Durasi: ${dur}`;
+            openModal('m-bc-done');
+        })
+        .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
+}
+
+function closeDoneModal() {
+    closeModal('m-bc-done');
+    location.reload();
 }
 </script>
 @endpush

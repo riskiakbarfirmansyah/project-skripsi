@@ -6,6 +6,7 @@ use App\Http\Controllers\InformasiSiaranController;
 use App\Http\Controllers\NarasumberByphoneController;
 use App\Http\Controllers\NarasumberTalkshowController;
 use App\Http\Controllers\NarasumberSelfRegistrationController;
+use App\Http\Controllers\BroadcastSessionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -126,6 +127,12 @@ Route::group(['middleware' => 'isPenyiar', 'prefix' => 'penyiar', 'as' => 'penyi
     Route::get('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'show'])->name('talkshow.show');
     Route::put('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'update'])->name('talkshow.update');
     Route::delete('/narasumber-talkshow/{id}',  [NarasumberTalkshowController::class, 'destroy'])->name('talkshow.destroy');
+
+    // ── Broadcast ────────────────────────────────────────────────────
+    Route::post('/broadcast/start',   [BroadcastSessionController::class, 'startBroadcast'])->name('broadcast.start');
+    Route::post('/broadcast/end',     [BroadcastSessionController::class, 'endBroadcast'])->name('broadcast.end');
+    Route::get('/broadcast/current',  [BroadcastSessionController::class, 'getCurrentBroadcast'])->name('broadcast.current');
+    Route::get('/broadcast/history',  [BroadcastSessionController::class, 'getBroadcastHistory'])->name('broadcast.history');
 });
  
 /*
