@@ -7,6 +7,9 @@
 
         <title>{{ config('app.name') }}</title>
 
+        <link rel="icon" type="image/png" href="{{ asset('/image/LOGO.png') }}">
+        <link rel="shortcut icon" href="{{ asset('/image/LOGO.png') }}">
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:300,400,500,600,700|cormorant-garamond:400,500,600i&display=swap" rel="stylesheet" />
 
