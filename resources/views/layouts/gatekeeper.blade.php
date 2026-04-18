@@ -165,7 +165,7 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 10px; font-weight: 700; color: #1d4ed8; flex-shrink: 0;
         }
-        .abt { display: flex; gap: 5px; }
+        .abt { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .bico {
             width: 28px; height: 28px; border-radius: 6px;
             border: 1px solid #e2e8f0; background: transparent;
@@ -251,23 +251,34 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 14px 18px;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 500;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 12px;
             border-left: 4px solid;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
             z-index: 300;
             animation: slideIn .3s ease-out;
-            max-width: 400px;
+            max-width: 380px;
             min-width: 260px;
         }
         .alert.hide {
             animation: slideOut .3s ease-in forwards;
         }
+        .alert > svg { flex-shrink: 0; margin-top: 1px; }
+        .alert-body { flex: 1; min-width: 0; }
+        .alert-title { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 2px; }
+        .alert-msg { font-size: 12px; opacity: 0.8; line-height: 1.4; }
+        .alert-close {
+            background: none; border: none; cursor: pointer;
+            padding: 2px; border-radius: 4px; color: inherit;
+            opacity: 0.5; transition: opacity .15s; flex-shrink: 0; margin-top: 1px;
+        }
+        .alert-close:hover { opacity: 1; }
+        .alert-close svg { width: 12px; height: 12px; }
         @keyframes slideIn {
             from { transform: translateX(440px); opacity: 0; }
             to   { transform: translateX(0);     opacity: 1; }
