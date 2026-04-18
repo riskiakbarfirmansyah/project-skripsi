@@ -659,28 +659,9 @@ function startBroadcast() {
         .then(d => {
             if (!d.success) { showFlash(d.message || 'Gagal memulai siaran.', 'error'); return; }
             closeModal('m-bc-start');
-            const sess = d.data;
-            const nar  = sess.narasumber || {};
-            bcStartedAt = new Date(sess.started_at);
-            renderOnAir(sess);
-            startBroadcastTimer();
-            showFlash('Siaran dimulai!');
+            location.reload();
         })
         .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
-}
-
-function renderOnAir(sess) {
-    const nar = sess.narasumber || {};
-    // card
-    const card = document.getElementById('bc-card');
-    card.classList.add('on-air');
-    document.getElementById('bc-dot').classList.add('live');
-    document.getElementById('bc-label').textContent = '🔴 Sedang Siaran';
-    document.getElementById('bc-sub').textContent   = (nar.nama || '—') + ' · ' + (nar.tema_wawancara || '—');
-
-    // Replace button area — remove siap button, add timer + selesai button
-    // The easiest way after an AJAX start: reload page
-    location.reload();
 }
 
 // Open end modal

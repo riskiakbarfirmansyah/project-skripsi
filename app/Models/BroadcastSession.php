@@ -32,14 +32,6 @@ class BroadcastSession extends Model
         return $this->belongsTo(User::class, 'penyiar_id');
     }
 
-    public function narasumber()
-    {
-        if ($this->narasumber_type === 'byphone') {
-            return $this->belongsTo(narasumberbyphone::class, 'narasumber_id', 'byphoneID');
-        }
-        return $this->belongsTo(narasumbertalkshow::class, 'narasumber_id', 'talkshowID');
-    }
-
     public function getNarasumberAttribute()
     {
         if ($this->narasumber_type === 'byphone') {
