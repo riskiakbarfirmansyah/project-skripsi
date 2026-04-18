@@ -182,6 +182,9 @@ class NarasumberByphoneController extends Controller
 
     /**
      * Cari & filter narasumber byphone (AJAX).
+     *
+     * Query param `today_only=true` membatasi hasil hanya untuk hari ini
+     * dan menambahkan field `broadcast_status` pada setiap item.
      */
     public function search(Request $request): JsonResponse
     {
@@ -204,7 +207,36 @@ class NarasumberByphoneController extends Controller
             $query->whereDate('waktu_wawancara', $request->tanggal);
         }
 
-        $list = $query->orderBy('waktu_wawancara', 'desc')->get();
+        if ($request->boolean('today_only')) {
+            $query->whereDate('waktu_wawancara', today());
+        }
+
+        $list = $query->orderBy('waktu_wawancara', 'asc')->get();
+
+        // Tambahkan broadcast_status untuk setiap narasumber
+        if ($request->boolean('today_only') || $request->filled('tanggal')) {
+            $narasumberIds = $list->pluck('byphoneID')->toArray();
+
+            $todaySessions = BroadcastSession::where('narasumber_type', 'byphone')
+                ->whereIn('narasumber_id', $narasumberIds)
+                ->whereDate('started_at', today())
+                ->get()
+                ->groupBy('narasumber_id');
+
+            $list = $list->map(function ($n) use ($todaySessions) {
+                $sessions = $todaySessions->get($n->byphoneID, collect());
+
+                if ($sessions->contains('status', 'active')) {
+                    $n->broadcast_status = 'sedang_siaran';
+                } elseif ($sessions->contains('status', 'completed')) {
+                    $n->broadcast_status = 'sudah_siaran';
+                } else {
+                    $n->broadcast_status = 'belum_siaran';
+                }
+
+                return $n;
+            });
+        }
 
         return response()->json([
             'success' => true,
