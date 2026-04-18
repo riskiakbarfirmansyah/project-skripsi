@@ -107,7 +107,7 @@
             </svg>
         </div>
         <div class="sc-lbl">Total Siaran</div>
-        <div class="sc-val">{{ $stats['total_siaran'] }}</div>
+        <div class="sc-val" id="stat-total-siaran">{{ $stats['total_siaran'] }}</div>
         <div class="sc-sub">Semua data siaran</div>
     </div>
     <div class="sc">
@@ -118,7 +118,7 @@
             </svg>
         </div>
         <div class="sc-lbl">Total Narasumber</div>
-        <div class="sc-val">{{ $stats['total_narasumber'] }}</div>
+        <div class="sc-val" id="stat-total-narasumber">{{ $stats['total_narasumber'] }}</div>
         <div class="sc-sub">Narasumber byphone</div>
     </div>
     <div class="sc">
@@ -129,7 +129,7 @@
             </svg>
         </div>
         <div class="sc-lbl">Siaran Hari Ini</div>
-        <div class="sc-val">{{ $stats['siaran_hari_ini'] }}</div>
+        <div class="sc-val" id="stat-siaran-hari-ini">{{ $stats['siaran_hari_ini'] }}</div>
         <div class="sc-sub">Jadwal siaran hari ini</div>
     </div>
     <div class="sc">
@@ -140,7 +140,7 @@
             </svg>
         </div>
         <div class="sc-lbl">Wawancara Hari Ini</div>
-        <div class="sc-val">{{ $stats['wawancara_hari_ini'] }}</div>
+        <div class="sc-val" id="stat-wawancara-hari-ini">{{ $stats['wawancara_hari_ini'] }}</div>
         <div class="sc-sub">Jadwal wawancara hari ini</div>
     </div>
 </div>
@@ -503,10 +503,29 @@
 <script>
 const RSIARAN  = '{{ url('gatekeeper/siaran') }}';
 const RBYPHONE = '{{ url('gatekeeper/narasumber-byphone') }}';
+const RSTATS   = '{{ route('gatekeeper.stats') }}';
 const RSRSEARCH  = '{{ route('gatekeeper.siaran.search') }}';
 const RNRSEARCH  = '{{ route('gatekeeper.byphone.search') }}';
 const RSIARAN_START = (id) => `{{ url('gatekeeper/siaran') }}/${id}/start`;
 const RSIARAN_END   = (id) => `{{ url('gatekeeper/siaran') }}/${id}/end`;
+// ── Stats refresh ──────────────────────────────────────
+function updateStats() {
+    fetch(RSTATS, { headers: { Accept: 'application/json' } })
+        .then(r => r.json())
+        .then(d => {
+            if (!d.success) return;
+            const s = d.data;
+            document.getElementById('stat-total-siaran').textContent       = s.total_siaran;
+            document.getElementById('stat-total-narasumber').textContent   = s.total_narasumber;
+            document.getElementById('stat-siaran-hari-ini').textContent    = s.siaran_hari_ini;
+            document.getElementById('stat-wawancara-hari-ini').textContent = s.wawancara_hari_ini;
+            const bdgS = document.getElementById('bdg-s');
+            const bdgN = document.getElementById('bdg-n');
+            if (bdgS) bdgS.textContent = s.total_siaran;
+            if (bdgN) bdgN.textContent = s.total_narasumber;
+        });
+}
+
 // ── Tab switching ─────────────────────────────────────
 function showTab(name) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -644,7 +663,7 @@ function submitSiaranAdd(e) {
         waktu:      document.getElementById('sa-waktu').value,
         keterangan: document.getElementById('sa-keterangan').value,
     }).then(d => {
-        if (d.success) { closeModal('m-siaran-add'); document.getElementById('sa-tanggal').closest('form').reset(); showFlash(d.message); doSearchSiaran(); }
+        if (d.success) { closeModal('m-siaran-add'); document.getElementById('sa-tanggal').closest('form').reset(); showFlash(d.message); doSearchSiaran(); updateStats(); }
         else showFlash(d.message || 'Gagal menyimpan.', 'error');
     });
 }
@@ -656,7 +675,7 @@ function submitSiaranEdit(e) {
         waktu:      document.getElementById('se-waktu').value,
         keterangan: document.getElementById('se-keterangan').value,
     }).then(d => {
-        if (d.success) { closeModal('m-siaran-edit'); showFlash(d.message); doSearchSiaran(); }
+        if (d.success) { closeModal('m-siaran-edit'); showFlash(d.message); doSearchSiaran(); updateStats(); }
         else showFlash(d.message || 'Gagal memperbarui.', 'error');
     });
 }
@@ -667,7 +686,7 @@ function deleteSiaran(id) {
         function(done) {
             apiFetch(RSIARAN + '/' + id, 'DELETE').then(d => {
                 done();
-                if (d.success) { showFlash(d.message); doSearchSiaran(); }
+                if (d.success) { showFlash(d.message); doSearchSiaran(); updateStats(); }
                 else showFlash(d.message || 'Gagal menghapus.', 'error');
             }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
         }
@@ -675,13 +694,13 @@ function deleteSiaran(id) {
 }
 function mulaiSiaran(id) {
     apiFetch(RSIARAN_START(id), 'POST').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(); }
+        if (d.success) { showFlash(d.message); doSearchSiaran(); updateStats(); }
         else showFlash(d.message || 'Gagal memulai siaran.', 'error');
     });
 }
 function selesaiSiaran(id) {
     apiFetch(RSIARAN_END(id), 'POST').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(); }
+        if (d.success) { showFlash(d.message); doSearchSiaran(); updateStats(); }
         else showFlash(d.message || 'Gagal mengakhiri siaran.', 'error');
     });
 }
@@ -724,7 +743,7 @@ function submitNrAdd(e) {
         waktu_wawancara: document.getElementById('na-waktu').value.replace('T', ' '),
         draft_pertanyaan: document.getElementById('na-draft').value,
     }).then(d => {
-        if (d.success) { closeModal('m-nr-add'); document.getElementById('na-nama').closest('form').reset(); showFlash(d.message); doSearchNr(); }
+        if (d.success) { closeModal('m-nr-add'); document.getElementById('na-nama').closest('form').reset(); showFlash(d.message); doSearchNr(); updateStats(); }
         else showFlash(d.message || 'Gagal menyimpan.', 'error');
     });
 }
@@ -739,7 +758,7 @@ function submitNrEdit(e) {
         waktu_wawancara: document.getElementById('ne-waktu').value.replace('T', ' '),
         draft_pertanyaan: document.getElementById('ne-draft').value,
     }).then(d => {
-        if (d.success) { closeModal('m-nr-edit'); showFlash(d.message); doSearchNr(); }
+        if (d.success) { closeModal('m-nr-edit'); showFlash(d.message); doSearchNr(); updateStats(); }
         else showFlash(d.message || 'Gagal memperbarui.', 'error');
     });
 }
@@ -750,7 +769,7 @@ function deleteNr(id) {
         function(done) {
             apiFetch(RBYPHONE + '/' + id, 'DELETE').then(d => {
                 done();
-                if (d.success) { showFlash(d.message); doSearchNr(); }
+                if (d.success) { showFlash(d.message); doSearchNr(); updateStats(); }
                 else showFlash(d.message || 'Gagal menghapus.', 'error');
             }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
         }

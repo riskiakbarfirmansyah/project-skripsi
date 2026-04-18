@@ -246,6 +246,25 @@ class NarasumberByphoneController extends Controller
     }
 
     /**
+     * Statistik terkini untuk dashboard gatekeeper (AJAX).
+     *
+     * Route: GET /gatekeeper/stats
+     * Middleware: isGatekeeper
+     */
+    public function getStats(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'total_siaran'       => informasisiaran::count(),
+                'total_narasumber'   => narasumberbyphone::count(),
+                'siaran_hari_ini'    => informasisiaran::whereDate('tanggal', today())->count(),
+                'wawancara_hari_ini' => narasumberbyphone::whereDate('waktu_wawancara', today())->count(),
+            ],
+        ]);
+    }
+
+    /**
      * Daftar instansi unik untuk dropdown filter (AJAX).
      */
     public function instansiList(): JsonResponse

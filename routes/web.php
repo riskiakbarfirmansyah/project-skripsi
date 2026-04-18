@@ -84,6 +84,9 @@ Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
     Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardGatekeeper'])
         ->name('dashboard');
  
+    // ── Statistik (AJAX) ─────────────────────────────────────────────
+    Route::get('/stats', [NarasumberByphoneController::class, 'getStats'])->name('stats');
+
     // ── Informasi Siaran ─────────────────────────────────────────────
     Route::get('/siaran/search',       [InformasiSiaranController::class, 'search'])->name('siaran.search');
     Route::post('/siaran',             [InformasiSiaranController::class, 'store'])->name('siaran.store');
