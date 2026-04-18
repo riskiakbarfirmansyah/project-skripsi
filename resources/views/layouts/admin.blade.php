@@ -247,6 +247,29 @@
         }
         .bsv:hover { opacity: .9; }
         .bdel { background: #dc2626; }
+        .bdel:disabled { opacity: .7; cursor: not-allowed; }
+
+        /* ── Delete Confirmation Modal ───────────────── */
+        .mbg-center { align-items: center; }
+        .del-icon-wrap {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #fef2f2;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .del-modal-title {
+            font-size: 16px; font-weight: 700; color: #0f172a;
+            margin-bottom: 8px; text-align: center;
+        }
+        .del-modal-msg {
+            font-size: 13px; color: #64748b;
+            line-height: 1.6; text-align: center;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(.95) translateY(-8px); }
+            to   { opacity: 1; transform: scale(1)   translateY(0); }
+        }
+        .modal-anim { animation: modalIn .2s ease-out; }
 
         /* ── Alert ────────────────────────────────────── */
         .alert {
@@ -413,6 +436,27 @@
     </div>
 </div>
 
+{{-- ═══════════════════ DELETE CONFIRM MODAL ═══════════════════ --}}
+<div class="mbg mbg-center" id="m-delete-confirm">
+    <div class="modal modal-anim" style="width:420px;max-width:95vw;">
+        <div style="padding:8px 0 4px;">
+            <div class="del-icon-wrap">
+                <svg width="26" height="26" viewBox="0 0 15 15" fill="none">
+                    <path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="del-modal-title" id="del-modal-title">Hapus Data</div>
+            <div class="del-modal-msg" id="del-modal-msg">Apakah Anda yakin ingin menghapus data ini?</div>
+        </div>
+        <div class="mft" style="margin-top:22px;">
+            <button class="bcn" onclick="closeDeleteConfirm()">Batalkan</button>
+            <button class="bsv bdel" id="del-modal-btn" onclick="confirmDelete()">
+                <span id="del-modal-btn-text">Hapus</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 function toggleTbMenu() {
     const m = document.getElementById('tb-profile-menu');
@@ -472,9 +516,35 @@ function closeModal(id) {
 // Close modal when clicking backdrop
 document.querySelectorAll('.mbg').forEach(bg => {
     bg.addEventListener('click', function(e) {
-        if (e.target === this) closeModal(this.id);
+        if (e.target === this) {
+            if (this.id === 'm-delete-confirm') closeDeleteConfirm();
+            else closeModal(this.id);
+        }
     });
 });
+
+// ── Delete Confirmation Modal ─────────────────────────
+var _deleteCallback = null;
+function showDeleteConfirm(title, msg, callback) {
+    document.getElementById('del-modal-title').textContent = title;
+    document.getElementById('del-modal-msg').textContent   = msg;
+    var btn = document.getElementById('del-modal-btn');
+    btn.disabled = false;
+    document.getElementById('del-modal-btn-text').textContent = 'Hapus';
+    _deleteCallback = callback;
+    openModal('m-delete-confirm');
+}
+function closeDeleteConfirm() {
+    closeModal('m-delete-confirm');
+    _deleteCallback = null;
+}
+function confirmDelete() {
+    if (!_deleteCallback) return;
+    var btn = document.getElementById('del-modal-btn');
+    btn.disabled = true;
+    document.getElementById('del-modal-btn-text').textContent = 'Menghapus...';
+    _deleteCallback(function() { closeDeleteConfirm(); });
+}
 </script>
 @stack('scripts')
 </body>

@@ -678,11 +678,17 @@ function submitSiaranEdit(e) {
     });
 }
 function deleteSiaran(id) {
-    if (!confirm('Hapus data siaran ini?')) return;
-    apiFetch(RSIARAN + '/' + id, 'DELETE').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(); }
-        else showFlash(d.message || 'Gagal menghapus.', 'error');
-    });
+    showDeleteConfirm(
+        'Hapus Data Siaran',
+        'Apakah Anda yakin ingin menghapus data siaran ini? Tindakan ini tidak dapat dibatalkan.',
+        function(done) {
+            apiFetch(RSIARAN + '/' + id, 'DELETE').then(d => {
+                done();
+                if (d.success) { showFlash(d.message); doSearchSiaran(); }
+                else showFlash(d.message || 'Gagal menghapus.', 'error');
+            }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
+        }
+    );
 }
 function mulaiSiaran(id) {
     apiFetch(RSIARAN_START(id), 'POST').then(d => {
@@ -755,11 +761,17 @@ function submitNrEdit(e) {
     });
 }
 function deleteNr(id) {
-    if (!confirm('Hapus data narasumber ini?')) return;
-    apiFetch(RBYPHONE + '/' + id, 'DELETE').then(d => {
-        if (d.success) { showFlash(d.message); doSearchNr(); }
-        else showFlash(d.message || 'Gagal menghapus.', 'error');
-    });
+    showDeleteConfirm(
+        'Hapus Data Narasumber',
+        'Apakah Anda yakin ingin menghapus data narasumber ini? Tindakan ini tidak dapat dibatalkan.',
+        function(done) {
+            apiFetch(RBYPHONE + '/' + id, 'DELETE').then(d => {
+                done();
+                if (d.success) { showFlash(d.message); doSearchNr(); }
+                else showFlash(d.message || 'Gagal menghapus.', 'error');
+            }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
+        }
+    );
 }
 
 // ── Date helpers ──────────────────────────────────────
