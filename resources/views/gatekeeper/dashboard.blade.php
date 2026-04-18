@@ -515,23 +515,6 @@ function showTab(name) {
     document.getElementById('tab-' + name + '-btn').classList.add('active');
 }
 
-function showFlash(msg, type = 'success') {
-    const el = document.getElementById('flash-gk');
-    const isSuccess = type === 'success';
-    const icon = isSuccess
-        ? '<svg viewBox="0 0 18 18" fill="none" width="20" height="20"><circle cx="9" cy="9" r="8" stroke="#059669" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-        : '<svg viewBox="0 0 18 18" fill="none" width="20" height="20"><circle cx="9" cy="9" r="8" stroke="#dc2626" stroke-width="1.5"/><path d="M9 5.5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>';
-    const title = isSuccess ? 'Berhasil' : 'Gagal';
-    el.className = 'alert alert-' + type;
-    el.classList.remove('hide');
-    el.style.display = 'flex';
-    el.innerHTML = `${icon}<div class="alert-body"><div class="alert-title">${title}</div><div class="alert-msg">${msg}</div></div><button class="alert-close" onclick="var p=this.closest('.alert');p.classList.add('hide');setTimeout(()=>{p.style.display='none';},300)"><svg viewBox="0 0 15 15" fill="none" width="12" height="12"><path d="M3 3l9 9M12 3l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>`;
-    clearTimeout(showFlash._timer);
-    showFlash._timer = setTimeout(() => {
-        el.classList.add('hide');
-        setTimeout(() => { el.style.display = 'none'; }, 300);
-    }, 4000);
-}
 
 function debounce(fn, delay) {
     let t;

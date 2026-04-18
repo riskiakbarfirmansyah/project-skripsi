@@ -273,14 +273,58 @@
             white-space: pre-wrap; margin-top: 5px;
         }
 
-        /* ── Alert ────────────────────────────────────── */
+        /* ── Alert / Toast ────────────────────────────── */
         .alert {
-            padding: 11px 16px; border-radius: 8px;
-            font-size: 13px; margin-bottom: 16px;
-            display: flex; align-items: center; gap: 8px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border-left: 4px solid;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            z-index: 300;
+            animation: slideIn .3s ease-out;
+            max-width: 380px;
+            min-width: 260px;
         }
-        .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert.hide {
+            animation: slideOut .3s ease-in forwards;
+        }
+        .alert > svg { flex-shrink: 0; margin-top: 1px; }
+        .alert-body { flex: 1; min-width: 0; }
+        .alert-title { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 2px; }
+        .alert-msg { font-size: 12px; opacity: 0.8; line-height: 1.4; }
+        .alert-close {
+            background: none; border: none; cursor: pointer;
+            padding: 2px; border-radius: 4px; color: inherit;
+            opacity: 0.5; transition: opacity .15s; flex-shrink: 0; margin-top: 1px;
+        }
+        .alert-close:hover { opacity: 1; }
+        .alert-close svg { width: 12px; height: 12px; }
+        @keyframes slideIn {
+            from { transform: translateX(440px); opacity: 0; }
+            to   { transform: translateX(0);     opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0);     opacity: 1; }
+            to   { transform: translateX(440px); opacity: 0; }
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #166534;
+            border-left-color: #10b981;
+        }
+        .alert-error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #991b1b;
+            border-left-color: #ef4444;
+        }
+        .alert svg { width: 18px; height: 18px; flex-shrink: 0; }
 
         @media (max-width: 768px) {
             .sb { transform: translateX(-224px); transition: transform .2s; }
@@ -471,10 +515,26 @@ function apiFetch(url, method = 'GET', body = null) {
 
 function showFlash(msg, type = 'success') {
     const el = document.getElementById('flash-msg');
+    const isSuccess = type === 'success';
+    const iconSvg = isSuccess
+        ? '<svg viewBox="0 0 18 18" fill="none" width="20" height="20"><circle cx="9" cy="9" r="8" stroke="#059669" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="0 0 18 18" fill="none" width="20" height="20"><circle cx="9" cy="9" r="8" stroke="#dc2626" stroke-width="1.5"/><path d="M9 5.5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    const closeSvg = '<svg viewBox="0 0 15 15" fill="none" width="12" height="12"><path d="M3 3l9 9M12 3l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
     el.className = 'alert alert-' + type;
-    el.textContent = msg;
+    el.classList.remove('hide');
     el.style.display = 'flex';
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
+    el.innerHTML = iconSvg + '<div class="alert-body"><div class="alert-title"></div><div class="alert-msg"></div></div><button class="alert-close">' + closeSvg + '</button>';
+    el.querySelector('.alert-title').textContent = isSuccess ? 'Berhasil' : 'Gagal';
+    el.querySelector('.alert-msg').textContent = msg;
+    el.querySelector('.alert-close').addEventListener('click', function() {
+        el.classList.add('hide');
+        setTimeout(() => { el.style.display = 'none'; }, 300);
+    });
+    clearTimeout(showFlash._timer);
+    showFlash._timer = setTimeout(() => {
+        el.classList.add('hide');
+        setTimeout(() => { el.style.display = 'none'; }, 300);
+    }, 4000);
 }
 
 function openModal(id) {
