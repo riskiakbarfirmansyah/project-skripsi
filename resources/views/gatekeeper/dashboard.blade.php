@@ -29,6 +29,21 @@
 .mclose:hover { color: #0f172a; }
 .wa-link { display:inline-flex; align-items:center; gap:4px; color:#16a34a; text-decoration:none; font-weight:500; transition:color .15s; }
 .wa-link:hover { color:#15803d; text-decoration:underline; }
+
+/* ── Siaran status badges ── */
+.bdg-pending    { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#f1f5f9;color:#475569; }
+.bdg-active     { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#fef2f2;color:#dc2626; }
+.bdg-completed  { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#d1fae5;color:#065f46; }
+.bdg-active-dot { width:6px;height:6px;border-radius:50%;background:#dc2626;animation:pulse-dot 1.4s infinite;flex-shrink:0; }
+@keyframes pulse-dot {
+    0%   { box-shadow:0 0 0 0 rgba(239,68,68,.4); }
+    70%  { box-shadow:0 0 0 5px rgba(239,68,68,0); }
+    100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+}
+.btn-mulai   { padding:4px 10px;font-size:11px;font-weight:600;border-radius:6px;border:none;cursor:pointer;color:#fff;background:#059669;transition:opacity .15s; }
+.btn-mulai:hover   { opacity:.85; }
+.btn-selesai-s { padding:4px 10px;font-size:11px;font-weight:600;border-radius:6px;border:none;cursor:pointer;color:#fff;background:#dc2626;transition:opacity .15s; }
+.btn-selesai-s:hover { opacity:.85; }
 </style>
 @endpush
 
@@ -121,7 +136,8 @@
                         <th style="width:110px">Tanggal</th>
                         <th style="width:80px">Waktu</th>
                         <th>Keterangan</th>
-                        <th style="width:80px">Aksi</th>
+                        <th style="width:110px">Status</th>
+                        <th style="width:130px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="siaran-tbody">
@@ -130,12 +146,26 @@
                         <td class="mono">{{ $i + 1 }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($s->tanggal)->format('d M Y') }}</td>
                         <td class="mono">{{ $s->waktu }}</td>
-                        <td class="trunc" style="max-width:320px;">{{ $s->keterangan }}</td>
+                        <td class="trunc" style="max-width:220px;">{{ $s->keterangan }}</td>
+                        <td>
+                            @if($s->status === 'active')
+                                <span class="bdg-active"><span class="bdg-active-dot"></span>Sedang Berlangsung</span>
+                            @elseif($s->status === 'completed')
+                                <span class="bdg-completed">✅ Sudah Selesai</span>
+                            @else
+                                <span class="bdg-pending">⏰ Dijadwalkan</span>
+                            @endif
+                        </td>
                         <td>
                             <div class="abt">
                                 <button class="bico" title="Detail" onclick="viewSiaran({{ $s->siaranID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                                 </button>
+                                @if($s->status === 'pending')
+                                <button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran({{ $s->siaranID }})">▶ Mulai</button>
+                                @elseif($s->status === 'active')
+                                <button class="btn-selesai-s" title="Siaran Selesai" onclick="selesaiSiaran({{ $s->siaranID }})">⏹ Selesai</button>
+                                @endif
                                 <button class="bico" title="Edit" onclick="editSiaran({{ $s->siaranID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
                                 </button>
@@ -146,7 +176,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="empty">Belum ada data siaran.</td></tr>
+                    <tr><td colspan="6" class="empty">Belum ada data siaran.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -295,6 +325,9 @@
         </div>
         <div class="dr"><span class="dl">Tanggal</span><span class="dv" id="sv-tanggal">—</span></div>
         <div class="dr"><span class="dl">Waktu</span><span class="dv" id="sv-waktu">—</span></div>
+        <div class="dr"><span class="dl">Status</span><span class="dv" id="sv-status">—</span></div>
+        <div class="dr"><span class="dl">Mulai</span><span class="dv" id="sv-started">—</span></div>
+        <div class="dr"><span class="dl">Selesai</span><span class="dv" id="sv-ended">—</span></div>
         <div class="dr" style="flex-direction:column;">
             <span class="dl">Keterangan</span>
             <div class="dbox" id="sv-keterangan">—</div>
@@ -418,7 +451,8 @@ const RSIARAN  = '{{ url('gatekeeper/siaran') }}';
 const RBYPHONE = '{{ url('gatekeeper/narasumber-byphone') }}';
 const RSRSEARCH  = '{{ route('gatekeeper.siaran.search') }}';
 const RNRSEARCH  = '{{ route('gatekeeper.byphone.search') }}';
-
+const RSIARAN_START = (id) => `{{ url('gatekeeper/siaran') }}/${id}/start`;
+const RSIARAN_END   = (id) => `{{ url('gatekeeper/siaran') }}/${id}/end`;
 // ── Tab switching ─────────────────────────────────────
 function showTab(name) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -458,6 +492,17 @@ function waLinkHTML(phone) {
 }
 
 // ── Siaran Search ─────────────────────────────────────
+function siaranStatusBadge(status) {
+    if (status === 'active')     return '<span class="bdg-active"><span class="bdg-active-dot"></span>Sedang Berlangsung</span>';
+    if (status === 'completed')  return '<span class="bdg-completed">✅ Sudah Selesai</span>';
+    return '<span class="bdg-pending">⏰ Dijadwalkan</span>';
+}
+function siaranActionBtn(s) {
+    if (s.status === 'pending')   return `<button class="btn-mulai" onclick="mulaiSiaran(${s.siaranID})">▶ Mulai</button>`;
+    if (s.status === 'active')    return `<button class="btn-selesai-s" onclick="selesaiSiaran(${s.siaranID})">⏹ Selesai</button>`;
+    return '';
+}
+
 function doSearchSiaran() {
     const kw = document.getElementById('siaran-search').value;
     const bm = document.getElementById('siaran-bulan').value;
@@ -471,18 +516,20 @@ function doSearchSiaran() {
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((s, i) => `
-                <tr>
+                <tr data-id="${s.siaranID}">
                     <td class="mono">${i+1}</td>
                     <td class="mono">${formatDate(s.tanggal)}</td>
                     <td class="mono">${s.waktu}</td>
-                    <td class="trunc" style="max-width:320px;">${s.keterangan}</td>
+                    <td class="trunc" style="max-width:220px;">${s.keterangan}</td>
+                    <td>${siaranStatusBadge(s.status)}</td>
                     <td><div class="abt">
                         <button class="bico" onclick="viewSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
+                        ${siaranActionBtn(s)}
                         <button class="bico" onclick="editSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
                         <button class="bico del" onclick="deleteSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
-            document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="5" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('siaran-count').textContent = d.total + ' data';
             document.getElementById('siaran-pag').textContent = 'Menampilkan ' + d.total + ' data';
         });
@@ -518,12 +565,21 @@ function doSearchNr() {
 }
 
 // ── Siaran CRUD ───────────────────────────────────────
+function statusLabel(status) {
+    if (status === 'active')    return 'Sedang Berlangsung';
+    if (status === 'completed') return 'Sudah Selesai';
+    return 'Dijadwalkan';
+}
 function viewSiaran(id) {
     apiFetch(RSIARAN + '/' + id).then(d => {
         if (!d.success) return;
-        document.getElementById('sv-tanggal').textContent = formatDate(d.data.tanggal);
-        document.getElementById('sv-waktu').textContent   = d.data.waktu;
-        document.getElementById('sv-keterangan').textContent = d.data.keterangan;
+        const s = d.data;
+        document.getElementById('sv-tanggal').textContent   = formatDate(s.tanggal);
+        document.getElementById('sv-waktu').textContent     = s.waktu;
+        document.getElementById('sv-status').textContent    = statusLabel(s.status);
+        document.getElementById('sv-started').textContent   = s.started_at ? formatDateTime(s.started_at) : '—';
+        document.getElementById('sv-ended').textContent     = s.ended_at   ? formatDateTime(s.ended_at)   : '—';
+        document.getElementById('sv-keterangan').textContent = s.keterangan;
         openModal('m-siaran-view');
     });
 }
@@ -565,6 +621,20 @@ function deleteSiaran(id) {
     apiFetch(RSIARAN + '/' + id, 'DELETE').then(d => {
         if (d.success) { showFlash(d.message); doSearchSiaran(); }
         else showFlash(d.message || 'Gagal menghapus.', 'error');
+    });
+}
+function mulaiSiaran(id) {
+    if (!confirm('Mulai siaran ini sekarang?')) return;
+    apiFetch(RSIARAN_START(id), 'POST').then(d => {
+        if (d.success) { showFlash(d.message); doSearchSiaran(); }
+        else showFlash(d.message || 'Gagal memulai siaran.', 'error');
+    });
+}
+function selesaiSiaran(id) {
+    if (!confirm('Tandai siaran ini sebagai selesai?')) return;
+    apiFetch(RSIARAN_END(id), 'POST').then(d => {
+        if (d.success) { showFlash(d.message); doSearchSiaran(); }
+        else showFlash(d.message || 'Gagal mengakhiri siaran.', 'error');
     });
 }
 
