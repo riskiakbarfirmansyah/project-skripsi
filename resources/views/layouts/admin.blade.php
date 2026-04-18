@@ -324,6 +324,31 @@
         }
         .alert svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+        /* ── Detail row (view modals) ─────────────────── */
+        .dr { display: flex; gap: 10px; margin-bottom: 9px; }
+        .dl { font-size: 12px; color: #64748b; width: 100px; flex-shrink: 0; font-weight: 500; }
+        .dv { font-size: 13px; color: #0f172a; }
+
+        /* ── User detail view modal ────────────────────── */
+        .vd-profile {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px;
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 10px; margin-bottom: 16px;
+        }
+        .vd-ini { width: 44px; height: 44px; font-size: 16px; flex-shrink: 0; }
+        .vd-pname { font-size: 14px; font-weight: 700; color: #0f172a; }
+        .vd-pemail { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .vd-fields { display: flex; flex-direction: column; gap: 8px; }
+        .vd-row {
+            display: flex; align-items: center;
+            padding: 9px 12px;
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 8px; gap: 12px;
+        }
+        .vd-label { font-size: 12px; color: #64748b; font-weight: 500; width: 90px; flex-shrink: 0; }
+        .vd-val { font-size: 13px; color: #0f172a; }
+
         /* ── Error text ───────────────────────────────── */
         .err-txt { font-size: 11px; color: #dc2626; margin-top: 4px; display: none; }
         .fi.is-invalid { border-color: #f87171; }

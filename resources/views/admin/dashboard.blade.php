@@ -237,11 +237,29 @@
             <button class="mclose" onclick="closeModal('m-view')">×</button>
         </div>
         <div id="view-body">
-            <div class="dr"><span class="dl">Nama</span><span class="dv" id="v-name">—</span></div>
-            <div class="dr"><span class="dl">Email</span><span class="dv" id="v-email">—</span></div>
-            <div class="dr"><span class="dl">Role</span><span class="dv" id="v-role">—</span></div>
-            <div class="dr"><span class="dl">Dibuat</span><span class="dv" id="v-created">—</span></div>
-            <div class="dr"><span class="dl">Diperbarui</span><span class="dv" id="v-updated">—</span></div>
+            {{-- Profile header --}}
+            <div class="vd-profile">
+                <div class="ini vd-ini" id="v-avatar">?</div>
+                <div>
+                    <div class="vd-pname" id="v-name">—</div>
+                    <div class="vd-pemail" id="v-email">—</div>
+                </div>
+            </div>
+            {{-- Detail fields --}}
+            <div class="vd-fields">
+                <div class="vd-row">
+                    <span class="vd-label">Role</span>
+                    <span id="v-role">—</span>
+                </div>
+                <div class="vd-row">
+                    <span class="vd-label">Dibuat</span>
+                    <span class="vd-val" id="v-created">—</span>
+                </div>
+                <div class="vd-row">
+                    <span class="vd-label">Diperbarui</span>
+                    <span class="vd-val" id="v-updated">—</span>
+                </div>
+            </div>
         </div>
         <div class="mft">
             <button type="button" class="bcn" onclick="closeModal('m-view')">Tutup</button>
@@ -370,6 +388,7 @@ function viewUser(id) {
     apiFetch(ROUTES.show + '/' + id).then(d => {
         if (!d.success) return;
         const u = d.data;
+        document.getElementById('v-avatar').textContent  = ini(u.name);
         document.getElementById('v-name').textContent    = u.name;
         document.getElementById('v-email').textContent   = u.email;
         document.getElementById('v-role').innerHTML      = roleBadge(u.role);
