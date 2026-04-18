@@ -41,10 +41,10 @@
     100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
 }
 .btn-mulai {
-    padding: 10px 18px;
-    font-size: 12px;
+    padding: 7px 11px;
+    font-size: 11px;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
     color: #fff;
@@ -52,21 +52,22 @@
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+    gap: 4px;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+    white-space: nowrap;
 }
 .btn-mulai:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.35);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
     filter: brightness(1.05);
 }
 .btn-mulai:active { transform: translateY(0); }
 
 .btn-selesai-s {
-    padding: 10px 18px;
-    font-size: 12px;
+    padding: 7px 11px;
+    font-size: 11px;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
     color: #fff;
@@ -74,21 +75,23 @@
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+    gap: 4px;
+    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15);
     animation: pulseRed 1.5s ease-in-out infinite;
+    white-space: nowrap;
 }
 .btn-selesai-s:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
     animation: none;
     filter: brightness(1.05);
 }
 .btn-selesai-s:active { transform: translateY(0); }
 @keyframes pulseRed {
-    0%, 100% { box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2); }
-    50% { box-shadow: 0 2px 12px rgba(239, 68, 68, 0.4); }
+    0%, 100% { box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15); }
+    50% { box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
 }
+.btn-mulai svg, .btn-selesai-s svg { width: 11px; height: 11px; flex-shrink: 0; }
 </style>
 @endpush
 
@@ -208,13 +211,13 @@
                                 </button>
                                 @if($s->status === 'pending')
                                 <button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran({{ $s->siaranID }})">
-                                    <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg>
-                                    Mulai Siaran
+                                    <svg viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg>
+                                    Mulai
                                 </button>
                                 @elseif($s->status === 'active')
-                                <button class="btn-selesai-s" title="Siaran Selesai" onclick="selesaiSiaran({{ $s->siaranID }})">
-                                    <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg>
-                                    Selesai Siaran
+                                <button class="btn-selesai-s" title="Selesai Siaran" onclick="selesaiSiaran({{ $s->siaranID }})">
+                                    <svg viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg>
+                                    Selesai
                                 </button>
                                 @endif
                                 <button class="bico" title="Edit" onclick="editSiaran({{ $s->siaranID }})">
@@ -514,15 +517,15 @@ function showTab(name) {
 
 function showFlash(msg, type = 'success') {
     const el = document.getElementById('flash-gk');
-    const iconSuccess = '<svg viewBox="0 0 18 18" fill="none" width="18" height="18"><circle cx="9" cy="9" r="8" stroke="#059669" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    const iconError   = '<svg viewBox="0 0 18 18" fill="none" width="18" height="18"><circle cx="9" cy="9" r="8" stroke="#dc2626" stroke-width="1.5"/><path d="M9 5.5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    const isSuccess = type === 'success';
+    const icon = isSuccess
+        ? '<svg viewBox="0 0 18 18" fill="none" width="20" height="20"><circle cx="9" cy="9" r="8" stroke="#059669" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="0 0 18 18" fill="none" width="20" height="20"><circle cx="9" cy="9" r="8" stroke="#dc2626" stroke-width="1.5"/><path d="M9 5.5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    const title = isSuccess ? 'Berhasil' : 'Gagal';
     el.className = 'alert alert-' + type;
     el.classList.remove('hide');
     el.style.display = 'flex';
-    el.innerHTML = type === 'success' ? iconSuccess : iconError;
-    const txt = document.createElement('span');
-    txt.textContent = msg;
-    el.appendChild(txt);
+    el.innerHTML = `${icon}<div class="alert-body"><div class="alert-title">${title}</div><div class="alert-msg">${msg}</div></div><button class="alert-close" onclick="var p=this.closest('.alert');p.classList.add('hide');setTimeout(()=>{p.style.display='none';},300)"><svg viewBox="0 0 15 15" fill="none" width="12" height="12"><path d="M3 3l9 9M12 3l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>`;
     clearTimeout(showFlash._timer);
     showFlash._timer = setTimeout(() => {
         el.classList.add('hide');
@@ -556,8 +559,8 @@ function siaranStatusBadge(status) {
     return '<span class="bdg-pending">⏰ Dijadwalkan</span>';
 }
 function siaranActionBtn(s) {
-    if (s.status === 'pending')   return `<button class="btn-mulai" onclick="mulaiSiaran(${s.siaranID})"><svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg> Mulai Siaran</button>`;
-    if (s.status === 'active')    return `<button class="btn-selesai-s" onclick="selesaiSiaran(${s.siaranID})"><svg width="12" height="12" viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg> Selesai Siaran</button>`;
+    if (s.status === 'pending')   return `<button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg> Mulai</button>`;
+    if (s.status === 'active')    return `<button class="btn-selesai-s" title="Selesai Siaran" onclick="selesaiSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg> Selesai</button>`;
     return '';
 }
 
