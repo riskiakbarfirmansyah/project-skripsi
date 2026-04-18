@@ -384,6 +384,9 @@
             <select class="fi" id="bc-narasumber">
                 <option value="">— Pilih narasumber —</option>
             </select>
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
+                Menampilkan narasumber hari ini. ✅ = sudah siaran, 🔴 = sedang siaran.
+            </div>
         </div>
         <div id="bc-preview" style="display:none;background:#f8fafc;border-radius:8px;padding:12px 14px;margin-bottom:13px;font-size:13px;">
             <div style="font-weight:600;color:#0f172a;margin-bottom:4px;" id="bc-prev-nama">—</div>
@@ -557,9 +560,6 @@ const RBROADCAST_CURRENT = '{{ route('penyiar.broadcast.current') }}';
 const RBSEARCH_BP        = '{{ route('penyiar.byphone.search') }}';
 const RBSEARCH_TS        = '{{ route('penyiar.talkshow.search') }}';
 
-// Storage for narasumber options by type
-let bcNarasumberData = { byphone: [], talkshow: [] };
-
 // Timer
 let bcTimerInterval = null;
 let bcStartedAt     = null;
@@ -594,44 +594,60 @@ function formatDuration(seconds) {
     return `${s} detik`;
 }
 
-// Load narasumber dropdown options
+// Load narasumber dropdown options – selalu muat ulang dari server (dengan filter hari ini)
 function loadNarasumberOptions() {
-    const type  = document.getElementById('bc-type').value;
-    const sel   = document.getElementById('bc-narasumber');
+    const type = document.getElementById('bc-type').value;
+    const sel  = document.getElementById('bc-narasumber');
     sel.innerHTML = '<option value="">— Memuat… —</option>';
     document.getElementById('bc-preview').style.display = 'none';
 
-    if (bcNarasumberData[type].length > 0) {
-        populateNarasumberSelect(bcNarasumberData[type]);
-        return;
-    }
-
-    const url = type === 'byphone' ? RBSEARCH_BP : RBSEARCH_TS;
+    const url = (type === 'byphone' ? RBSEARCH_BP : RBSEARCH_TS) + '?today_only=true';
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (d.success) {
-                bcNarasumberData[type] = d.data;
                 populateNarasumberSelect(d.data);
+            } else {
+                sel.innerHTML = '<option value="">— Gagal memuat data —</option>';
             }
+        })
+        .catch(() => {
+            sel.innerHTML = '<option value="">— Gagal memuat data —</option>';
         });
 }
 
 function populateNarasumberSelect(data) {
     const sel = document.getElementById('bc-narasumber');
+    if (data.length === 0) {
+        sel.innerHTML = '<option value="">— Tidak ada narasumber hari ini —</option>';
+        return;
+    }
     sel.innerHTML = '<option value="">— Pilih narasumber —</option>';
     data.forEach(n => {
-        const idKey = n.byphoneID !== undefined ? n.byphoneID : n.talkshowID;
-        const opt   = document.createElement('option');
-        opt.value   = idKey;
-        opt.textContent = `${n.nama} — ${n.instansi}`;
-        opt.dataset.nama  = n.nama;
-        opt.dataset.tema  = n.tema_wawancara;
+        const idKey  = n.byphoneID !== undefined ? n.byphoneID : n.talkshowID;
+        const status = n.broadcast_status || 'belum_siaran';
+        const opt    = document.createElement('option');
+        opt.value    = idKey;
+
+        let label = `${n.nama} — ${n.instansi}`;
+        if (status === 'sudah_siaran') {
+            label = `✅ ${n.nama} — ${n.instansi} (Sudah Siaran)`;
+            opt.style.color = '#64748b';
+        } else if (status === 'sedang_siaran') {
+            label    = `🔴 ${n.nama} — ${n.instansi} (Sedang Siaran)`;
+            opt.disabled = true;
+            opt.style.color = '#94a3b8';
+        }
+
+        opt.textContent      = label;
+        opt.dataset.nama     = n.nama;
+        opt.dataset.tema     = n.tema_wawancara;
+        opt.dataset.status   = status;
         sel.appendChild(opt);
     });
     sel.onchange = () => {
         const opt = sel.options[sel.selectedIndex];
-        if (opt.value) {
+        if (opt && opt.value) {
             document.getElementById('bc-prev-nama').textContent = opt.dataset.nama;
             document.getElementById('bc-prev-tema').textContent = opt.dataset.tema;
             document.getElementById('bc-preview').style.display = 'block';
@@ -641,7 +657,7 @@ function populateNarasumberSelect(data) {
     };
 }
 
-// Open start broadcast modal – pre-load byphone
+// Open start broadcast modal – muat ulang data hari ini setiap kali modal dibuka
 function openStartModal() {
     document.getElementById('bc-type').value = 'byphone';
     document.getElementById('bc-preview').style.display = 'none';
