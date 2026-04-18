@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Penyiar @yield('title', 'Dashboard')</title>
+    <link rel="icon" type="image/png" href="{{ asset('/image/LOGO.png') }}">
+    <link rel="shortcut icon" href="{{ asset('/image/LOGO.png') }}">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
