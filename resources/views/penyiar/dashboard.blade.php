@@ -36,17 +36,39 @@
 .bc-sub   { font-size:12px; color:#64748b; margin-top:2px; }
 .bc-timer { font-size:20px; font-weight:700; color:#059669; letter-spacing:.04em; font-family:'Courier New',monospace; }
 .btn-siap {
-    padding:9px 20px; font-size:13px; font-weight:600;
-    border-radius:8px; border:none; cursor:pointer; color:#fff;
-    background:#059669; transition:opacity .15s;
+    padding:12px 28px; font-size:14px; font-weight:600;
+    border-radius:10px; border:none; cursor:pointer; color:#fff;
+    background:linear-gradient(135deg,#059669,#047857);
+    transition:all .2s ease;
+    display:inline-flex; align-items:center; gap:8px;
+    box-shadow:0 2px 8px rgba(5,150,105,.15);
 }
-.btn-siap:hover { opacity:.88; }
+.btn-siap:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(5,150,105,.3);
+}
+.btn-siap:active { transform:translateY(0); }
+
 .btn-selesai {
-    padding:9px 20px; font-size:13px; font-weight:600;
-    border-radius:8px; border:none; cursor:pointer; color:#fff;
-    background:#dc2626; transition:opacity .15s;
+    padding:12px 28px; font-size:14px; font-weight:600;
+    border-radius:10px; border:none; cursor:pointer; color:#fff;
+    background:linear-gradient(135deg,#dc2626,#b91c1c);
+    transition:all .2s ease;
+    display:inline-flex; align-items:center; gap:8px;
+    box-shadow:0 2px 8px rgba(220,38,38,.15);
+    animation:pulse-red 2s ease-in-out infinite;
 }
-.btn-selesai:hover { opacity:.88; }
+.btn-selesai:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(220,38,38,.4);
+    animation:none;
+}
+.btn-selesai:active { transform:translateY(0); }
+
+@keyframes pulse-red {
+    0%,100% { box-shadow:0 2px 8px rgba(220,38,38,.15); }
+    50%      { box-shadow:0 2px 16px rgba(220,38,38,.35); }
+}
 
 /* ── Live broadcast detail block ── */
 .bc-detail {
@@ -90,8 +112,10 @@
 }
 .notes-ta:focus { border-color:#6ee7b7; box-shadow:0 0 0 3px #ecfdf5; }
 .done-check {
-    width:52px; height:52px; border-radius:50%; background:#d1fae5;
-    display:flex; align-items:center; justify-content:center; margin:0 auto 12px;
+    width:68px; height:68px; border-radius:50%;
+    background:linear-gradient(135deg,#d1fae5,#a7f3d0);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+    box-shadow:0 4px 16px rgba(5,150,105,.2);
 }
 </style>
 @endpush
@@ -118,9 +142,20 @@
     </div>
     @if($isOnAir)
         <div class="bc-timer" id="bc-timer">00:00:00</div>
-        <button class="btn-selesai" onclick="openEndModal()">Siaran Selesai</button>
+        <button class="btn-selesai" onclick="openEndModal()">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/>
+            </svg>
+            Siaran Selesai
+        </button>
     @else
-        <button class="btn-siap" id="btn-siap" onclick="openStartModal()">Siap Siaran</button>
+        <button class="btn-siap" id="btn-siap" onclick="openStartModal()">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <path d="M7.5 1.5a2.5 2.5 0 0 1 2.5 2.5v4a2.5 2.5 0 0 1-5 0V4a2.5 2.5 0 0 1 2.5-2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                <path d="M3 7.5A4.5 4.5 0 0 0 12 7.5M7.5 12v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Siap Siaran
+        </button>
     @endif
 </div>
 
@@ -394,7 +429,12 @@
         </div>
         <div class="mft">
             <button class="bcn" onclick="closeModal('m-bc-start')">Batal</button>
-            <button class="bsv" onclick="startBroadcast()">Mulai Siaran</button>
+            <button class="bsv" style="padding:10px 24px;border-radius:10px;font-size:14px;background:linear-gradient(135deg,#059669,#047857);box-shadow:0 2px 8px rgba(5,150,105,.2);display:inline-flex;align-items:center;gap:7px;" onclick="startBroadcast()">
+                <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+                    <path d="M5 3.5l7 4-7 4V3.5z" fill="currentColor"/>
+                </svg>
+                Mulai Siaran
+            </button>
         </div>
     </div>
 </div>
@@ -413,7 +453,12 @@
         </div>
         <div class="mft">
             <button class="bcn" onclick="closeModal('m-bc-end')">Batal</button>
-            <button class="btn-selesai" onclick="endBroadcast()">Ya, Akhiri Siaran</button>
+            <button class="btn-selesai" style="animation:none;" onclick="endBroadcast()">
+                <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+                    <path d="M12.5 4.5l-7 7-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Ya, Akhiri Siaran
+            </button>
         </div>
     </div>
 </div>
@@ -422,14 +467,21 @@
 <div class="mbg" id="m-bc-done">
     <div class="modal" style="text-align:center;">
         <div class="done-check">
-            <svg width="22" height="22" viewBox="0 0 15 15" fill="none">
-                <path d="M12.5 4.5l-7 7-3-3" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="11" fill="url(#done-grad)" opacity=".15"/>
+                <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <defs>
+                    <linearGradient id="done-grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#059669"/>
+                        <stop offset="1" stop-color="#047857"/>
+                    </linearGradient>
+                </defs>
             </svg>
         </div>
-        <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px;">Siaran Telah Selesai!</div>
-        <div style="font-size:13px;color:#64748b;margin-bottom:18px;" id="bc-done-summary">—</div>
+        <div style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:6px;">Siaran Telah Selesai!</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:20px;" id="bc-done-summary">—</div>
         <div style="display:flex;gap:8px;justify-content:center;">
-            <button class="bsv" onclick="closeDoneModal()">Selesai</button>
+            <button class="bsv" style="padding:10px 28px;border-radius:10px;font-size:14px;background:linear-gradient(135deg,#059669,#047857);box-shadow:0 2px 8px rgba(5,150,105,.2);" onclick="closeDoneModal()">Selesai</button>
         </div>
     </div>
 </div>
