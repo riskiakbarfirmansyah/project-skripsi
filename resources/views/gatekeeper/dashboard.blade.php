@@ -866,7 +866,6 @@ function doExport(period) {
             const el = document.getElementById(id);
             if (el) el.style.pointerEvents = '';
         });
-        closeModal('m-export');
     }, 2000);
     return false;
 }

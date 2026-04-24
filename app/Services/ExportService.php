@@ -22,6 +22,16 @@ class ExportService
     private const HEADER_BG = '0F766E';
 
     /**
+     * Date format for cells.
+     */
+    private const DATE_FORMAT = 'd-m-Y H:i';
+
+    /**
+     * Date-only format for cells.
+     */
+    private const DATE_ONLY_FORMAT = 'd-m-Y';
+
+    /**
      * Resolve the start-of-period based on `period` query param.
      *
      * @param  string  $period  week | month | year
@@ -137,7 +147,7 @@ class ExportService
             $sheet1->setCellValue("C{$rowNum}", $row->instansi);
             $sheet1->setCellValue("D{$rowNum}", $row->nomor_telp);
             $sheet1->setCellValue("E{$rowNum}", $row->tema_wawancara);
-            $sheet1->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format('d-m-Y H:i'));
+            $sheet1->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
             $sheet1->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
         }
 
@@ -160,7 +170,7 @@ class ExportService
         foreach ($siaranData as $idx => $row) {
             $rowNum = $idx + 2;
             $sheet2->setCellValue("A{$rowNum}", $idx + 1);
-            $sheet2->setCellValue("B{$rowNum}", Carbon::parse($row->tanggal)->format('d-m-Y'));
+            $sheet2->setCellValue("B{$rowNum}", Carbon::parse($row->tanggal)->format(self::DATE_ONLY_FORMAT));
             $sheet2->setCellValue("C{$rowNum}", $row->waktu);
             $sheet2->setCellValue("D{$rowNum}", $row->keterangan);
         }
@@ -216,7 +226,7 @@ class ExportService
             $sheet->setCellValue("C{$rowNum}", $row->instansi);
             $sheet->setCellValue("D{$rowNum}", $row->nomor_telp);
             $sheet->setCellValue("E{$rowNum}", $row->tema_wawancara);
-            $sheet->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format('d-m-Y H:i'));
+            $sheet->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
             $sheet->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
         }
 
