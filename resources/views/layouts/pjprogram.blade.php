@@ -191,6 +191,7 @@
         }
         .btn-add:hover { opacity: .88; }
         .btn-add svg { width: 13px; height: 13px; }
+        .b-green { background: #16a34a; color: #fff; }
 
         /* ── Modals ───────────────────────────────────── */
         .mbg {

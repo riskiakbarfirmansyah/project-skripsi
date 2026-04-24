@@ -87,6 +87,9 @@ Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
     // ── Statistik (AJAX) ─────────────────────────────────────────────
     Route::get('/stats', [NarasumberByphoneController::class, 'getStats'])->name('stats');
 
+    // ── Export Excel ─────────────────────────────────────────────────
+    Route::get('/export', [NarasumberByphoneController::class, 'exportGatekeeper'])->name('export');
+
     // ── Informasi Siaran ─────────────────────────────────────────────
     Route::get('/siaran/search',       [InformasiSiaranController::class, 'search'])->name('siaran.search');
     Route::post('/siaran',             [InformasiSiaranController::class, 'store'])->name('siaran.store');
@@ -151,7 +154,10 @@ Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => '
     // Dashboard pj_program
     Route::get('/dashboard', [NarasumberTalkshowController::class, 'dashboardPjProgram'])
         ->name('dashboard');
- 
+
+    // ── Export Excel ─────────────────────────────────────────────────
+    Route::get('/export', [NarasumberTalkshowController::class, 'exportPjProgram'])->name('export');
+
     // ── Narasumber Talkshow ──────────────────────────────────────────
     Route::get('/narasumber-talkshow/search',   [NarasumberTalkshowController::class, 'search'])->name('talkshow.search');
     Route::get('/narasumber-talkshow/instansi', [NarasumberTalkshowController::class, 'instansiList'])->name('talkshow.instansi');

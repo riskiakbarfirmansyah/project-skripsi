@@ -197,6 +197,7 @@
         .btn-add:hover { opacity: .88; }
         .b-blue { background: #bfdbfe; color: #1e3a8a; }
         .b-teal { background: #99f6e4; color: #134e4a; }
+        .b-green { background: #bbf7d0; color: #14532d; }
 
         /* ── Modals ───────────────────────────────────── */
         .mbg {

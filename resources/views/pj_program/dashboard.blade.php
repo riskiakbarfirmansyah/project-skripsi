@@ -8,6 +8,18 @@
 <style>
 .wa-link { display:inline-flex; align-items:center; gap:4px; color:#16a34a; text-decoration:none; font-weight:500; transition:color .15s; }
 .wa-link:hover { color:#15803d; text-decoration:underline; }
+/* ── Export modal options ── */
+.exp-opt {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 8px;
+    border: 1px solid #e2e8f0; text-decoration: none;
+    color: #0f172a; transition: background .15s, border-color .15s;
+    cursor: pointer;
+}
+.exp-opt:hover { background: #f0fdf4; border-color: #86efac; }
+.exp-ico { font-size: 20px; flex-shrink: 0; }
+.exp-lbl { font-size: 13px; font-weight: 600; }
+.exp-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
 </style>
 @endpush
 
@@ -78,6 +90,13 @@
                 <path d="M7.5 1v13M1 7.5h13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
             Tambah Narasumber
+        </button>
+        <button class="btn-add b-green" onclick="openModal('m-export')">
+            <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
+                <path d="M7.5 1v9M4.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 11v1.5a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Export Excel
         </button>
     </div>
 
@@ -240,6 +259,48 @@
     </div>
 </div>
 
+{{-- ════════════════════ MODAL EXPORT EXCEL ════════════════════ --}}
+<div class="mbg" id="m-export">
+    <div class="modal" style="max-width:360px;">
+        <div class="mttl">
+            Export Excel
+            <button class="mclose" onclick="closeModal('m-export')">×</button>
+        </div>
+        <p style="font-size:13px;color:#64748b;margin:0 0 16px;">
+            Pilih periode data yang ingin di-export. File Excel akan berisi sheet: <strong>Narasumber Talkshow</strong>.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+            <a id="exp-week" href="#" class="exp-opt" onclick="doExport('week')">
+                <div class="exp-ico">📅</div>
+                <div>
+                    <div class="exp-lbl">Minggu Ini</div>
+                    <div class="exp-sub">Data 7 hari terakhir</div>
+                </div>
+            </a>
+            <a id="exp-month" href="#" class="exp-opt" onclick="doExport('month')">
+                <div class="exp-ico">🗓️</div>
+                <div>
+                    <div class="exp-lbl">Bulan Ini</div>
+                    <div class="exp-sub">Data 30 hari terakhir</div>
+                </div>
+            </a>
+            <a id="exp-year" href="#" class="exp-opt" onclick="doExport('year')">
+                <div class="exp-ico">📆</div>
+                <div>
+                    <div class="exp-lbl">Tahun Ini</div>
+                    <div class="exp-sub">Data 365 hari terakhir</div>
+                </div>
+            </a>
+        </div>
+        <div id="exp-loading" style="display:none;text-align:center;font-size:13px;color:#64748b;padding:8px 0;">
+            ⏳ Sedang memproses export…
+        </div>
+        <div class="mft">
+            <button class="bcn" onclick="closeModal('m-export')">Batal</button>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -369,6 +430,26 @@ function formatDateTime(d) {
     const dt = new Date(d.replace(' ', 'T'));
     return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
         + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ── Export Excel ──────────────────────────────────────
+const REXPORT = '{{ route('pj_program.export') }}';
+function doExport(period) {
+    document.getElementById('exp-loading').style.display = 'block';
+    ['exp-week','exp-month','exp-year'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.pointerEvents = 'none';
+    });
+    window.location.href = REXPORT + '?period=' + period;
+    setTimeout(function() {
+        document.getElementById('exp-loading').style.display = 'none';
+        ['exp-week','exp-month','exp-year'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.pointerEvents = '';
+        });
+        closeModal('m-export');
+    }, 2000);
+    return false;
 }
 </script>
 @endpush
