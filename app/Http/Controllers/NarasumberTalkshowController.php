@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\BroadcastSession;
 use App\Models\narasumbertalkshow;
+use App\Services\ExportService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class NarasumberTalkshowController extends Controller
 {
@@ -191,6 +193,21 @@ class NarasumberTalkshowController extends Controller
             'total'   => $list->count(),
             'data'    => $list,
         ]);
+    }
+
+    /**
+     * Export data PJ Program ke Excel.
+     *
+     * Route: GET /pj-program/export?period=week|month|year
+     * Middleware: isPjProgram
+     */
+    public function exportPjProgram(Request $request, ExportService $exportService): StreamedResponse
+    {
+        $period = in_array($request->query('period'), ['week', 'month', 'year'])
+            ? $request->query('period')
+            : 'month';
+
+        return $exportService->exportPjProgram($period);
     }
 
     /**

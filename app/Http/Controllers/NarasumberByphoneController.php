@@ -6,10 +6,12 @@ use App\Models\narasumberbyphone;
 use App\Models\narasumbertalkshow;
 use App\Models\informasisiaran;
 use App\Models\BroadcastSession;
+use App\Services\ExportService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class NarasumberByphoneController extends Controller
 {
@@ -262,6 +264,21 @@ class NarasumberByphoneController extends Controller
                 'wawancara_hari_ini' => narasumberbyphone::whereDate('waktu_wawancara', today())->count(),
             ],
         ]);
+    }
+
+    /**
+     * Export data Gatekeeper ke Excel.
+     *
+     * Route: GET /gatekeeper/export?period=week|month|year
+     * Middleware: isGatekeeper
+     */
+    public function exportGatekeeper(Request $request, ExportService $exportService): StreamedResponse
+    {
+        $period = in_array($request->query('period'), ['week', 'month', 'year'])
+            ? $request->query('period')
+            : 'month';
+
+        return $exportService->exportGatekeeper($period);
     }
 
     /**
