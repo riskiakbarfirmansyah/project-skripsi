@@ -516,7 +516,7 @@
         <div class="hero-text">
             <div class="hero-badge">
                 <span class="dot"></span>
-                Radio Management System
+                Sistem Manajemen Radio
             </div>
             <h1 class="hero-title">
                 Kelola Siaran &amp; Narasumber<br>
