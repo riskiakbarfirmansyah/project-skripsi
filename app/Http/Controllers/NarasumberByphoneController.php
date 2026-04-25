@@ -282,6 +282,36 @@ class NarasumberByphoneController extends Controller
     }
 
     /**
+     * Export Narasumber Byphone saja ke Excel.
+     *
+     * Route: GET /gatekeeper/export-byphone?period=week|month|year
+     * Middleware: isGatekeeper
+     */
+    public function exportByphone(Request $request, ExportService $exportService): StreamedResponse
+    {
+        $period = in_array($request->query('period'), ['week', 'month', 'year'])
+            ? $request->query('period')
+            : 'month';
+
+        return $exportService->exportNarasumberByphone($period);
+    }
+
+    /**
+     * Export Informasi Siaran saja ke Excel.
+     *
+     * Route: GET /gatekeeper/export-siaran?period=week|month|year
+     * Middleware: isGatekeeper
+     */
+    public function exportSiaran(Request $request, ExportService $exportService): StreamedResponse
+    {
+        $period = in_array($request->query('period'), ['week', 'month', 'year'])
+            ? $request->query('period')
+            : 'month';
+
+        return $exportService->exportInformasiSiaran($period);
+    }
+
+    /**
      * Daftar instansi unik untuk dropdown filter (AJAX).
      */
     public function instansiList(): JsonResponse
