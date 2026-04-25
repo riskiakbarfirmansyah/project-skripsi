@@ -167,6 +167,7 @@ Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => '
     Route::post('/narasumber-talkshow',         [NarasumberTalkshowController::class, 'store'])->name('talkshow.store');
     Route::get('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'show'])->name('talkshow.show');
     Route::put('/narasumber-talkshow/{id}',     [NarasumberTalkshowController::class, 'update'])->name('talkshow.update');
+    Route::patch('/narasumber-talkshow/{id}/schedule', [NarasumberTalkshowController::class, 'updateSchedule'])->name('talkshow.update-schedule');
     Route::delete('/narasumber-talkshow/{id}',  [NarasumberTalkshowController::class, 'destroy'])->name('talkshow.destroy');
 });
 

@@ -204,7 +204,7 @@ class ExportService
 
     /**
      * Build and stream an Excel file with only Narasumber Talkshow data.
-     * Sheet 1: Narasumber Talkshow (7 cols)
+     * Sheet 1: Narasumber Talkshow (8 cols – includes Jadwal Talkshow)
      */
     public function exportNarasumberTalkshow(string $period): StreamedResponse
     {
@@ -214,6 +214,20 @@ class ExportService
             ->orderBy('waktu_wawancara')
             ->get();
 
+        $scheduleLabels = [
+            'pendidikan_kota_kita' => 'Pendidikan Kota Kita',
+            'youth_speak_up'       => 'Youth Speak Up',
+            'layanan_publik'       => 'Layanan Publik',
+            'anda_dan_keluarga'    => 'Anda dan Keluarga',
+            'dinkes_menyapa'       => 'Dinkes Menyapa',
+            'komunitas_bicara'     => 'Komunitas Bicara',
+            'indie_vibes'          => 'Indie Vibes',
+            'kojah_sastra'         => 'Kojah Sastra',
+            'inspirasi_bisnis'     => 'Inspirasi Bisnis',
+            'obrolan_agama_islam'  => 'Obrolan Seputar Agama Islam',
+            'ngosasi'              => 'Ngosasi (Ngobrol Asik Sana Sini)',
+        ];
+
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getProperties()
             ->setTitle('Export Narasumber Talkshow')
@@ -222,9 +236,9 @@ class ExportService
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Narasumber Talkshow');
 
-        $headers = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Draft Pertanyaan'];
+        $headers = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Jadwal Talkshow', 'Draft Pertanyaan'];
         $sheet->fromArray($headers, null, 'A1');
-        $this->applyHeaderStyle($sheet, 'A1:G1');
+        $this->applyHeaderStyle($sheet, 'A1:H1');
         $sheet->getRowDimension(1)->setRowHeight(22);
 
         foreach ($talkshowData as $idx => $row) {
@@ -235,15 +249,16 @@ class ExportService
             $sheet->setCellValue("D{$rowNum}", $row->nomor_telp);
             $sheet->setCellValue("E{$rowNum}", $row->tema_wawancara);
             $sheet->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
-            $sheet->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
+            $sheet->setCellValue("G{$rowNum}", $row->talkshow_schedule ? ($scheduleLabels[$row->talkshow_schedule] ?? $row->talkshow_schedule) : '');
+            $sheet->setCellValue("H{$rowNum}", $row->draft_pertanyaan ?? '');
         }
 
         $lastRow = max(2, $talkshowData->count() + 1);
         if ($talkshowData->count() > 0) {
-            $this->applyDataStyle($sheet, "A2:G{$lastRow}");
+            $this->applyDataStyle($sheet, "A2:H{$lastRow}");
         }
-        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D', 'E', 'F', 'G']);
-        $sheet->getColumnDimension('G')->setWidth(40);
+        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']);
+        $sheet->getColumnDimension('H')->setWidth(40);
 
         $filename = 'Export_NarasumberTalkshow_' . Carbon::now()->format('Y-m-d') . '.xlsx';
 

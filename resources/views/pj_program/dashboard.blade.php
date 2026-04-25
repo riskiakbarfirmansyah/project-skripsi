@@ -20,6 +20,20 @@
 .exp-ico { font-size: 20px; flex-shrink: 0; }
 .exp-lbl { font-size: 13px; font-weight: 600; }
 .exp-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+/* ── Jadwal Talkshow dropdown ── */
+.sched-select {
+    font-size: 11px; padding: 4px 6px; border-radius: 6px;
+    border: 1px solid #cbd5e1; background: #f8fafc; color: #0f172a;
+    cursor: pointer; min-width: 140px; max-width: 180px;
+    transition: border-color .15s, background .15s;
+}
+.sched-select:focus { outline: none; border-color: #0f766e; background: #fff; }
+.sched-select.saving { opacity: .6; pointer-events: none; }
+.sched-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 12px; font-size: 11px;
+    font-weight: 600; background: #ccfbf1; color: #065f46;
+}
 </style>
 @endpush
 
@@ -110,6 +124,7 @@
                     <th style="width:120px">Telepon</th>
                     <th>Tema Wawancara</th>
                     <th style="width:115px">Waktu</th>
+                    <th style="width:185px">Jadwal Talkshow</th>
                     <th style="width:80px">Aksi</th>
                 </tr>
             </thead>
@@ -128,6 +143,22 @@
                     <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
                     <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                     <td>
+                        <select class="sched-select" onchange="updateSchedule({{ $n->talkshowID }}, this)">
+                            <option value="">— Pilih Jadwal —</option>
+                            <option value="pendidikan_kota_kita" {{ $n->talkshow_schedule === 'pendidikan_kota_kita' ? 'selected' : '' }}>Pendidikan Kota Kita</option>
+                            <option value="youth_speak_up" {{ $n->talkshow_schedule === 'youth_speak_up' ? 'selected' : '' }}>Youth Speak Up</option>
+                            <option value="layanan_publik" {{ $n->talkshow_schedule === 'layanan_publik' ? 'selected' : '' }}>Layanan Publik</option>
+                            <option value="anda_dan_keluarga" {{ $n->talkshow_schedule === 'anda_dan_keluarga' ? 'selected' : '' }}>Anda dan Keluarga</option>
+                            <option value="dinkes_menyapa" {{ $n->talkshow_schedule === 'dinkes_menyapa' ? 'selected' : '' }}>Dinkes Menyapa</option>
+                            <option value="komunitas_bicara" {{ $n->talkshow_schedule === 'komunitas_bicara' ? 'selected' : '' }}>Komunitas Bicara</option>
+                            <option value="indie_vibes" {{ $n->talkshow_schedule === 'indie_vibes' ? 'selected' : '' }}>Indie Vibes</option>
+                            <option value="kojah_sastra" {{ $n->talkshow_schedule === 'kojah_sastra' ? 'selected' : '' }}>Kojah Sastra</option>
+                            <option value="inspirasi_bisnis" {{ $n->talkshow_schedule === 'inspirasi_bisnis' ? 'selected' : '' }}>Inspirasi Bisnis</option>
+                            <option value="obrolan_agama_islam" {{ $n->talkshow_schedule === 'obrolan_agama_islam' ? 'selected' : '' }}>Obrolan Seputar Agama Islam</option>
+                            <option value="ngosasi" {{ $n->talkshow_schedule === 'ngosasi' ? 'selected' : '' }}>Ngosasi (Ngobrol Asik Sana Sini)</option>
+                        </select>
+                    </td>
+                    <td>
                         <div class="abt">
                             <button class="bico" title="Detail" onclick="viewTs({{ $n->talkshowID }})">
                                 <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -142,7 +173,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="empty">Belum ada data narasumber talkshow.</td></tr>
+                <tr><td colspan="8" class="empty">Belum ada data narasumber talkshow.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -307,6 +338,45 @@
 <script>
 const RTALKSHOW = '{{ url('pj-program/narasumber-talkshow') }}';
 const RTSEARCH  = '{{ route('pj_program.talkshow.search') }}';
+const RSCHEDULE = '{{ url('pj-program/narasumber-talkshow') }}';
+
+const SCHEDULE_LABELS = {
+    'pendidikan_kota_kita': 'Pendidikan Kota Kita',
+    'youth_speak_up':       'Youth Speak Up',
+    'layanan_publik':       'Layanan Publik',
+    'anda_dan_keluarga':    'Anda dan Keluarga',
+    'dinkes_menyapa':       'Dinkes Menyapa',
+    'komunitas_bicara':     'Komunitas Bicara',
+    'indie_vibes':          'Indie Vibes',
+    'kojah_sastra':         'Kojah Sastra',
+    'inspirasi_bisnis':     'Inspirasi Bisnis',
+    'obrolan_agama_islam':  'Obrolan Seputar Agama Islam',
+    'ngosasi':              'Ngosasi (Ngobrol Asik Sana Sini)',
+};
+
+function scheduleDropdownHTML(id, currentValue) {
+    const opts = Object.entries(SCHEDULE_LABELS).map(([val, lbl]) =>
+        `<option value="${val}" ${currentValue === val ? 'selected' : ''}>${lbl}</option>`
+    ).join('');
+    return `<select class="sched-select" onchange="updateSchedule(${id}, this)">
+        <option value="">— Pilih Jadwal —</option>
+        ${opts}
+    </select>`;
+}
+
+function updateSchedule(id, selectEl) {
+    selectEl.classList.add('saving');
+    apiFetch(RSCHEDULE + '/' + id + '/schedule', 'PATCH', {
+        talkshow_schedule: selectEl.value || null,
+    }).then(d => {
+        selectEl.classList.remove('saving');
+        if (d.success) { showFlash('Jadwal talkshow berhasil disimpan.'); }
+        else { showFlash(d.message || 'Gagal menyimpan jadwal.', 'error'); }
+    }).catch(function() {
+        selectEl.classList.remove('saving');
+        showFlash('Terjadi kesalahan, coba lagi.', 'error');
+    });
+}
 
 function debounce(fn, delay) {
     let t;
@@ -343,13 +413,14 @@ function doSearch() {
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
                     <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
+                    <td>${scheduleDropdownHTML(n.talkshowID, n.talkshow_schedule)}</td>
                     <td><div class="abt">
                         <button class="bico" onclick="viewTs(${n.talkshowID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         <button class="bico" onclick="editTs(${n.talkshowID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
                         <button class="bico del" onclick="deleteTs(${n.talkshowID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
-            document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('ts-count').textContent = d.total + ' data';
             document.getElementById('ts-pag').textContent = 'Menampilkan ' + d.total + ' data';
         });

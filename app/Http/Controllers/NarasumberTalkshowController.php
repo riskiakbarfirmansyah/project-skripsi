@@ -226,6 +226,35 @@ class NarasumberTalkshowController extends Controller
     }
 
     /**
+     * Update jadwal talkshow untuk satu narasumber (AJAX).
+     *
+     * Route: PATCH /pj-program/narasumber-talkshow/{id}/schedule
+     * Middleware: isPjProgram
+     */
+    public function updateSchedule(Request $request, string $id): JsonResponse
+    {
+        $validSchedules = [
+            'pendidikan_kota_kita', 'youth_speak_up', 'layanan_publik',
+            'anda_dan_keluarga', 'dinkes_menyapa', 'komunitas_bicara',
+            'indie_vibes', 'kojah_sastra', 'inspirasi_bisnis',
+            'obrolan_agama_islam', 'ngosasi',
+        ];
+
+        $validated = $request->validate([
+            'talkshow_schedule' => ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
+        ]);
+
+        $narasumber = narasumbertalkshow::findOrFail($id);
+        $narasumber->update(['talkshow_schedule' => $validated['talkshow_schedule'] ?? null]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jadwal talkshow berhasil disimpan.',
+            'data'    => $narasumber->fresh(),
+        ]);
+    }
+
+    /**
      * Daftar instansi unik untuk dropdown filter (AJAX).
      */
     public function instansiList(): JsonResponse
