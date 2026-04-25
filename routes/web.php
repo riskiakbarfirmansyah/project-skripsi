@@ -89,6 +89,8 @@ Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
 
     // ── Export Excel ─────────────────────────────────────────────────
     Route::get('/export', [NarasumberByphoneController::class, 'exportGatekeeper'])->name('export');
+    Route::get('/export-byphone', [NarasumberByphoneController::class, 'exportByphone'])->name('export-byphone');
+    Route::get('/export-siaran', [NarasumberByphoneController::class, 'exportSiaran'])->name('export-siaran');
 
     // ── Informasi Siaran ─────────────────────────────────────────────
     Route::get('/siaran/search',       [InformasiSiaranController::class, 'search'])->name('siaran.search');
@@ -157,6 +159,7 @@ Route::group(['middleware' => 'isPjProgram', 'prefix' => 'pj-program', 'as' => '
 
     // ── Export Excel ─────────────────────────────────────────────────
     Route::get('/export', [NarasumberTalkshowController::class, 'exportPjProgram'])->name('export');
+    Route::get('/export-talkshow', [NarasumberTalkshowController::class, 'exportTalkshow'])->name('export-talkshow');
 
     // ── Narasumber Talkshow ──────────────────────────────────────────
     Route::get('/narasumber-talkshow/search',   [NarasumberTalkshowController::class, 'search'])->name('talkshow.search');

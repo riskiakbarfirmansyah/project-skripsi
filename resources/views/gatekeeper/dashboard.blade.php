@@ -187,12 +187,19 @@
                 </svg>
                 Tambah Siaran
             </button>
-            <button class="btn-add b-green" onclick="openModal('m-export')">
+            <button class="btn-add b-green" onclick="openModal('m-export-byphone')">
                 <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
                     <path d="M7.5 1v9M4.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 11v1.5a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                 </svg>
-                Export Excel
+                Export Byphone
+            </button>
+            <button class="btn-add b-green" onclick="openModal('m-export-siaran')">
+                <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
+                    <path d="M7.5 1v9M4.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 11v1.5a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                Export Siaran
             </button>
         </div>
 
@@ -517,32 +524,32 @@
     </div>
 </div>
 
-{{-- ════════════════════ MODAL EXPORT EXCEL ════════════════════ --}}
-<div class="mbg" id="m-export">
+{{-- ════════════════════ MODAL EXPORT BYPHONE ════════════════════ --}}
+<div class="mbg" id="m-export-byphone">
     <div class="modal" style="max-width:360px;">
         <div class="mttl">
-            Export Excel
-            <button class="mclose" onclick="closeModal('m-export')">×</button>
+            Export Narasumber Byphone
+            <button class="mclose" onclick="closeModal('m-export-byphone')">×</button>
         </div>
         <p style="font-size:13px;color:#64748b;margin:0 0 16px;">
-            Pilih periode data yang ingin di-export. File Excel akan berisi dua sheet: <strong>Narasumber Byphone</strong> dan <strong>Informasi Siaran</strong>.
+            Pilih periode data yang ingin di-export. File Excel akan berisi sheet: <strong>Narasumber Byphone</strong>.
         </p>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
-            <a id="exp-week" href="#" class="exp-opt" onclick="doExport('week')">
+            <a id="expbp-week" href="#" class="exp-opt" onclick="doExportByphone('week')">
                 <div class="exp-ico">📅</div>
                 <div>
                     <div class="exp-lbl">Minggu Ini</div>
                     <div class="exp-sub">Data 7 hari terakhir</div>
                 </div>
             </a>
-            <a id="exp-month" href="#" class="exp-opt" onclick="doExport('month')">
+            <a id="expbp-month" href="#" class="exp-opt" onclick="doExportByphone('month')">
                 <div class="exp-ico">🗓️</div>
                 <div>
                     <div class="exp-lbl">Bulan Ini</div>
                     <div class="exp-sub">Data 30 hari terakhir</div>
                 </div>
             </a>
-            <a id="exp-year" href="#" class="exp-opt" onclick="doExport('year')">
+            <a id="expbp-year" href="#" class="exp-opt" onclick="doExportByphone('year')">
                 <div class="exp-ico">📆</div>
                 <div>
                     <div class="exp-lbl">Tahun Ini</div>
@@ -550,11 +557,53 @@
                 </div>
             </a>
         </div>
-        <div id="exp-loading" style="display:none;text-align:center;font-size:13px;color:#64748b;padding:8px 0;">
+        <div id="expbp-loading" style="display:none;text-align:center;font-size:13px;color:#64748b;padding:8px 0;">
             ⏳ Sedang memproses export…
         </div>
         <div class="mft">
-            <button class="bcn" onclick="closeModal('m-export')">Batal</button>
+            <button class="bcn" onclick="closeModal('m-export-byphone')">Batal</button>
+        </div>
+    </div>
+</div>
+
+{{-- ════════════════════ MODAL EXPORT SIARAN ════════════════════ --}}
+<div class="mbg" id="m-export-siaran">
+    <div class="modal" style="max-width:360px;">
+        <div class="mttl">
+            Export Informasi Siaran
+            <button class="mclose" onclick="closeModal('m-export-siaran')">×</button>
+        </div>
+        <p style="font-size:13px;color:#64748b;margin:0 0 16px;">
+            Pilih periode data yang ingin di-export. File Excel akan berisi sheet: <strong>Informasi Siaran</strong>.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+            <a id="expsr-week" href="#" class="exp-opt" onclick="doExportSiaran('week')">
+                <div class="exp-ico">📅</div>
+                <div>
+                    <div class="exp-lbl">Minggu Ini</div>
+                    <div class="exp-sub">Data 7 hari terakhir</div>
+                </div>
+            </a>
+            <a id="expsr-month" href="#" class="exp-opt" onclick="doExportSiaran('month')">
+                <div class="exp-ico">🗓️</div>
+                <div>
+                    <div class="exp-lbl">Bulan Ini</div>
+                    <div class="exp-sub">Data 30 hari terakhir</div>
+                </div>
+            </a>
+            <a id="expsr-year" href="#" class="exp-opt" onclick="doExportSiaran('year')">
+                <div class="exp-ico">📆</div>
+                <div>
+                    <div class="exp-lbl">Tahun Ini</div>
+                    <div class="exp-sub">Data 365 hari terakhir</div>
+                </div>
+            </a>
+        </div>
+        <div id="expsr-loading" style="display:none;text-align:center;font-size:13px;color:#64748b;padding:8px 0;">
+            ⏳ Sedang memproses export…
+        </div>
+        <div class="mft">
+            <button class="bcn" onclick="closeModal('m-export-siaran')">Batal</button>
         </div>
     </div>
 </div>
@@ -852,17 +901,36 @@ function formatDateTime(d) {
 }
 
 // ── Export Excel ──────────────────────────────────────
-const REXPORT = '{{ route('gatekeeper.export') }}';
-function doExport(period) {
-    document.getElementById('exp-loading').style.display = 'block';
-    ['exp-week','exp-month','exp-year'].forEach(id => {
+const REXPORT_BYPHONE = '{{ route('gatekeeper.export-byphone') }}';
+const REXPORT_SIARAN  = '{{ route('gatekeeper.export-siaran') }}';
+
+function doExportByphone(period) {
+    document.getElementById('expbp-loading').style.display = 'block';
+    ['expbp-week','expbp-month','expbp-year'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.pointerEvents = 'none';
     });
-    window.location.href = REXPORT + '?period=' + period;
+    window.location.href = REXPORT_BYPHONE + '?period=' + period;
     setTimeout(function() {
-        document.getElementById('exp-loading').style.display = 'none';
-        ['exp-week','exp-month','exp-year'].forEach(id => {
+        document.getElementById('expbp-loading').style.display = 'none';
+        ['expbp-week','expbp-month','expbp-year'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.pointerEvents = '';
+        });
+    }, 2000);
+    return false;
+}
+
+function doExportSiaran(period) {
+    document.getElementById('expsr-loading').style.display = 'block';
+    ['expsr-week','expsr-month','expsr-year'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.pointerEvents = 'none';
+    });
+    window.location.href = REXPORT_SIARAN + '?period=' + period;
+    setTimeout(function() {
+        document.getElementById('expsr-loading').style.display = 'none';
+        ['expsr-week','expsr-month','expsr-year'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.pointerEvents = '';
         });

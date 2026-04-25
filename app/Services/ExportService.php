@@ -105,7 +105,153 @@ class ExportService
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // GATEKEEPER EXPORT (2 sheets)
+    // GATEKEEPER EXPORTS (individual)
+    // ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Build and stream an Excel file with only Narasumber Byphone data.
+     * Sheet 1: Narasumber Byphone (7 cols)
+     */
+    public function exportNarasumberByphone(string $period): StreamedResponse
+    {
+        $start = $this->startDate($period);
+
+        $byphoneData = narasumberbyphone::where('waktu_wawancara', '>=', $start)
+            ->orderBy('waktu_wawancara')
+            ->get();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setTitle('Export Narasumber Byphone')
+            ->setCreator('Radio Management System');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Narasumber Byphone');
+
+        $headers = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Draft Pertanyaan'];
+        $sheet->fromArray($headers, null, 'A1');
+        $this->applyHeaderStyle($sheet, 'A1:G1');
+        $sheet->getRowDimension(1)->setRowHeight(22);
+
+        foreach ($byphoneData as $idx => $row) {
+            $rowNum = $idx + 2;
+            $sheet->setCellValue("A{$rowNum}", $idx + 1);
+            $sheet->setCellValue("B{$rowNum}", $row->nama);
+            $sheet->setCellValue("C{$rowNum}", $row->instansi);
+            $sheet->setCellValue("D{$rowNum}", $row->nomor_telp);
+            $sheet->setCellValue("E{$rowNum}", $row->tema_wawancara);
+            $sheet->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
+            $sheet->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
+        }
+
+        $lastRow = max(2, $byphoneData->count() + 1);
+        if ($byphoneData->count() > 0) {
+            $this->applyDataStyle($sheet, "A2:G{$lastRow}");
+        }
+        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D', 'E', 'F', 'G']);
+        $sheet->getColumnDimension('G')->setWidth(40);
+
+        $filename = 'Export_NarasumberByphone_' . Carbon::now()->format('Y-m-d') . '.xlsx';
+
+        return $this->streamResponse($spreadsheet, $filename);
+    }
+
+    /**
+     * Build and stream an Excel file with only Informasi Siaran data.
+     * Sheet 1: Informasi Siaran (4 cols)
+     */
+    public function exportInformasiSiaran(string $period): StreamedResponse
+    {
+        $start = $this->startDate($period);
+
+        $siaranData = informasisiaran::where('tanggal', '>=', $start->toDateString())
+            ->orderBy('tanggal')
+            ->orderBy('waktu')
+            ->get();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setTitle('Export Informasi Siaran')
+            ->setCreator('Radio Management System');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Informasi Siaran');
+
+        $headers = ['No', 'Tanggal', 'Jam Mulai', 'Keterangan'];
+        $sheet->fromArray($headers, null, 'A1');
+        $this->applyHeaderStyle($sheet, 'A1:D1');
+        $sheet->getRowDimension(1)->setRowHeight(22);
+
+        foreach ($siaranData as $idx => $row) {
+            $rowNum = $idx + 2;
+            $sheet->setCellValue("A{$rowNum}", $idx + 1);
+            $sheet->setCellValue("B{$rowNum}", Carbon::parse($row->tanggal)->format(self::DATE_ONLY_FORMAT));
+            $sheet->setCellValue("C{$rowNum}", $row->waktu);
+            $sheet->setCellValue("D{$rowNum}", $row->keterangan);
+        }
+
+        $lastRow = max(2, $siaranData->count() + 1);
+        if ($siaranData->count() > 0) {
+            $this->applyDataStyle($sheet, "A2:D{$lastRow}");
+        }
+        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D']);
+        $sheet->getColumnDimension('D')->setWidth(40);
+
+        $filename = 'Export_InformasiSiaran_' . Carbon::now()->format('Y-m-d') . '.xlsx';
+
+        return $this->streamResponse($spreadsheet, $filename);
+    }
+
+    /**
+     * Build and stream an Excel file with only Narasumber Talkshow data.
+     * Sheet 1: Narasumber Talkshow (7 cols)
+     */
+    public function exportNarasumberTalkshow(string $period): StreamedResponse
+    {
+        $start = $this->startDate($period);
+
+        $talkshowData = narasumbertalkshow::where('waktu_wawancara', '>=', $start)
+            ->orderBy('waktu_wawancara')
+            ->get();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setTitle('Export Narasumber Talkshow')
+            ->setCreator('Radio Management System');
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Narasumber Talkshow');
+
+        $headers = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Draft Pertanyaan'];
+        $sheet->fromArray($headers, null, 'A1');
+        $this->applyHeaderStyle($sheet, 'A1:G1');
+        $sheet->getRowDimension(1)->setRowHeight(22);
+
+        foreach ($talkshowData as $idx => $row) {
+            $rowNum = $idx + 2;
+            $sheet->setCellValue("A{$rowNum}", $idx + 1);
+            $sheet->setCellValue("B{$rowNum}", $row->nama);
+            $sheet->setCellValue("C{$rowNum}", $row->instansi);
+            $sheet->setCellValue("D{$rowNum}", $row->nomor_telp);
+            $sheet->setCellValue("E{$rowNum}", $row->tema_wawancara);
+            $sheet->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
+            $sheet->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
+        }
+
+        $lastRow = max(2, $talkshowData->count() + 1);
+        if ($talkshowData->count() > 0) {
+            $this->applyDataStyle($sheet, "A2:G{$lastRow}");
+        }
+        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D', 'E', 'F', 'G']);
+        $sheet->getColumnDimension('G')->setWidth(40);
+
+        $filename = 'Export_NarasumberTalkshow_' . Carbon::now()->format('Y-m-d') . '.xlsx';
+
+        return $this->streamResponse($spreadsheet, $filename);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // GATEKEEPER EXPORT (2 sheets – legacy, kept for compatibility)
     // ─────────────────────────────────────────────────────────────────
 
     /**

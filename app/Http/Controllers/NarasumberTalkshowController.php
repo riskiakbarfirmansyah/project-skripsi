@@ -211,6 +211,21 @@ class NarasumberTalkshowController extends Controller
     }
 
     /**
+     * Export Narasumber Talkshow saja ke Excel.
+     *
+     * Route: GET /pj-program/export-talkshow?period=week|month|year
+     * Middleware: isPjProgram
+     */
+    public function exportTalkshow(Request $request, ExportService $exportService): StreamedResponse
+    {
+        $period = in_array($request->query('period'), ['week', 'month', 'year'])
+            ? $request->query('period')
+            : 'month';
+
+        return $exportService->exportNarasumberTalkshow($period);
+    }
+
+    /**
      * Daftar instansi unik untuk dropdown filter (AJAX).
      */
     public function instansiList(): JsonResponse

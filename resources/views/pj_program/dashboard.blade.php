@@ -96,7 +96,7 @@
                 <path d="M7.5 1v9M4.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 11v1.5a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
-            Export Excel
+            Export Talkshow
         </button>
     </div>
 
@@ -263,7 +263,7 @@
 <div class="mbg" id="m-export">
     <div class="modal" style="max-width:360px;">
         <div class="mttl">
-            Export Excel
+            Export Narasumber Talkshow
             <button class="mclose" onclick="closeModal('m-export')">×</button>
         </div>
         <p style="font-size:13px;color:#64748b;margin:0 0 16px;">
@@ -433,7 +433,7 @@ function formatDateTime(d) {
 }
 
 // ── Export Excel ──────────────────────────────────────
-const REXPORT = '{{ route('pj_program.export') }}';
+const REXPORT = '{{ route('pj_program.export-talkshow') }}';
 function doExport(period) {
     document.getElementById('exp-loading').style.display = 'block';
     ['exp-week','exp-month','exp-year'].forEach(id => {
