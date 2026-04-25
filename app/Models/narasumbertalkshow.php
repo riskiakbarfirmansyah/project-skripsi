@@ -18,6 +18,7 @@ class narasumbertalkshow extends Model
         'nomor_telp',
         'tema_wawancara',
         'waktu_wawancara',
+        'talkshow_schedule',
         'draft_pertanyaan',
         'is_self_registered',
     ];
