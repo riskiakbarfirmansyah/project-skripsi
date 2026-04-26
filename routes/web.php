@@ -107,6 +107,7 @@ Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 
     Route::post('/narasumber-byphone',         [NarasumberByphoneController::class, 'store'])->name('byphone.store');
     Route::get('/narasumber-byphone/{id}',     [NarasumberByphoneController::class, 'show'])->name('byphone.show');
     Route::put('/narasumber-byphone/{id}',     [NarasumberByphoneController::class, 'update'])->name('byphone.update');
+    Route::patch('/narasumber-byphone/{id}/schedule', [NarasumberByphoneController::class, 'updateSchedule'])->name('byphone.update-schedule');
     Route::delete('/narasumber-byphone/{id}',  [NarasumberByphoneController::class, 'destroy'])->name('byphone.destroy');
 });
  

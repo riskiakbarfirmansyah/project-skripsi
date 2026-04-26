@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BroadcastSession;
 use App\Models\narasumbertalkshow;
 use App\Services\ExportService;
+use App\Services\JadwalValidationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -233,19 +234,29 @@ class NarasumberTalkshowController extends Controller
      */
     public function updateSchedule(Request $request, string $id): JsonResponse
     {
-        $validSchedules = [
-            'pendidikan_kota_kita', 'youth_speak_up', 'layanan_publik',
-            'anda_dan_keluarga', 'dinkes_menyapa', 'komunitas_bicara',
-            'indie_vibes', 'kojah_sastra', 'inspirasi_bisnis',
-            'obrolan_agama_islam', 'ngosasi',
-        ];
+        $validSchedules = array_keys(JadwalValidationService::SCHEDULES);
 
         $validated = $request->validate([
             'talkshow_schedule' => ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
         ]);
 
         $narasumber = narasumbertalkshow::findOrFail($id);
-        $narasumber->update(['talkshow_schedule' => $validated['talkshow_schedule'] ?? null]);
+
+        // Anti-collision: only validate when setting a schedule (not when clearing)
+        $newSchedule = $validated['talkshow_schedule'] ?? null;
+        if ($newSchedule !== null) {
+            $jam = (new JadwalValidationService())->extractJam($narasumber->waktu_wawancara);
+            $result = (new JadwalValidationService())->isJamTalkshowAvailable($jam, (int) $narasumber->talkshowID);
+
+            if ($result !== true) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result,
+                ], 422);
+            }
+        }
+
+        $narasumber->update(['talkshow_schedule' => $newSchedule]);
 
         return response()->json([
             'success' => true,

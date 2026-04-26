@@ -110,7 +110,7 @@ class ExportService
 
     /**
      * Build and stream an Excel file with only Narasumber Byphone data.
-     * Sheet 1: Narasumber Byphone (7 cols)
+     * Sheet 1: Narasumber Byphone (8 cols – includes Jadwal Byphone)
      */
     public function exportNarasumberByphone(string $period): StreamedResponse
     {
@@ -120,6 +120,20 @@ class ExportService
             ->orderBy('waktu_wawancara')
             ->get();
 
+        $scheduleLabels = [
+            'pendidikan_kota_kita' => 'Pendidikan Kota Kita',
+            'youth_speak_up'       => 'Youth Speak Up',
+            'layanan_publik'       => 'Layanan Publik',
+            'anda_dan_keluarga'    => 'Anda dan Keluarga',
+            'dinkes_menyapa'       => 'Dinkes Menyapa',
+            'komunitas_bicara'     => 'Komunitas Bicara',
+            'indie_vibes'          => 'Indie Vibes',
+            'kojah_sastra'         => 'Kojah Sastra',
+            'inspirasi_bisnis'     => 'Inspirasi Bisnis',
+            'obrolan_agama_islam'  => 'Obrolan Seputar Agama Islam',
+            'ngosasi'              => 'Ngosasi (Ngobrol Asik Sana Sini)',
+        ];
+
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getProperties()
             ->setTitle('Export Narasumber Byphone')
@@ -128,9 +142,9 @@ class ExportService
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Narasumber Byphone');
 
-        $headers = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Draft Pertanyaan'];
+        $headers = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Jadwal Byphone', 'Draft Pertanyaan'];
         $sheet->fromArray($headers, null, 'A1');
-        $this->applyHeaderStyle($sheet, 'A1:G1');
+        $this->applyHeaderStyle($sheet, 'A1:H1');
         $sheet->getRowDimension(1)->setRowHeight(22);
 
         foreach ($byphoneData as $idx => $row) {
@@ -141,15 +155,16 @@ class ExportService
             $sheet->setCellValue("D{$rowNum}", $row->nomor_telp);
             $sheet->setCellValue("E{$rowNum}", $row->tema_wawancara);
             $sheet->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
-            $sheet->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
+            $sheet->setCellValue("G{$rowNum}", $row->byphone_schedule ? ($scheduleLabels[$row->byphone_schedule] ?? $row->byphone_schedule) : '');
+            $sheet->setCellValue("H{$rowNum}", $row->draft_pertanyaan ?? '');
         }
 
         $lastRow = max(2, $byphoneData->count() + 1);
         if ($byphoneData->count() > 0) {
-            $this->applyDataStyle($sheet, "A2:G{$lastRow}");
+            $this->applyDataStyle($sheet, "A2:H{$lastRow}");
         }
-        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D', 'E', 'F', 'G']);
-        $sheet->getColumnDimension('G')->setWidth(40);
+        $this->autoFitColumns($sheet, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']);
+        $sheet->getColumnDimension('H')->setWidth(40);
 
         $filename = 'Export_NarasumberByphone_' . Carbon::now()->format('Y-m-d') . '.xlsx';
 
@@ -296,9 +311,23 @@ class ExportService
         $sheet1 = $spreadsheet->getActiveSheet();
         $sheet1->setTitle('Narasumber Byphone');
 
-        $headers1 = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Draft Pertanyaan'];
+        $byphoneScheduleLabels = [
+            'pendidikan_kota_kita' => 'Pendidikan Kota Kita',
+            'youth_speak_up'       => 'Youth Speak Up',
+            'layanan_publik'       => 'Layanan Publik',
+            'anda_dan_keluarga'    => 'Anda dan Keluarga',
+            'dinkes_menyapa'       => 'Dinkes Menyapa',
+            'komunitas_bicara'     => 'Komunitas Bicara',
+            'indie_vibes'          => 'Indie Vibes',
+            'kojah_sastra'         => 'Kojah Sastra',
+            'inspirasi_bisnis'     => 'Inspirasi Bisnis',
+            'obrolan_agama_islam'  => 'Obrolan Seputar Agama Islam',
+            'ngosasi'              => 'Ngosasi (Ngobrol Asik Sana Sini)',
+        ];
+
+        $headers1 = ['No', 'Nama', 'Instansi', 'Nomor Telepon', 'Tema Wawancara', 'Waktu Wawancara', 'Jadwal Byphone', 'Draft Pertanyaan'];
         $sheet1->fromArray($headers1, null, 'A1');
-        $this->applyHeaderStyle($sheet1, 'A1:G1');
+        $this->applyHeaderStyle($sheet1, 'A1:H1');
         $sheet1->getRowDimension(1)->setRowHeight(22);
 
         foreach ($byphoneData as $idx => $row) {
@@ -309,15 +338,16 @@ class ExportService
             $sheet1->setCellValue("D{$rowNum}", $row->nomor_telp);
             $sheet1->setCellValue("E{$rowNum}", $row->tema_wawancara);
             $sheet1->setCellValue("F{$rowNum}", Carbon::parse($row->waktu_wawancara)->format(self::DATE_FORMAT));
-            $sheet1->setCellValue("G{$rowNum}", $row->draft_pertanyaan ?? '');
+            $sheet1->setCellValue("G{$rowNum}", $row->byphone_schedule ? ($byphoneScheduleLabels[$row->byphone_schedule] ?? $row->byphone_schedule) : '');
+            $sheet1->setCellValue("H{$rowNum}", $row->draft_pertanyaan ?? '');
         }
 
         $lastRow1 = max(2, $byphoneData->count() + 1);
         if ($byphoneData->count() > 0) {
-            $this->applyDataStyle($sheet1, "A2:G{$lastRow1}");
+            $this->applyDataStyle($sheet1, "A2:H{$lastRow1}");
         }
-        $this->autoFitColumns($sheet1, ['A', 'B', 'C', 'D', 'E', 'F', 'G']);
-        $sheet1->getColumnDimension('G')->setWidth(40);
+        $this->autoFitColumns($sheet1, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']);
+        $sheet1->getColumnDimension('H')->setWidth(40);
 
         // ── Sheet 2: Informasi Siaran ────────────────────────────────
         $sheet2 = $spreadsheet->createSheet();

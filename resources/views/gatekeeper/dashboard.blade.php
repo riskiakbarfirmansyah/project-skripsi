@@ -105,6 +105,15 @@
 .exp-ico { font-size: 20px; flex-shrink: 0; }
 .exp-lbl { font-size: 13px; font-weight: 600; }
 .exp-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+/* ── Jadwal Byphone dropdown ── */
+.sched-select {
+    font-size: 11px; padding: 4px 6px; border-radius: 6px;
+    border: 1px solid #cbd5e1; background: #f8fafc; color: #0f172a;
+    cursor: pointer; min-width: 140px; max-width: 180px;
+    transition: border-color .15s, background .15s;
+}
+.sched-select:focus { outline: none; border-color: #0f766e; background: #fff; }
+.sched-select.saving { opacity: .6; pointer-events: none; }
 </style>
 @endpush
 
@@ -297,6 +306,7 @@
                         <th style="width:120px">Telepon</th>
                         <th>Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
+                        <th style="width:185px">Jadwal Byphone</th>
                         <th style="width:80px">Aksi</th>
                     </tr>
                 </thead>
@@ -315,6 +325,22 @@
                         <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                         <td>
+                            <select class="sched-select" onchange="updateScheduleByphone({{ $n->byphoneID }}, this)">
+                                <option value="">— Pilih Jadwal —</option>
+                                <option value="pendidikan_kota_kita" {{ $n->byphone_schedule === 'pendidikan_kota_kita' ? 'selected' : '' }}>Pendidikan Kota Kita</option>
+                                <option value="youth_speak_up" {{ $n->byphone_schedule === 'youth_speak_up' ? 'selected' : '' }}>Youth Speak Up</option>
+                                <option value="layanan_publik" {{ $n->byphone_schedule === 'layanan_publik' ? 'selected' : '' }}>Layanan Publik</option>
+                                <option value="anda_dan_keluarga" {{ $n->byphone_schedule === 'anda_dan_keluarga' ? 'selected' : '' }}>Anda dan Keluarga</option>
+                                <option value="dinkes_menyapa" {{ $n->byphone_schedule === 'dinkes_menyapa' ? 'selected' : '' }}>Dinkes Menyapa</option>
+                                <option value="komunitas_bicara" {{ $n->byphone_schedule === 'komunitas_bicara' ? 'selected' : '' }}>Komunitas Bicara</option>
+                                <option value="indie_vibes" {{ $n->byphone_schedule === 'indie_vibes' ? 'selected' : '' }}>Indie Vibes</option>
+                                <option value="kojah_sastra" {{ $n->byphone_schedule === 'kojah_sastra' ? 'selected' : '' }}>Kojah Sastra</option>
+                                <option value="inspirasi_bisnis" {{ $n->byphone_schedule === 'inspirasi_bisnis' ? 'selected' : '' }}>Inspirasi Bisnis</option>
+                                <option value="obrolan_agama_islam" {{ $n->byphone_schedule === 'obrolan_agama_islam' ? 'selected' : '' }}>Obrolan Seputar Agama Islam</option>
+                                <option value="ngosasi" {{ $n->byphone_schedule === 'ngosasi' ? 'selected' : '' }}>Ngosasi (Ngobrol Asik Sana Sini)</option>
+                            </select>
+                        </td>
+                        <td>
                             <div class="abt">
                                 <button class="bico" title="Detail" onclick="viewNr({{ $n->byphoneID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -329,7 +355,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="7" class="empty">Belum ada data narasumber byphone.</td></tr>
+                    <tr><td colspan="8" class="empty">Belum ada data narasumber byphone.</td></tr>
                     @endforelse
                 </tbody>
             </table>

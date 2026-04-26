@@ -7,6 +7,7 @@ use App\Models\narasumbertalkshow;
 use App\Models\informasisiaran;
 use App\Models\BroadcastSession;
 use App\Services\ExportService;
+use App\Services\JadwalValidationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -324,6 +325,45 @@ class NarasumberByphoneController extends Controller
         return response()->json([
             'success' => true,
             'data'    => $instansi,
+        ]);
+    }
+
+    /**
+     * Update jadwal byphone untuk satu narasumber (AJAX).
+     *
+     * Route: PATCH /gatekeeper/narasumber-byphone/{id}/schedule
+     * Middleware: isGatekeeper
+     */
+    public function updateSchedule(Request $request, string $id): JsonResponse
+    {
+        $validSchedules = array_keys(JadwalValidationService::SCHEDULES);
+
+        $validated = $request->validate([
+            'byphone_schedule' => ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
+        ]);
+
+        $narasumber = narasumberbyphone::findOrFail($id);
+
+        // Anti-collision: only validate when setting a schedule (not when clearing)
+        $newSchedule = $validated['byphone_schedule'] ?? null;
+        if ($newSchedule !== null) {
+            $jam = (new JadwalValidationService())->extractJam($narasumber->waktu_wawancara);
+            $result = (new JadwalValidationService())->isJamByphoneAvailable($jam, (int) $narasumber->byphoneID);
+
+            if ($result !== true) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result,
+                ], 422);
+            }
+        }
+
+        $narasumber->update(['byphone_schedule' => $newSchedule]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jadwal byphone berhasil disimpan.',
+            'data'    => $narasumber->fresh(),
         ]);
     }
 }
