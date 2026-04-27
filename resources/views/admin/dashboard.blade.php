@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard Admin')
-@section('page-sub', 'Manajemen pengguna sistem radio')
+@section('page-sub', 'Manajemen pengguna aplikasi')
 
 @section('content')
 

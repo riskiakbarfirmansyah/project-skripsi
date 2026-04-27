@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard Gatekeeper')
-@section('page-sub', 'Ringkasan data siaran dan narasumber')
+@section('page-sub', 'Manajemen data siaran dan narasumber')
 
 @push('styles')
 <style>

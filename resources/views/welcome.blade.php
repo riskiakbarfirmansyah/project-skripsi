@@ -516,7 +516,7 @@
         <div class="hero-text">
             <div class="hero-badge">
                 <span class="dot"></span>
-                Sistem Manajemen Radio
+                Aplikasi Manajemen Radio
             </div>
             <h1 class="hero-title">
                 Kelola Siaran &amp; Narasumber<br>
@@ -524,7 +524,7 @@
             </h1>
             <p class="hero-sub">
                 Platform manajemen terpadu untuk operator radio — catat informasi siaran,
-                data narasumber byphone dan talkshow, semua dalam satu sistem yang mudah digunakan.
+                data narasumber byphone dan talkshow, semua dalam satu aplikasi yang mudah digunakan.
             </p>
             <a href="{{ route('login') }}" class="hero-cta">
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -532,7 +532,7 @@
                     <path d="M6.5 11l3-3L6.5 5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                     <line x1="9.5" y1="8" x2="2" y2="8" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
                 </svg>
-                Masuk ke Sistem
+                Masuk ke Aplikasi
             </a>
             <button type="button" class="hero-cta-secondary" id="btnDaftarNarasumber">
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -634,7 +634,7 @@
 
     {{-- ── Footer ── --}}
     <footer>
-        &copy; {{ date('Y') }} {{ config('app.name', 'Radio RKB') }} — Sistem Manajemen Radio
+        &copy; {{ date('Y') }} {{ config('app.name', 'Radio RKB') }} — Aplikasi Manajemen Radio
     </footer>
 
 </div>
