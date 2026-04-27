@@ -541,6 +541,8 @@ function schedBadgeHTML(key) {
     if (!key) return '<span class="sched-none">—</span>';
     return `<span class="sched-badge">${SCHEDULE_LABELS[key] || key}</span>`;
 }
+
+function debounce(fn, delay) {
     let t;
     return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); };
 }
