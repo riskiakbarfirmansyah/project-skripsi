@@ -643,8 +643,56 @@ const RBYPHONE = '{{ url('gatekeeper/narasumber-byphone') }}';
 const RSTATS   = '{{ route('gatekeeper.stats') }}';
 const RSRSEARCH  = '{{ route('gatekeeper.siaran.search') }}';
 const RNRSEARCH  = '{{ route('gatekeeper.byphone.search') }}';
-const RSIARAN_START = (id) => `{{ url('gatekeeper/siaran') }}/${id}/start`;
-const RSIARAN_END   = (id) => `{{ url('gatekeeper/siaran') }}/${id}/end`;
+const RSIARAN_START  = (id) => `{{ url('gatekeeper/siaran') }}/${id}/start`;
+const RSIARAN_END    = (id) => `{{ url('gatekeeper/siaran') }}/${id}/end`;
+const RBPSCHEDULE    = '{{ url('gatekeeper/narasumber-byphone') }}';
+
+const BYPHONE_SCHEDULE_LABELS = {
+    'pendidikan_kota_kita': 'Pendidikan Kota Kita',
+    'youth_speak_up':       'Youth Speak Up',
+    'layanan_publik':       'Layanan Publik',
+    'anda_dan_keluarga':    'Anda dan Keluarga',
+    'dinkes_menyapa':       'Dinkes Menyapa',
+    'komunitas_bicara':     'Komunitas Bicara',
+    'indie_vibes':          'Indie Vibes',
+    'kojah_sastra':         'Kojah Sastra',
+    'inspirasi_bisnis':     'Inspirasi Bisnis',
+    'obrolan_agama_islam':  'Obrolan Seputar Agama Islam',
+    'ngosasi':              'Ngosasi (Ngobrol Asik Sana Sini)',
+};
+
+function byphoneScheduleDropdownHTML(id, currentValue) {
+    const opts = Object.entries(BYPHONE_SCHEDULE_LABELS).map(([val, lbl]) =>
+        `<option value="${val}" ${currentValue === val ? 'selected' : ''}>${lbl}</option>`
+    ).join('');
+    return `<select class="sched-select" onchange="updateScheduleByphone(${id}, this)">
+        <option value="">— Pilih Jadwal —</option>
+        ${opts}
+    </select>`;
+}
+
+function updateScheduleByphone(id, selectEl) {
+    const prevValue = selectEl.dataset.prevValue ?? selectEl.value;
+    selectEl.dataset.prevValue = selectEl.value;
+    selectEl.classList.add('saving');
+    apiFetch(RBPSCHEDULE + '/' + id + '/schedule', 'PATCH', {
+        byphone_schedule: selectEl.value || null,
+    }).then(d => {
+        selectEl.classList.remove('saving');
+        if (d.success) {
+            selectEl.dataset.prevValue = selectEl.value;
+            showFlash('Jadwal byphone berhasil disimpan.');
+        } else {
+            showFlash(d.message || 'Gagal menyimpan jadwal.', 'error');
+            selectEl.value = prevValue;
+        }
+    }).catch(function() {
+        selectEl.classList.remove('saving');
+        showFlash('Terjadi kesalahan, coba lagi.', 'error');
+        selectEl.value = prevValue;
+    });
+}
+
 // ── Stats refresh ──────────────────────────────────────
 function updateStats() {
     fetch(RSTATS, { headers: { Accept: 'application/json' } })
@@ -752,13 +800,14 @@ function doSearchNr() {
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
                     <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
+                    <td>${byphoneScheduleDropdownHTML(n.byphoneID, n.byphone_schedule)}</td>
                     <td><div class="abt">
                         <button class="bico" onclick="viewNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         <button class="bico" onclick="editNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
                         <button class="bico del" onclick="deleteNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
-            document.getElementById('nr-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('nr-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('nr-count').textContent = d.total + ' data';
             document.getElementById('nr-pag').textContent = 'Menampilkan ' + d.total + ' data';
         });

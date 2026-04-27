@@ -9,6 +9,16 @@
 .wa-link { display:inline-flex; align-items:center; gap:4px; color:#16a34a; text-decoration:none; font-weight:500; transition:color .15s; }
 .wa-link:hover { color:#15803d; text-decoration:underline; }
 
+/* ── Schedule badge (read-only) ── */
+.sched-badge {
+    display:inline-block; padding:2px 8px; border-radius:12px;
+    font-size:10px; font-weight:600;
+    background:#ccfbf1; color:#065f46;
+    white-space:nowrap; max-width:160px;
+    overflow:hidden; text-overflow:ellipsis;
+}
+.sched-none { color:#94a3b8; font-size:11px; }
+
 /* ── Broadcast card ── */
 .bc-card {
     background:#fff; border-radius:10px; border:1px solid #e2e8f0;
@@ -269,6 +279,7 @@
                         <th style="width:120px">Telepon</th>
                         <th>Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
+                        <th style="width:140px">Jadwal</th>
                         <th style="width:50px">Aksi</th>
                     </tr>
                 </thead>
@@ -287,13 +298,20 @@
                         <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                         <td>
+                            @if($n->byphone_schedule)
+                                <span class="sched-badge">{{ \App\Services\JadwalValidationService::SCHEDULES[$n->byphone_schedule] ?? $n->byphone_schedule }}</span>
+                            @else
+                                <span class="sched-none">—</span>
+                            @endif
+                        </td>
+                        <td>
                             <button class="bico" title="Detail" onclick="viewBp({{ $n->byphoneID }})">
                                 <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                             </button>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="7" class="empty">Belum ada data narasumber byphone.</td></tr>
+                    <tr><td colspan="8" class="empty">Belum ada data narasumber byphone.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -327,6 +345,7 @@
                         <th style="width:120px">Telepon</th>
                         <th>Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
+                        <th style="width:140px">Jadwal Talkshow</th>
                         <th style="width:50px">Aksi</th>
                     </tr>
                 </thead>
@@ -345,13 +364,20 @@
                         <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                         <td>
+                            @if($n->talkshow_schedule)
+                                <span class="sched-badge">{{ \App\Services\JadwalValidationService::SCHEDULES[$n->talkshow_schedule] ?? $n->talkshow_schedule }}</span>
+                            @else
+                                <span class="sched-none">—</span>
+                            @endif
+                        </td>
+                        <td>
                             <button class="bico" title="Detail" onclick="viewTs({{ $n->talkshowID }})">
                                 <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                             </button>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="7" class="empty">Belum ada data narasumber talkshow.</td></tr>
+                    <tr><td colspan="8" class="empty">Belum ada data narasumber talkshow.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -372,6 +398,7 @@
         <div class="dr"><span class="dl">Nomor Telepon</span><span class="dv" id="bv-nomor">—</span></div>
         <div class="dr"><span class="dl">Tema Wawancara</span><span class="dv" id="bv-tema">—</span></div>
         <div class="dr"><span class="dl">Waktu Wawancara</span><span class="dv" id="bv-waktu">—</span></div>
+        <div class="dr"><span class="dl">Jadwal Byphone</span><span class="dv" id="bv-jadwal">—</span></div>
         <div class="dr" style="flex-direction:column;">
             <span class="dl">Draft Pertanyaan</span>
             <div class="dbox" id="bv-draft">—</div>
@@ -392,6 +419,7 @@
         <div class="dr"><span class="dl">Nomor Telepon</span><span class="dv" id="tv-nomor">—</span></div>
         <div class="dr"><span class="dl">Tema Wawancara</span><span class="dv" id="tv-tema">—</span></div>
         <div class="dr"><span class="dl">Waktu Wawancara</span><span class="dv" id="tv-waktu">—</span></div>
+        <div class="dr"><span class="dl">Jadwal Talkshow</span><span class="dv" id="tv-jadwal">—</span></div>
         <div class="dr" style="flex-direction:column;">
             <span class="dl">Draft Pertanyaan</span>
             <div class="dbox" id="tv-draft">—</div>
@@ -495,7 +523,24 @@ const RTALKSHOW = '{{ url('penyiar/narasumber-talkshow') }}';
 const RBPSEARCH = '{{ route('penyiar.byphone.search') }}';
 const RTSSEARCH = '{{ route('penyiar.talkshow.search') }}';
 
-function debounce(fn, delay) {
+const SCHEDULE_LABELS = {
+    'pendidikan_kota_kita': 'Pendidikan Kota Kita',
+    'youth_speak_up':       'Youth Speak Up',
+    'layanan_publik':       'Layanan Publik',
+    'anda_dan_keluarga':    'Anda dan Keluarga',
+    'dinkes_menyapa':       'Dinkes Menyapa',
+    'komunitas_bicara':     'Komunitas Bicara',
+    'indie_vibes':          'Indie Vibes',
+    'kojah_sastra':         'Kojah Sastra',
+    'inspirasi_bisnis':     'Inspirasi Bisnis',
+    'obrolan_agama_islam':  'Obrolan Seputar Agama Islam',
+    'ngosasi':              'Ngosasi (Ngobrol Asik Sana Sini)',
+};
+
+function schedBadgeHTML(key) {
+    if (!key) return '<span class="sched-none">—</span>';
+    return `<span class="sched-badge">${SCHEDULE_LABELS[key] || key}</span>`;
+}
     let t;
     return function(...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), delay); };
 }
@@ -531,11 +576,12 @@ function doSearchBp() {
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
                     <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
+                    <td>${schedBadgeHTML(n.byphone_schedule)}</td>
                     <td><button class="bico" onclick="viewBp(${n.byphoneID})">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                     </button></td>
                 </tr>`).join('');
-            document.getElementById('bp-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('bp-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('bp-count').textContent = d.total + ' data';
             document.getElementById('bp-pag').textContent = 'Menampilkan ' + d.total + ' data';
         });
@@ -558,11 +604,12 @@ function doSearchTs() {
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
                     <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
+                    <td>${schedBadgeHTML(n.talkshow_schedule)}</td>
                     <td><button class="bico" onclick="viewTs(${n.talkshowID})">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                     </button></td>
                 </tr>`).join('');
-            document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('ts-count').textContent = d.total + ' data';
             document.getElementById('ts-pag').textContent = 'Menampilkan ' + d.total + ' data';
         });
@@ -578,6 +625,7 @@ function viewBp(id) {
         document.getElementById('bv-nomor').innerHTML      = waLinkHTML(n.nomor_telp);
         document.getElementById('bv-tema').textContent     = n.tema_wawancara;
         document.getElementById('bv-waktu').textContent    = formatDateTime(n.waktu_wawancara);
+        document.getElementById('bv-jadwal').innerHTML     = schedBadgeHTML(n.byphone_schedule);
         document.getElementById('bv-draft').textContent    = n.draft_pertanyaan || '(kosong)';
         openModal('m-bp-view');
     });
@@ -591,6 +639,7 @@ function viewTs(id) {
         document.getElementById('tv-nomor').innerHTML      = waLinkHTML(n.nomor_telp);
         document.getElementById('tv-tema').textContent     = n.tema_wawancara;
         document.getElementById('tv-waktu').textContent    = formatDateTime(n.waktu_wawancara);
+        document.getElementById('tv-jadwal').innerHTML     = schedBadgeHTML(n.talkshow_schedule);
         document.getElementById('tv-draft').textContent    = n.draft_pertanyaan || '(kosong)';
         openModal('m-ts-view');
     });
