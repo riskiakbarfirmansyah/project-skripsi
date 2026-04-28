@@ -278,7 +278,9 @@
             border: 1.5px solid rgba(255,255,255,0.85);
             border-radius: 24px;
             padding: 2rem 2.2rem;
-            width: 100%; max-width: 520px;
+            width: 100%; max-width: 580px;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
             box-shadow: 0 16px 60px rgba(120,100,200,0.18), 0 2px 0 rgba(255,255,255,0.9) inset;
             transform: translateY(24px) scale(0.97);
             transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
@@ -334,6 +336,7 @@
             font-size: 0.78rem; font-weight: 600; color: var(--text-mid);
         }
         .form-input, .form-textarea {
+            width: 100%;
             padding: 0.6rem 0.85rem;
             border: 1.5px solid rgba(124,108,224,0.2);
             border-radius: 10px;
@@ -341,6 +344,7 @@
             background: rgba(255,255,255,0.7);
             transition: border-color 0.18s, box-shadow 0.18s;
             outline: none;
+            box-sizing: border-box;
         }
         .form-input:focus, .form-textarea:focus {
             border-color: rgba(124,108,224,0.55);
