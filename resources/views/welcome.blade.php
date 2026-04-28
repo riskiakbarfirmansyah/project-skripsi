@@ -228,61 +228,6 @@
             100% { transform: scaleY(1);    }
         }
 
-        /* ── Features Section ── */
-        .features {
-            max-width: 1100px; margin: 0 auto 4rem;
-            padding: 0 2.5rem; width: 100%;
-        }
-        .features-label {
-            text-align: center;
-            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
-            color: var(--accent); text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-        .features-title {
-            text-align: center;
-            font-size: clamp(1.3rem, 3vw, 1.75rem);
-            font-weight: 700; color: var(--text-dark);
-            margin-bottom: 2rem;
-        }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.2rem;
-        }
-        .feat-card {
-            background: var(--card-bg);
-            border: 1.5px solid var(--card-border);
-            border-radius: 20px; padding: 1.8rem;
-            backdrop-filter: blur(24px) saturate(1.6);
-            box-shadow:
-                0 2px 0 rgba(255,255,255,0.8) inset,
-                0 12px 32px rgba(120,100,200,0.1);
-            transition: transform 0.22s, box-shadow 0.22s;
-        }
-        .feat-card:hover {
-            transform: translateY(-5px);
-            box-shadow:
-                0 2px 0 rgba(255,255,255,0.9) inset,
-                0 20px 48px rgba(120,100,200,0.18);
-        }
-        .feat-icon {
-            width: 44px; height: 44px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 1rem;
-        }
-        .feat-icon svg { width: 22px; height: 22px; }
-        .feat-icon-1 { background: rgba(124,108,224,0.12); color: var(--accent); }
-        .feat-icon-2 { background: rgba(100,180,255,0.15); color: #4a9fd4; }
-        .feat-icon-3 { background: rgba(100,220,180,0.15); color: #3aab8c; }
-        .feat-title {
-            font-size: 0.95rem; font-weight: 700; color: var(--text-dark);
-            margin-bottom: 0.4rem;
-        }
-        .feat-desc {
-            font-size: 0.83rem; color: var(--text-soft); line-height: 1.65;
-        }
-
         /* ── Footer ── */
         footer {
             text-align: center;
@@ -452,8 +397,6 @@
             .hero { flex-direction: column-reverse; text-align: center; padding: 2.5rem 1.5rem 2rem; gap: 2rem; }
             .hero-text { display: flex; flex-direction: column; align-items: center; }
             .hero-sub { max-width: 100%; }
-            .features-grid { grid-template-columns: 1fr; }
-            .features { padding: 0 1.5rem; }
             .navbar { padding: 0.9rem 1.2rem; }
             .form-grid { grid-template-columns: 1fr; }
         }
@@ -549,61 +492,6 @@
                 <div class="bar" style="height:40px; --dur:0.70s; --delay:0.00s;"></div>
                 <div class="bar" style="height:20px; --dur:1.2s;  --delay:0.25s;"></div>
             </div>
-        </div>
-    </section>
-
-    {{-- ── Features ── --}}
-    <section class="features">
-        <div class="features-label">Fitur Utama</div>
-        <div class="features-title">Semua Kebutuhan Siaran dalam Satu Platform</div>
-        <div class="features-grid">
-
-            <div class="feat-card">
-                <div class="feat-icon feat-icon-1">
-                    {{-- Broadcast / signal icon --}}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="2"/>
-                        <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-                        <path d="M7.76 7.76a6 6 0 0 0 0 8.49"/>
-                        <path d="M16.24 7.76a6 6 0 0 1 0 8.49"/>
-                    </svg>
-                </div>
-                <div class="feat-title">Informasi Siaran</div>
-                <div class="feat-desc">
-                    Catat dan kelola jadwal serta informasi program siaran secara terstruktur dan mudah dicari kapan saja.
-                </div>
-            </div>
-
-            <div class="feat-card">
-                <div class="feat-icon feat-icon-2">
-                    {{-- Phone icon --}}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.28 11.9 19.79 19.79 0 0 1 1.21 3.23 2 2 0 0 1 3.18 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.1 6.1l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                    </svg>
-                </div>
-                <div class="feat-title">Narasumber Byphone</div>
-                <div class="feat-desc">
-                    Simpan data narasumber yang dihubungi via telepon lengkap dengan instansi dan keterangan siaran.
-                </div>
-            </div>
-
-            <div class="feat-card">
-                <div class="feat-icon feat-icon-3">
-                    {{-- Microphone icon --}}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                        <line x1="12" y1="19" x2="12" y2="23"/>
-                        <line x1="8"  y1="23" x2="16" y2="23"/>
-                    </svg>
-                </div>
-                <div class="feat-title">Narasumber Talkshow</div>
-                <div class="feat-desc">
-                    Kelola data narasumber talkshow yang hadir langsung di studio dengan informasi lengkap dan terorganisir.
-                </div>
-            </div>
-
         </div>
     </section>
 
