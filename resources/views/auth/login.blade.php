@@ -226,7 +226,7 @@
             <div class="card-divider"></div>
 
             <div class="card-title">Selamat Datang</div>
-            <div class="card-sub">Masuk ke Aplikasi Manajemen Radio</div>
+            <div class="card-sub">Masuk ke Manajemen Radio</div>
 
             @if (session('status'))
                 <div class="status-msg">{{ session('status') }}</div>
