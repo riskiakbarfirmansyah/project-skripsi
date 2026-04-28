@@ -327,10 +327,9 @@
 
         /* Form */
         .form-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;
+            display: grid; grid-template-columns: 1fr; gap: 0.85rem;
         }
         .form-field { display: flex; flex-direction: column; gap: 0.3rem; }
-        .form-field.full { grid-column: 1 / -1; }
         .form-label {
             font-size: 0.78rem; font-weight: 600; color: var(--text-mid);
         }
@@ -398,7 +397,6 @@
             .hero-text { display: flex; flex-direction: column; align-items: center; }
             .hero-sub { max-width: 100%; }
             .navbar { padding: 0.9rem 1.2rem; }
-            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
