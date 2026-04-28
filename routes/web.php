@@ -20,6 +20,10 @@ Route::get('/', function () {
 | NARASUMBER SELF-REGISTRATION (Public — no login required)
 |--------------------------------------------------------------------------
 */
+Route::get('/daftar-narasumber', function () {
+    return view('daftar-narasumber');
+})->name('narasumber.register-page');
+
 Route::post('/daftar-narasumber', [NarasumberSelfRegistrationController::class, 'store'])
     ->name('narasumber.self-register');
 
