@@ -445,12 +445,16 @@
                 Aplikasi Manajemen Radio
             </div>
             <h1 class="hero-title">
-                Kelola Siaran &amp; Narasumber<br>
-                <em>Lebih Cepat, Lebih Rapi</em>
+                Selamat datang di<br>
+                <em>Aplikasi Manajemen Radio</em>
             </h1>
+            <p class="hero-sub" style="margin-bottom:0.5rem;">
+                Kelola operasional siaran lebih cepat dan terdokumentasi.
+            </p>
             <p class="hero-sub">
-                Platform manajemen terpadu untuk operator radio — catat informasi siaran,
-                data narasumber byphone dan talkshow, semua dalam satu aplikasi yang mudah digunakan.
+                Ingin menjadi narasumber di program kami? Daftarkan data Anda melalui tombol
+                <strong>"Daftar Sebagai Narasumber"</strong>. Tim kami akan meninjau pengajuan Anda
+                dan menghubungi Anda untuk kebutuhan <strong>byphone</strong> atau <strong>talkshow</strong>.
             </p>
             <button type="button" class="hero-cta-secondary" id="btnDaftarNarasumber">
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
