@@ -161,23 +161,6 @@
             line-height: 1.7; margin-bottom: 2rem; max-width: 460px;
         }
 
-        .hero-cta {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.78rem 1.8rem; border-radius: 12px; border: none;
-            font-family: inherit; font-size: 0.95rem; font-weight: 700;
-            cursor: pointer; text-decoration: none;
-            background: linear-gradient(135deg, #9b8af4 0%, #7ab3f5 100%);
-            color: #fff;
-            box-shadow: 0 4px 20px rgba(140,110,240,0.35), 0 1px 0 rgba(255,255,255,0.2) inset;
-            transition: transform 0.18s, box-shadow 0.2s;
-            animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        .hero-cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 28px rgba(140,110,240,0.42);
-        }
-        .hero-cta svg { width: 16px; height: 16px; }
-
         @keyframes rise {
             from { opacity: 0; transform: translateY(20px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -526,14 +509,6 @@
                 Platform manajemen terpadu untuk operator radio — catat informasi siaran,
                 data narasumber byphone dan talkshow, semua dalam satu aplikasi yang mudah digunakan.
             </p>
-            <a href="{{ route('login') }}" class="hero-cta">
-                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 2H12.5C13.3 2 14 2.7 14 3.5v9c0 .8-.7 1.5-1.5 1.5H10" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                    <path d="M6.5 11l3-3L6.5 5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <line x1="9.5" y1="8" x2="2" y2="8" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                </svg>
-                Masuk ke Aplikasi
-            </a>
             <button type="button" class="hero-cta-secondary" id="btnDaftarNarasumber">
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
