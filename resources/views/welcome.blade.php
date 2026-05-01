@@ -601,14 +601,6 @@
 <div class="modal-overlay" id="modalNarasumber" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-box">
 
-        {{-- Header --}}
-        <div class="modal-header">
-            <div>
-                <div class="modal-title" id="modalTitle">Daftar Sebagai Narasumber</div>
-                <div class="modal-subtitle">Isi data di bawah untuk mendaftar sebagai narasumber siaran</div>
-            </div>
-        </div>
-
         {{-- Success State --}}
         <div class="modal-success" id="modalSuccess">
             <div class="success-icon">
@@ -623,6 +615,14 @@
 
         {{-- Form --}}
         <div id="modalFormWrapper">
+            {{-- Header --}}
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalTitle">Daftar Sebagai Narasumber</div>
+                    <div class="modal-subtitle">Isi data di bawah untuk mendaftar sebagai narasumber siaran</div>
+                </div>
+            </div>
+
             {{-- Tabs --}}
             <div class="modal-tabs" role="tablist">
                 <button type="button" class="modal-tab active" id="tabByphone" role="tab" aria-selected="true" data-tipe="byphone">
