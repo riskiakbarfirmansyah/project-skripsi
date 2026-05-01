@@ -492,6 +492,8 @@
             .hero-text { display: flex; flex-direction: column; align-items: center; }
             .hero-sub { max-width: 100%; }
             .navbar { padding: 0.9rem 1.2rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-field.full { grid-column: auto; }
         }
     </style>
 </head>
