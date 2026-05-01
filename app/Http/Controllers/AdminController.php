@@ -28,20 +28,16 @@ class AdminController extends Controller
         $users = User::whereIn('role', self::ALLOWED_ROLES)
             ->orderBy('role')
             ->orderBy('name')
-            ->get();
+            ->paginate(15);
 
         $stats = [
-            'total_user'       => $users->count(),
-            'total_gatekeeper' => $users->where('role', 'gatekeeper')->count(),
-            'total_penyiar'    => $users->where('role', 'penyiar')->count(),
-            'total_pj_program' => $users->where('role', 'pj_program')->count(),
+            'total_user'       => User::whereIn('role', self::ALLOWED_ROLES)->count(),
+            'total_gatekeeper' => User::where('role', 'gatekeeper')->count(),
+            'total_penyiar'    => User::where('role', 'penyiar')->count(),
+            'total_pj_program' => User::where('role', 'pj_program')->count(),
         ];
 
-        $usersByRole = [
-            'gatekeeper' => $users->where('role', 'gatekeeper')->values(),
-            'penyiar'    => $users->where('role', 'penyiar')->values(),
-            'pj_program' => $users->where('role', 'pj_program')->values(),
-        ];
+        $usersByRole = [];
 
         return view('admin.dashboard', compact('users', 'stats', 'usersByRole'));
     }
@@ -225,12 +221,14 @@ class AdminController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users = $query->orderBy('role')->orderBy('name')->get();
+        $users = $query->orderBy('role')->orderBy('name')->paginate(15);
 
         return response()->json([
-            'success' => true,
-            'total'   => $users->count(),
-            'data'    => $users->map(fn($u) => [
+            'success'      => true,
+            'total'        => $users->total(),
+            'current_page' => $users->currentPage(),
+            'last_page'    => $users->lastPage(),
+            'data'         => collect($users->items())->map(fn($u) => [
                 'id'    => $u->id,
                 'name'  => $u->name,
                 'email' => $u->email,

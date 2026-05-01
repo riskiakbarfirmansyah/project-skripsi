@@ -1,7 +1,7 @@
 @extends('layouts.gatekeeper')
 
 @section('title', 'Dashboard')
-@section('page-title', 'Dashboard Gatekeeper')
+@section('page-title', '')
 @section('page-sub', 'Manajemen data siaran dan narasumber')
 
 @push('styles')
@@ -114,6 +114,16 @@
 }
 .sched-select:focus { outline: none; border-color: #0f766e; background: #fff; }
 .sched-select.saving { opacity: .6; pointer-events: none; }
+
+/* ── Schedule badge (read-only) ── */
+.sched-badge {
+    display:inline-block; padding:2px 8px; border-radius:12px;
+    font-size:10px; font-weight:600;
+    background:#ccfbf1; color:#065f46;
+    white-space:nowrap; max-width:160px;
+    overflow:hidden; text-overflow:ellipsis;
+}
+.sched-none { color:#94a3b8; font-size:11px; }
 </style>
 @endpush
 
@@ -188,7 +198,8 @@
                 </svg>
                 <input type="text" id="siaran-search" placeholder="Cari keterangan…" oninput="debounce(doSearchSiaran, 350)()">
             </div>
-            <input type="month" class="fsel" id="siaran-bulan" onchange="doSearchSiaran()">
+            <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
+            <input type="date" class="fsel" id="siaran-tanggal" onchange="doSearchSiaran()">
             <span class="rc" id="siaran-count">{{ $siaranList->count() }} data</span>
             <button class="btn-add b-blue" onclick="openModal('m-siaran-add')">
                 <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
@@ -205,22 +216,26 @@
             </button>
         </div>
 
+        <div style="font-weight:600;color:#64748b;font-size:13px;padding:0 8px 10px;">
+            Tabel Informasi Siaran
+        </div>
+
         <div style="overflow-x:auto;">
             <table>
                 <thead>
                     <tr>
-                        <th style="width:40px">#</th>
+                        <th style="width:60px">Nomor</th>
                         <th style="width:110px">Tanggal</th>
                         <th style="width:80px">Waktu</th>
                         <th>Keterangan</th>
                         <th style="width:110px">Status</th>
-                        <th style="width:130px">Aksi</th>
+                        <th style="width:180px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="siaran-tbody">
                     @forelse($siaranList as $i => $s)
                     <tr data-id="{{ $s->siaranID }}">
-                        <td class="mono">{{ $i + 1 }}</td>
+                        <td class="mono">{{ $siaranList->firstItem() + $i }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($s->tanggal)->format('d M Y') }}</td>
                         <td class="mono">{{ $s->waktu }}</td>
                         <td class="trunc" style="max-width:220px;">{{ $s->keterangan }}</td>
@@ -235,9 +250,6 @@
                         </td>
                         <td>
                             <div class="abt">
-                                <button class="bico" title="Detail" onclick="viewSiaran({{ $s->siaranID }})">
-                                    <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
-                                </button>
                                 @if($s->status === 'pending')
                                 <button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran({{ $s->siaranID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg>
@@ -249,6 +261,9 @@
                                     Selesai
                                 </button>
                                 @endif
+                                <button class="bico" title="Detail" onclick="viewSiaran({{ $s->siaranID }})">
+                                    <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+                                </button>
                                 <button class="bico" title="Edit" onclick="editSiaran({{ $s->siaranID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
                                 </button>
@@ -264,7 +279,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="pag" id="siaran-pag">Menampilkan {{ $siaranList->count() }} data</div>
+        <div class="pag" id="siaran-pag"></div>
     </div>
 </div>
 
@@ -277,8 +292,9 @@
                     <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.3"/>
                     <path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                 </svg>
-                <input type="text" id="nr-search" placeholder="Cari nama, instansi…" oninput="debounce(doSearchNr, 350)()">
+                <input type="text" id="nr-search" placeholder="Cari nama, instansi, tema, jadwal…" oninput="debounce(doSearchNr, 350)()">
             </div>
+            <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
             <input type="date" class="fsel" id="nr-tanggal" onchange="doSearchNr()">
             <span class="rc" id="nr-count">{{ $narasumberList->count() }} data</span>
             <button class="btn-add b-teal" onclick="openModal('m-nr-add')">
@@ -296,11 +312,15 @@
             </button>
         </div>
 
+        <div style="font-weight:600;color:#64748b;font-size:13px;padding:0 8px 10px;">
+            Tabel Narasumber Byphone
+        </div>
+
         <div style="overflow-x:auto;">
             <table>
                 <thead>
                     <tr>
-                        <th style="width:40px">#</th>
+                        <th style="width:60px">Nomor</th>
                         <th>Nama</th>
                         <th>Instansi</th>
                         <th style="width:120px">Nomor Telepon</th>
@@ -313,32 +333,20 @@
                 <tbody id="nr-tbody">
                     @forelse($narasumberList as $i => $n)
                     <tr data-id="{{ $n->byphoneID }}">
-                        <td class="mono">{{ $i + 1 }}</td>
+                        <td class="mono">{{ $narasumberList->firstItem() + $i }}</td>
                         <td>
-                            <div style="display:flex;align-items:center;gap:9px;">
-                                <div class="ini">{{ strtoupper(substr($n->nama, 0, 2)) }}</div>
-                                <div style="font-weight:600;font-size:13px;">{{ $n->nama }}</div>
-                            </div>
+                            <div style="font-weight:600;font-size:13px;">{{ $n->nama }}</div>
                         </td>
                         <td style="font-size:12px;color:#64748b;">{{ $n->instansi }}</td>
                         <td class="mono"><a href="{{ wa_link($n->nomor_telp) }}" target="_blank" rel="noopener" class="wa-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>{{ $n->nomor_telp }}</a></td>
-                        <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
+                        <td>{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                         <td>
-                            <select class="sched-select" onchange="updateScheduleByphone({{ $n->byphoneID }}, this)">
-                                <option value="">— Pilih Jenis Jadwal —</option>
-                                <option value="pendidikan_kota_kita" {{ $n->byphone_schedule === 'pendidikan_kota_kita' ? 'selected' : '' }}>Pendidikan Kota Kita</option>
-                                <option value="youth_speak_up" {{ $n->byphone_schedule === 'youth_speak_up' ? 'selected' : '' }}>Youth Speak Up</option>
-                                <option value="layanan_publik" {{ $n->byphone_schedule === 'layanan_publik' ? 'selected' : '' }}>Layanan Publik</option>
-                                <option value="anda_dan_keluarga" {{ $n->byphone_schedule === 'anda_dan_keluarga' ? 'selected' : '' }}>Anda dan Keluarga</option>
-                                <option value="dinkes_menyapa" {{ $n->byphone_schedule === 'dinkes_menyapa' ? 'selected' : '' }}>Dinkes Menyapa</option>
-                                <option value="komunitas_bicara" {{ $n->byphone_schedule === 'komunitas_bicara' ? 'selected' : '' }}>Komunitas Bicara</option>
-                                <option value="indie_vibes" {{ $n->byphone_schedule === 'indie_vibes' ? 'selected' : '' }}>Indie Vibes</option>
-                                <option value="kojah_sastra" {{ $n->byphone_schedule === 'kojah_sastra' ? 'selected' : '' }}>Kojah Sastra</option>
-                                <option value="inspirasi_bisnis" {{ $n->byphone_schedule === 'inspirasi_bisnis' ? 'selected' : '' }}>Inspirasi Bisnis</option>
-                                <option value="obrolan_agama_islam" {{ $n->byphone_schedule === 'obrolan_agama_islam' ? 'selected' : '' }}>Obrolan Seputar Agama Islam</option>
-                                <option value="ngosasi" {{ $n->byphone_schedule === 'ngosasi' ? 'selected' : '' }}>Ngosasi (Ngobrol Asik Sana Sini)</option>
-                            </select>
+                            @if($n->byphone_schedule)
+                                <span class="sched-badge">{{ \App\Services\JadwalValidationService::SCHEDULES[$n->byphone_schedule] ?? $n->byphone_schedule }}</span>
+                            @else
+                                <span class="sched-none">—</span>
+                            @endif
                         </td>
                         <td>
                             <div class="abt">
@@ -360,7 +368,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="pag" id="nr-pag">Menampilkan {{ $narasumberList->count() }} data</div>
+        <div class="pag" id="nr-pag"></div>
     </div>
 </div>
 
@@ -520,6 +528,23 @@
                 <input type="text" class="fi" id="ne-tema" required>
             </div>
             <div class="fg">
+                <label class="fl">Jenis Jadwal Byphone <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
+                <select class="fi" id="ne-jadwal">
+                    <option value="">— Pilih Jenis Jadwal —</option>
+                    <option value="pendidikan_kota_kita">Pendidikan Kota Kita</option>
+                    <option value="youth_speak_up">Youth Speak Up</option>
+                    <option value="layanan_publik">Layanan Publik</option>
+                    <option value="anda_dan_keluarga">Anda dan Keluarga</option>
+                    <option value="dinkes_menyapa">Dinkes Menyapa</option>
+                    <option value="komunitas_bicara">Komunitas Bicara</option>
+                    <option value="indie_vibes">Indie Vibes</option>
+                    <option value="kojah_sastra">Kojah Sastra</option>
+                    <option value="inspirasi_bisnis">Inspirasi Bisnis</option>
+                    <option value="obrolan_agama_islam">Obrolan Seputar Agama Islam</option>
+                    <option value="ngosasi">Ngosasi (Ngobrol Asik Sana Sini)</option>
+                </select>
+            </div>
+            <div class="fg">
                 <label class="fl">Draft Pertanyaan <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
                 <textarea class="fi" id="ne-draft" rows="3"></textarea>
             </div>
@@ -661,36 +686,9 @@ const BYPHONE_SCHEDULE_LABELS = {
     'ngosasi':              'Ngosasi (Ngobrol Asik Sana Sini)',
 };
 
-function byphoneScheduleDropdownHTML(id, currentValue) {
-    const opts = Object.entries(BYPHONE_SCHEDULE_LABELS).map(([val, lbl]) =>
-        `<option value="${val}" ${currentValue === val ? 'selected' : ''}>${lbl}</option>`
-    ).join('');
-    return `<select class="sched-select" onchange="updateScheduleByphone(${id}, this)">
-        <option value="">— Pilih Jadwal —</option>
-        ${opts}
-    </select>`;
-}
-
-function updateScheduleByphone(id, selectEl) {
-    const prevValue = selectEl.dataset.prevValue ?? selectEl.value;
-    selectEl.dataset.prevValue = selectEl.value;
-    selectEl.classList.add('saving');
-    apiFetch(RBPSCHEDULE + '/' + id + '/schedule', 'PATCH', {
-        byphone_schedule: selectEl.value || null,
-    }).then(d => {
-        selectEl.classList.remove('saving');
-        if (d.success) {
-            selectEl.dataset.prevValue = selectEl.value;
-            showFlash('Jadwal byphone berhasil disimpan.');
-        } else {
-            showFlash(d.message || 'Gagal menyimpan jadwal.', 'error');
-            selectEl.value = prevValue;
-        }
-    }).catch(function() {
-        selectEl.classList.remove('saving');
-        showFlash('Terjadi kesalahan, coba lagi.', 'error');
-        selectEl.value = prevValue;
-    });
+function schedBadgeHTML(key) {
+    if (!key) return '<span class="sched-none">—</span>';
+    return `<span class="sched-badge">${BYPHONE_SCHEDULE_LABELS[key] || key}</span>`;
 }
 
 // ── Stats refresh ──────────────────────────────────────
@@ -751,56 +749,84 @@ function siaranActionBtn(s) {
     return '';
 }
 
-function doSearchSiaran() {
-    const kw = document.getElementById('siaran-search').value;
-    const bm = document.getElementById('siaran-bulan').value;
-    let url = RSRSEARCH + '?keyword=' + encodeURIComponent(kw);
-    if (bm) {
-        const [y, m] = bm.split('-');
-        url += '&bulan=' + m + '&tahun=' + y;
+function renderPagination(d, fnName) {
+    if (d.last_page <= 1) return `Menampilkan ${d.total} data`;
+    
+    let html = `<div class="pagination-container">`;
+    if (d.current_page > 1) {
+        html += `<button class="page-btn" onclick="${fnName}(${d.current_page - 1})">«</button>`;
     }
+    
+    for (let i = 1; i <= d.last_page; i++) {
+        if (i === 1 || i === d.last_page || (i >= d.current_page - 2 && i <= d.current_page + 2)) {
+            let active = i === d.current_page ? 'active' : '';
+            html += `<button class="page-btn ${active}" onclick="${fnName}(${i})">${i}</button>`;
+        } else if (i === d.current_page - 3 || i === d.current_page + 3) {
+            html += `<span class="page-dots">...</span>`;
+        }
+    }
+
+    if (d.current_page < d.last_page) {
+        html += `<button class="page-btn" onclick="${fnName}(${d.current_page + 1})">»</button>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
+let siaranCurrentPage = 1;
+function doSearchSiaran(page = null) {
+    if (page !== null) siaranCurrentPage = page;
+    else siaranCurrentPage = 1;
+
+    const kw = document.getElementById('siaran-search').value;
+    const tg = document.getElementById('siaran-tanggal').value;
+    const url = RSRSEARCH + '?page=' + siaranCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((s, i) => `
                 <tr data-id="${s.siaranID}">
-                    <td class="mono">${i+1}</td>
+                    <td class="mono">${(siaranCurrentPage - 1) * 15 + i + 1}</td>
                     <td class="mono">${formatDate(s.tanggal)}</td>
                     <td class="mono">${s.waktu}</td>
                     <td class="trunc" style="max-width:220px;">${s.keterangan}</td>
                     <td>${siaranStatusBadge(s.status)}</td>
                     <td><div class="abt">
-                        <button class="bico" onclick="viewSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         ${siaranActionBtn(s)}
+                        <button class="bico" onclick="viewSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         <button class="bico" onclick="editSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
                         <button class="bico del" onclick="deleteSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
             document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('siaran-count').textContent = d.total + ' data';
-            document.getElementById('siaran-pag').textContent = 'Menampilkan ' + d.total + ' data';
+            document.getElementById('siaran-pag').innerHTML = renderPagination(d, 'doSearchSiaran');
         });
 }
 
 // ── Narasumber Search ─────────────────────────────────
-function doSearchNr() {
+let nrCurrentPage = 1;
+function doSearchNr(page = null) {
+    if (page !== null) nrCurrentPage = page;
+    else nrCurrentPage = 1;
+
     const kw = document.getElementById('nr-search').value;
     const tg = document.getElementById('nr-tanggal').value;
-    const url = RNRSEARCH + '?keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const url = RNRSEARCH + '?page=' + nrCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${i+1}</td>
-                    <td><div style="display:flex;align-items:center;gap:9px;"><div class="ini">${ini(n.nama)}</div><div style="font-weight:600;">${n.nama}</div></div></td>
+                    <td class="mono">${(nrCurrentPage - 1) * 15 + i + 1}</td>
+                    <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
-                    <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
+                    <td>${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
-                    <td>${byphoneScheduleDropdownHTML(n.byphoneID, n.byphone_schedule)}</td>
+                    <td>${schedBadgeHTML(n.byphone_schedule)}</td>
                     <td><div class="abt">
                         <button class="bico" onclick="viewNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         <button class="bico" onclick="editNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
@@ -809,7 +835,7 @@ function doSearchNr() {
                 </tr>`).join('');
             document.getElementById('nr-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('nr-count').textContent = d.total + ' data';
-            document.getElementById('nr-pag').textContent = 'Menampilkan ' + d.total + ' data';
+            document.getElementById('nr-pag').innerHTML = renderPagination(d, 'doSearchNr');
         });
 }
 
@@ -849,7 +875,7 @@ function submitSiaranAdd(e) {
         waktu:      document.getElementById('sa-waktu').value,
         keterangan: document.getElementById('sa-keterangan').value,
     }).then(d => {
-        if (d.success) { closeModal('m-siaran-add'); document.getElementById('sa-tanggal').closest('form').reset(); showFlash(d.message); doSearchSiaran(); updateStats(); }
+        if (d.success) { closeModal('m-siaran-add'); document.getElementById('sa-tanggal').closest('form').reset(); showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal menyimpan.', 'error');
     });
 }
@@ -861,7 +887,7 @@ function submitSiaranEdit(e) {
         waktu:      document.getElementById('se-waktu').value,
         keterangan: document.getElementById('se-keterangan').value,
     }).then(d => {
-        if (d.success) { closeModal('m-siaran-edit'); showFlash(d.message); doSearchSiaran(); updateStats(); }
+        if (d.success) { closeModal('m-siaran-edit'); showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal memperbarui.', 'error');
     });
 }
@@ -872,7 +898,7 @@ function deleteSiaran(id) {
         function(done) {
             apiFetch(RSIARAN + '/' + id, 'DELETE').then(d => {
                 done();
-                if (d.success) { showFlash(d.message); doSearchSiaran(); updateStats(); }
+                if (d.success) { showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
                 else showFlash(d.message || 'Gagal menghapus.', 'error');
             }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
         }
@@ -880,13 +906,13 @@ function deleteSiaran(id) {
 }
 function mulaiSiaran(id) {
     apiFetch(RSIARAN_START(id), 'POST').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(); updateStats(); }
+        if (d.success) { showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal memulai siaran.', 'error');
     });
 }
 function selesaiSiaran(id) {
     apiFetch(RSIARAN_END(id), 'POST').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(); updateStats(); }
+        if (d.success) { showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal mengakhiri siaran.', 'error');
     });
 }
@@ -915,6 +941,7 @@ function editNr(id) {
         document.getElementById('ne-nomor').value    = n.nomor_telp;
         document.getElementById('ne-tema').value     = n.tema_wawancara;
         document.getElementById('ne-waktu').value    = n.waktu_wawancara ? n.waktu_wawancara.replace(' ', 'T').substring(0, 16) : '';
+        document.getElementById('ne-jadwal').value   = n.byphone_schedule || '';
         document.getElementById('ne-draft').value    = n.draft_pertanyaan || '';
         openModal('m-nr-edit');
     });
@@ -929,7 +956,7 @@ function submitNrAdd(e) {
         waktu_wawancara: document.getElementById('na-waktu').value.replace('T', ' '),
         draft_pertanyaan: document.getElementById('na-draft').value,
     }).then(d => {
-        if (d.success) { closeModal('m-nr-add'); document.getElementById('na-nama').closest('form').reset(); showFlash(d.message); doSearchNr(); updateStats(); }
+        if (d.success) { closeModal('m-nr-add'); document.getElementById('na-nama').closest('form').reset(); showFlash(d.message); doSearchNr(nrCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal menyimpan.', 'error');
     });
 }
@@ -942,9 +969,10 @@ function submitNrEdit(e) {
         nomor_telp:      document.getElementById('ne-nomor').value,
         tema_wawancara:  document.getElementById('ne-tema').value,
         waktu_wawancara: document.getElementById('ne-waktu').value.replace('T', ' '),
+        byphone_schedule: document.getElementById('ne-jadwal').value || null,
         draft_pertanyaan: document.getElementById('ne-draft').value,
     }).then(d => {
-        if (d.success) { closeModal('m-nr-edit'); showFlash(d.message); doSearchNr(); updateStats(); }
+        if (d.success) { closeModal('m-nr-edit'); showFlash(d.message); doSearchNr(nrCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal memperbarui.', 'error');
     });
 }
@@ -955,7 +983,7 @@ function deleteNr(id) {
         function(done) {
             apiFetch(RBYPHONE + '/' + id, 'DELETE').then(d => {
                 done();
-                if (d.success) { showFlash(d.message); doSearchNr(); updateStats(); }
+                if (d.success) { showFlash(d.message); doSearchNr(nrCurrentPage); updateStats(); }
                 else showFlash(d.message || 'Gagal menghapus.', 'error');
             }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
         }
@@ -1012,5 +1040,10 @@ function doExportSiaran(period) {
     }, 2000);
     return false;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    doSearchSiaran(1);
+    doSearchNr(1);
+});
 </script>
 @endpush

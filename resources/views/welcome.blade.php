@@ -27,6 +27,22 @@
             overflow-x: hidden;
         }
 
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(124, 108, 224, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(124, 108, 224, 0.6);
+        }
+
         /* ── Aurora Background ── */
         .aurora-bg {
             position: fixed; inset: 0;
@@ -276,9 +292,10 @@
             background: rgba(255,255,255,0.92);
             backdrop-filter: blur(28px) saturate(1.8);
             border: 1.5px solid rgba(255,255,255,0.85);
-            border-radius: 24px;
-            padding: 2rem 2.2rem;
-            width: 100%; max-width: 520px;
+            border-radius: 20px;
+            padding: 1.5rem 1.8rem;
+            width: 100%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto;
             box-shadow: 0 16px 60px rgba(120,100,200,0.18), 0 2px 0 rgba(255,255,255,0.9) inset;
             transform: translateY(24px) scale(0.97);
             transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
@@ -288,7 +305,7 @@
         }
         .modal-header {
             display: flex; align-items: flex-start; justify-content: space-between;
-            margin-bottom: 1.4rem;
+            margin-bottom: 1rem;
         }
         .modal-title {
             font-size: 1.15rem; font-weight: 800; color: var(--text-dark);
@@ -309,7 +326,7 @@
             display: flex; gap: 0.4rem;
             background: rgba(124,108,224,0.07);
             border-radius: 12px; padding: 0.3rem;
-            margin-bottom: 1.4rem;
+            margin-bottom: 1rem;
         }
         .modal-tab {
             flex: 1; padding: 0.55rem 0.5rem;
@@ -327,7 +344,7 @@
 
         /* Form */
         .form-grid {
-            display: grid; grid-template-columns: 1fr; gap: 0.85rem;
+            display: grid; grid-template-columns: 1fr; gap: 0.75rem;
         }
         .form-field { display: flex; flex-direction: column; gap: 0.3rem; }
         .form-label {
@@ -349,8 +366,18 @@
         .form-textarea { resize: vertical; min-height: 72px; }
         .form-error { font-size: 0.75rem; color: #e05252; }
 
+        .form-btns {
+            display: flex; gap: 0.5rem; margin-top: 1rem;
+        }
+        .btn-cancel {
+            flex: 1; padding: 0.82rem; border-radius: 12px; border: none;
+            font-family: inherit; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; background: #f1f5f9; color: #64748b;
+            transition: background 0.18s, color 0.18s;
+        }
+        .btn-cancel:hover { background: #e2e8f0; color: #334155; }
         .btn-submit {
-            width: 100%; margin-top: 1.2rem;
+            flex: 1;
             padding: 0.82rem; border-radius: 12px; border: none;
             font-family: inherit; font-size: 0.95rem; font-weight: 700;
             cursor: pointer;
@@ -362,8 +389,76 @@
         .btn-submit:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(140,110,240,0.38);
+            background: #6a59d8;
         }
         .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+
+        .captcha-row {
+            margin-top: 1.2rem;
+            padding: 14px;
+            background: rgba(124, 108, 224, 0.03);
+            border: 1px solid rgba(124, 108, 224, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .captcha-label-wrap { flex: 1; }
+        .captcha-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .captcha-box {
+            background: #fff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            user-select: none;
+        }
+        .captcha-input-small {
+            width: 75px;
+            padding: 7px 10px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            color: var(--text-dark);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .captcha-input-small:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124, 108, 224, 0.1);
+        }
+        .captcha-refresh {
+            background: none; border: none; cursor: pointer; color: var(--text-soft);
+            padding: 5px; border-radius: 6px; transition: all 0.2s;
+            display: flex; align-items: center;
+        }
+        .captcha-refresh:hover {
+            color: var(--accent);
+            background: rgba(124, 108, 224, 0.1);
+        }
+        .captcha-refresh:hover svg {
+            transform: rotate(180deg);
+        }
+        .captcha-refresh svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
         /* Success state */
         .modal-success {
@@ -448,7 +543,7 @@
             <p class="hero-sub">
                 Ingin menjadi narasumber di program kami? Daftarkan data Anda melalui tombol
                 <strong>"Daftar Sebagai Narasumber"</strong>. Tim kami akan meninjau pengajuan Anda
-                dan menghubungi Anda untuk kebutuhan <strong>byphone</strong> atau <strong>talkshow</strong>.
+                dan menghubungi Anda untuk kebutuhan <strong>narasumber byphone</strong> atau <strong>narasumber talkshow</strong>.
             </p>
             <button type="button" class="hero-cta-secondary" id="btnDaftarNarasumber">
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -510,7 +605,6 @@
                 <div class="modal-title" id="modalTitle">Daftar Sebagai Narasumber</div>
                 <div class="modal-subtitle">Isi data di bawah untuk mendaftar sebagai narasumber siaran</div>
             </div>
-            <button class="modal-close" id="btnCloseModal" aria-label="Tutup">&times;</button>
         </div>
 
         {{-- Success State --}}
@@ -574,10 +668,30 @@
                     </div>
                 </div>
 
+                <div class="captcha-row">
+                    <div class="captcha-label-wrap">
+                        <label class="form-label" style="margin-bottom:0;" for="fieldCaptcha">Verifikasi Keamanan <span style="color:#e05252">*</span></label>
+                        <div style="font-size:11px; color:var(--text-soft); margin-top:2px;">Hitung angka untuk melanjutkan</div>
+                    </div>
+                    <div class="captcha-input-wrap">
+                        <div class="captcha-box">
+                            <span id="cap-n1">0</span> + <span id="cap-n2">0</span> =
+                        </div>
+                        <input type="number" class="captcha-input-small" id="fieldCaptcha" placeholder="?">
+                        <button type="button" class="captcha-refresh" onclick="generateCaptcha()" title="Ganti Kode">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <span class="form-error" id="errCaptcha" style="display:block; margin-top:4px; text-align:right;"></span>
+
                 <div class="form-error" id="errGeneral" style="margin-top:0.5rem;text-align:center;"></div>
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    Kirim Pendaftaran
-                </button>
+                <div class="form-btns">
+                    <button type="button" class="btn-cancel" id="btnCancelForm">Batal</button>
+                    <button type="submit" class="btn-submit" id="btnSubmit">Kirim Pendaftaran</button>
+                </div>
             </form>
         </div>
 
@@ -588,7 +702,6 @@
 (function () {
     const overlay      = document.getElementById('modalNarasumber');
     const btnOpen      = document.getElementById('btnDaftarNarasumber');
-    const btnClose     = document.getElementById('btnCloseModal');
     const btnCloseSucc = document.getElementById('btnCloseSuccess');
     const form         = document.getElementById('formDaftarNarasumber');
     const fieldTipe    = document.getElementById('fieldTipe');
@@ -596,6 +709,20 @@
     const successPanel = document.getElementById('modalSuccess');
     const successMsg   = document.getElementById('successMsg');
     const btnSubmit    = document.getElementById('btnSubmit');
+    const btnCancel    = document.getElementById('btnCancelForm');
+
+    // Captcha Logic
+    let captchaResult = 0;
+    function generateCaptcha() {
+        const n1 = Math.floor(Math.random() * 9) + 1;
+        const n2 = Math.floor(Math.random() * 9) + 1;
+        captchaResult = n1 + n2;
+        document.getElementById('cap-n1').textContent = n1;
+        document.getElementById('cap-n2').textContent = n2;
+        document.getElementById('fieldCaptcha').value = '';
+        document.getElementById('errCaptcha').textContent = '';
+    }
+    window.generateCaptcha = generateCaptcha;
 
     function openModal() {
         overlay.classList.add('active');
@@ -606,6 +733,7 @@
         form.reset();
         fieldTipe.value = 'byphone';
         setActiveTab('byphone');
+        generateCaptcha();
     }
 
     function closeModal() {
@@ -614,7 +742,7 @@
     }
 
     function clearErrors() {
-        ['errNama','errInstansi','errTelp','errTema','errWaktu','errGeneral'].forEach(function(id){
+        ['errNama','errInstansi','errTelp','errTema','errWaktu','errCaptcha','errGeneral'].forEach(function(id){
             var el = document.getElementById(id);
             if (el) el.textContent = '';
         });
@@ -638,7 +766,7 @@
 
     // Open / Close
     btnOpen.addEventListener('click', openModal);
-    btnClose.addEventListener('click', closeModal);
+    btnCancel.addEventListener('click', closeModal);
     btnCloseSucc.addEventListener('click', closeModal);
     overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
@@ -647,6 +775,14 @@
     form.addEventListener('submit', function(e){
         e.preventDefault();
         clearErrors();
+
+        // Validate Captcha
+        const userAns = parseInt(document.getElementById('fieldCaptcha').value);
+        if (isNaN(userAns) || userAns !== captchaResult) {
+            document.getElementById('errCaptcha').textContent = 'Jawaban salah. Silakan coba lagi.';
+            generateCaptcha();
+            return;
+        }
 
         var data = new FormData(form);
         // datetime-local input sends "YYYY-MM-DDTHH:MM"; normalise to "YYYY-MM-DD HH:MM"

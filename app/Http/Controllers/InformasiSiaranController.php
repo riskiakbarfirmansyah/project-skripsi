@@ -168,20 +168,18 @@ class InformasiSiaranController extends Controller
             });
         }
 
-        if ($request->filled('bulan')) {
-            $query->whereMonth('tanggal', $request->bulan);
+        if ($request->filled('tanggal')) {
+            $query->whereDate('tanggal', $request->tanggal);
         }
 
-        if ($request->filled('tahun')) {
-            $query->whereYear('tanggal', $request->tahun);
-        }
-
-        $list = $query->orderBy('tanggal', 'desc')->orderBy('waktu', 'desc')->get();
+        $list = $query->orderBy('tanggal', 'desc')->orderBy('waktu', 'desc')->paginate(15);
 
         return response()->json([
-            'success' => true,
-            'total'   => $list->count(),
-            'data'    => $list,
+            'success'      => true,
+            'total'        => $list->total(),
+            'current_page' => $list->currentPage(),
+            'last_page'    => $list->lastPage(),
+            'data'         => $list->items(),
         ]);
     }
 }

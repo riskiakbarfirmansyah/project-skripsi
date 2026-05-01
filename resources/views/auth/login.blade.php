@@ -86,11 +86,11 @@
 
         /* ── Card ── */
         .auth-card {
-            width: 100%; max-width: 440px;
+            width: 100%; max-width: 380px;
             background: var(--card-bg);
             border: 1.5px solid var(--card-border);
             border-radius: 28px;
-            padding: 2.8rem 2.4rem 2.4rem;
+            padding: 2.2rem 2rem 1.8rem;
             backdrop-filter: blur(36px) saturate(1.8);
             -webkit-backdrop-filter: blur(36px) saturate(1.8);
             box-shadow:
@@ -108,7 +108,7 @@
             display: flex; justify-content: center; align-items: center;
             margin-bottom: 1.2rem;
         }
-        .card-logo img { height: 48px; }
+        .card-logo img { height: 40px; }
         .card-divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(160,140,255,0.3), rgba(100,180,255,0.25), transparent);
@@ -139,8 +139,8 @@
             border: 1.5px solid var(--input-border);
             border-radius: 12px;
             color: var(--text-dark);
-            font-family: inherit; font-size: 0.93rem;
-            padding: 0.7rem 1rem;
+            font-family: inherit; font-size: 0.88rem;
+            padding: 0.65rem 0.9rem;
             transition: border-color 0.25s, box-shadow 0.25s, background 0.2s;
             outline: none;
             backdrop-filter: blur(8px);
@@ -180,8 +180,8 @@
             background: linear-gradient(135deg, #9b8af4 0%, #7ab3f5 100%);
             border: none; border-radius: 12px;
             color: #fff; font-family: inherit;
-            font-size: 0.93rem; font-weight: 600;
-            padding: 0.8rem 1.6rem; cursor: pointer;
+            font-size: 0.9rem; font-weight: 600;
+            padding: 0.7rem 1.4rem; cursor: pointer;
             letter-spacing: 0.03em;
             box-shadow: 0 4px 16px rgba(140,110,240,0.3), 0 1px 0 rgba(255,255,255,0.25) inset;
             transition: transform 0.18s, box-shadow 0.2s;

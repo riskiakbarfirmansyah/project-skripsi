@@ -25,18 +25,21 @@ class JadwalValidationService
     ];
 
     /**
-     * Check whether the given JAM (HH:MM extracted from waktu_wawancara)
+     * Check whether the given JAM (HH:MM) on a specific TANGGAL
      * is not already used by another scheduled talkshow narasumber.
      *
-     * Talkshow collides only with other talkshows.
+     * Same time on a different day is ALLOWED.
+     * Same time on the SAME day is BLOCKED.
      *
      * @param  string      $jam        Time string (HH:MM)
+     * @param  string      $tanggal    Date string (Y-m-d)
      * @param  int|null    $excludeId  talkshowID to exclude (for updates)
      * @return true|string             true if available, error message if not
      */
-    public function isJamTalkshowAvailable(string $jam, ?int $excludeId = null): true|string
+    public function isJamTalkshowAvailable(string $jam, string $tanggal, ?int $excludeId = null): true|string
     {
         $query = narasumbertalkshow::whereNotNull('talkshow_schedule')
+            ->whereDate('waktu_wawancara', $tanggal)
             ->whereRaw("TIME_FORMAT(waktu_wawancara, '%H:%i') = ?", [$jam]);
 
         if ($excludeId !== null) {
@@ -46,25 +49,28 @@ class JadwalValidationService
         $conflict = $query->first();
 
         if ($conflict) {
-            return "Jam {$jam} sudah digunakan oleh narasumber talkshow lain ({$conflict->nama}).";
+            return "Jam {$jam} pada tanggal tersebut sudah digunakan oleh narasumber talkshow lain ({$conflict->nama}).";
         }
 
         return true;
     }
 
     /**
-     * Check whether the given JAM (HH:MM extracted from waktu_wawancara)
+     * Check whether the given JAM (HH:MM) on a specific TANGGAL
      * is not already used by another scheduled byphone narasumber.
      *
-     * Byphone collides only with other byphones.
+     * Same time on a different day is ALLOWED.
+     * Same time on the SAME day is BLOCKED.
      *
      * @param  string      $jam        Time string (HH:MM)
+     * @param  string      $tanggal    Date string (Y-m-d)
      * @param  int|null    $excludeId  byphoneID to exclude (for updates)
      * @return true|string             true if available, error message if not
      */
-    public function isJamByphoneAvailable(string $jam, ?int $excludeId = null): true|string
+    public function isJamByphoneAvailable(string $jam, string $tanggal, ?int $excludeId = null): true|string
     {
         $query = narasumberbyphone::whereNotNull('byphone_schedule')
+            ->whereDate('waktu_wawancara', $tanggal)
             ->whereRaw("TIME_FORMAT(waktu_wawancara, '%H:%i') = ?", [$jam]);
 
         if ($excludeId !== null) {
@@ -74,7 +80,7 @@ class JadwalValidationService
         $conflict = $query->first();
 
         if ($conflict) {
-            return "Jam {$jam} sudah digunakan oleh narasumber byphone lain ({$conflict->nama}).";
+            return "Jam {$jam} pada tanggal tersebut sudah digunakan oleh narasumber byphone lain ({$conflict->nama}).";
         }
 
         return true;
@@ -90,4 +96,16 @@ class JadwalValidationService
     {
         return \Carbon\Carbon::parse($datetime)->format('H:i');
     }
+
+    /**
+     * Extract Y-m-d from a datetime string.
+     *
+     * @param  string  $datetime  e.g. "2026-04-19 19:00:00"
+     * @return string             e.g. "2026-04-19"
+     */
+    public function extractTanggal(string $datetime): string
+    {
+        return \Carbon\Carbon::parse($datetime)->format('Y-m-d');
+    }
 }
+

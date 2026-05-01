@@ -92,7 +92,7 @@
             position: sticky; top: 0; z-index: 50;
         }
         .tb-title { font-size: 15px; font-weight: 700; color: #0f172a; }
-        .tb-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .tb-sub { font-size: 14px; font-weight: 600; color: #1e293b; }
         .content { padding: 24px; }
 
         /* ── Stats grid ───────────────────────────────── */
@@ -165,7 +165,7 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 10px; font-weight: 700; color: #1d4ed8; flex-shrink: 0;
         }
-        .abt { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .abt { display: flex; align-items: center; gap: 5px; }
         .bico {
             width: 28px; height: 28px; border-radius: 6px;
             border: 1px solid #e2e8f0; background: transparent;
@@ -179,7 +179,17 @@
         .pag {
             padding: 11px 16px; border-top: 1px solid #e2e8f0;
             font-size: 12px; color: #64748b;
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .pagination-container { display: flex; align-items: center; gap: 4px; }
+        .page-btn {
+            padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 6px;
+            background: #fff; color: #475569; font-size: 12px; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .page-btn:hover:not(.active) { background: #f8fafc; border-color: #cbd5e1; }
+        .page-btn.active { background: #0284c7; color: #fff; border-color: #0284c7; cursor: default; }
+        .page-dots { padding: 4px 6px; color: #94a3b8; }
         .empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 13px; }
 
         /* ── Buttons ──────────────────────────────────── */
@@ -344,19 +354,6 @@
     </div>
 
     <div class="sb-nav">
-        <div class="nav-lbl">Menu</div>
-        <a href="{{ route('gatekeeper.dashboard') }}"
-           class="ni {{ request()->routeIs('gatekeeper.dashboard') ? 'active' : '' }}">
-            <svg viewBox="0 0 15 15" fill="none">
-                <rect x="1" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                <rect x="8.5" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                <rect x="1" y="8.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/>
-                <rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/>
-            </svg>
-            Dashboard
-        </a>
-
-        <div class="nav-lbl">Fitur</div>
         <a href="{{ route('gatekeeper.dashboard') }}#siaran"
            class="ni {{ request()->routeIs('gatekeeper.dashboard') && request()->get('tab') === 'siaran' ? 'active' : '' }}"
            onclick="showTab('siaran');return false;">

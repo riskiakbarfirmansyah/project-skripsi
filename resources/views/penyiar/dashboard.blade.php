@@ -1,7 +1,7 @@
 @extends('layouts.penyiar')
 
 @section('title', 'Dashboard')
-@section('page-title', 'Dashboard Penyiar')
+@section('page-title', '')
 @section('page-sub', 'Data narasumber byphone & talkshow')
 
 @push('styles')
@@ -263,17 +263,22 @@
                     <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.3"/>
                     <path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                 </svg>
-                <input type="text" id="bp-search" placeholder="Cari nama, instansi…" oninput="debounce(doSearchBp, 350)()">
+                <input type="text" id="bp-search" placeholder="Cari nama, instansi, tema, jadwal…" oninput="debounce(doSearchBp, 350)()">
             </div>
+            <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
             <input type="date" class="fsel" id="bp-tanggal" onchange="doSearchBp()">
             <span class="rc" id="bp-count">{{ $byphoneList->count() }} data</span>
+        </div>
+
+        <div style="font-weight:600;color:#64748b;font-size:13px;padding:0 8px 10px;">
+            Tabel Narasumber Byphone
         </div>
 
         <div style="overflow-x:auto;">
             <table>
                 <thead>
                     <tr>
-                        <th style="width:40px">#</th>
+                        <th style="width:60px">Nomor</th>
                         <th>Nama</th>
                         <th>Instansi</th>
                         <th style="width:120px">Telepon</th>
@@ -286,16 +291,13 @@
                 <tbody id="bp-tbody">
                     @forelse($byphoneList as $i => $n)
                     <tr>
-                        <td class="mono">{{ $i + 1 }}</td>
+                        <td class="mono">{{ $byphoneList->firstItem() + $i }}</td>
                         <td>
-                            <div style="display:flex;align-items:center;gap:9px;">
-                                <div class="ini">{{ strtoupper(substr($n->nama, 0, 2)) }}</div>
-                                <div style="font-weight:600;font-size:13px;">{{ $n->nama }}</div>
-                            </div>
+                            <div style="font-weight:600;font-size:13px;">{{ $n->nama }}</div>
                         </td>
                         <td style="font-size:12px;color:#64748b;">{{ $n->instansi }}</td>
                         <td class="mono"><a href="{{ wa_link($n->nomor_telp) }}" target="_blank" rel="noopener" class="wa-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>{{ $n->nomor_telp }}</a></td>
-                        <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
+                        <td>{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                         <td>
                             @if($n->byphone_schedule)
@@ -316,7 +318,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="pag" id="bp-pag">Menampilkan {{ $byphoneList->count() }} data</div>
+        <div class="pag" id="bp-pag"></div>
     </div>
 </div>
 
@@ -329,17 +331,22 @@
                     <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.3"/>
                     <path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                 </svg>
-                <input type="text" id="ts-search" placeholder="Cari nama, instansi…" oninput="debounce(doSearchTs, 350)()">
+                <input type="text" id="ts-search" placeholder="Cari nama, instansi, tema, jadwal…" oninput="debounce(doSearchTs, 350)()">
             </div>
+            <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
             <input type="date" class="fsel" id="ts-tanggal" onchange="doSearchTs()">
             <span class="rc" id="ts-count">{{ $talkshowList->count() }} data</span>
+        </div>
+
+        <div style="font-weight:600;color:#64748b;font-size:13px;padding:0 8px 10px;">
+            Tabel Narasumber Talkshow
         </div>
 
         <div style="overflow-x:auto;">
             <table>
                 <thead>
                     <tr>
-                        <th style="width:40px">#</th>
+                        <th style="width:60px">Nomor</th>
                         <th>Nama</th>
                         <th>Instansi</th>
                         <th style="width:120px">Telepon</th>
@@ -352,16 +359,13 @@
                 <tbody id="ts-tbody">
                     @forelse($talkshowList as $i => $n)
                     <tr>
-                        <td class="mono">{{ $i + 1 }}</td>
+                        <td class="mono">{{ $talkshowList->firstItem() + $i }}</td>
                         <td>
-                            <div style="display:flex;align-items:center;gap:9px;">
-                                <div class="ini">{{ strtoupper(substr($n->nama, 0, 2)) }}</div>
-                                <div style="font-weight:600;font-size:13px;">{{ $n->nama }}</div>
-                            </div>
+                            <div style="font-weight:600;font-size:13px;">{{ $n->nama }}</div>
                         </td>
                         <td style="font-size:12px;color:#64748b;">{{ $n->instansi }}</td>
                         <td class="mono"><a href="{{ wa_link($n->nomor_telp) }}" target="_blank" rel="noopener" class="wa-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>{{ $n->nomor_telp }}</a></td>
-                        <td class="trunc" style="max-width:180px;">{{ $n->tema_wawancara }}</td>
+                        <td>{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                         <td>
                             @if($n->talkshow_schedule)
@@ -382,7 +386,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="pag" id="ts-pag">Menampilkan {{ $talkshowList->count() }} data</div>
+        <div class="pag" id="ts-pag"></div>
     </div>
 </div>
 
@@ -561,22 +565,50 @@ function waLinkHTML(phone) {
     return `<a href="${waLink(phone)}" target="_blank" rel="noopener" class="wa-link">${WA_SVG}${phone}</a>`;
 }
 
+function renderPagination(d, fnName) {
+    if (d.last_page <= 1) return `Menampilkan ${d.total} data`;
+    
+    let html = `<div class="pagination-container">`;
+    if (d.current_page > 1) {
+        html += `<button class="page-btn" onclick="${fnName}(${d.current_page - 1})">«</button>`;
+    }
+    
+    for (let i = 1; i <= d.last_page; i++) {
+        if (i === 1 || i === d.last_page || (i >= d.current_page - 2 && i <= d.current_page + 2)) {
+            let active = i === d.current_page ? 'active' : '';
+            html += `<button class="page-btn ${active}" onclick="${fnName}(${i})">${i}</button>`;
+        } else if (i === d.current_page - 3 || i === d.current_page + 3) {
+            html += `<span class="page-dots">...</span>`;
+        }
+    }
+
+    if (d.current_page < d.last_page) {
+        html += `<button class="page-btn" onclick="${fnName}(${d.current_page + 1})">»</button>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
 // ── Byphone search ─────────────────────────────────────
-function doSearchBp() {
+let bpCurrentPage = 1;
+function doSearchBp(page = null) {
+    if (page !== null) bpCurrentPage = page;
+    else bpCurrentPage = 1;
+
     const kw = document.getElementById('bp-search').value;
     const tg = document.getElementById('bp-tanggal').value;
-    const url = RBPSEARCH + '?keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const url = RBPSEARCH + '?page=' + bpCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${i+1}</td>
-                    <td><div style="display:flex;align-items:center;gap:9px;"><div class="ini">${ini(n.nama)}</div><div style="font-weight:600;">${n.nama}</div></div></td>
+                    <td class="mono">${(bpCurrentPage - 1) * 15 + i + 1}</td>
+                    <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
-                    <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
+                    <td>${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
                     <td>${schedBadgeHTML(n.byphone_schedule)}</td>
                     <td><button class="bico" onclick="viewBp(${n.byphoneID})">
@@ -585,26 +617,30 @@ function doSearchBp() {
                 </tr>`).join('');
             document.getElementById('bp-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('bp-count').textContent = d.total + ' data';
-            document.getElementById('bp-pag').textContent = 'Menampilkan ' + d.total + ' data';
+            document.getElementById('bp-pag').innerHTML = renderPagination(d, 'doSearchBp');
         });
 }
 
 // ── Talkshow search ────────────────────────────────────
-function doSearchTs() {
+let tsCurrentPage = 1;
+function doSearchTs(page = null) {
+    if (page !== null) tsCurrentPage = page;
+    else tsCurrentPage = 1;
+
     const kw = document.getElementById('ts-search').value;
     const tg = document.getElementById('ts-tanggal').value;
-    const url = RTSSEARCH + '?keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const url = RTSSEARCH + '?page=' + tsCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${i+1}</td>
-                    <td><div style="display:flex;align-items:center;gap:9px;"><div class="ini">${ini(n.nama)}</div><div style="font-weight:600;">${n.nama}</div></div></td>
+                    <td class="mono">${(tsCurrentPage - 1) * 15 + i + 1}</td>
+                    <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
-                    <td class="trunc" style="max-width:180px;">${n.tema_wawancara}</td>
+                    <td>${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
                     <td>${schedBadgeHTML(n.talkshow_schedule)}</td>
                     <td><button class="bico" onclick="viewTs(${n.talkshowID})">
@@ -613,7 +649,7 @@ function doSearchTs() {
                 </tr>`).join('');
             document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('ts-count').textContent = d.total + ' data';
-            document.getElementById('ts-pag').textContent = 'Menampilkan ' + d.total + ' data';
+            document.getElementById('ts-pag').innerHTML = renderPagination(d, 'doSearchTs');
         });
 }
 

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Dashboard')
-@section('page-title', 'Dashboard Admin')
+@section('page-title', '')
 @section('page-sub', 'Manajemen pengguna aplikasi')
 
 @section('content')
@@ -79,11 +79,15 @@
         </button>
     </div>
 
+    <div style="font-weight:600;color:#64748b;font-size:13px;padding:0 8px 10px;">
+        Tabel Pengguna
+    </div>
+
     <div style="overflow-x:auto;">
         <table>
             <thead>
                 <tr>
-                    <th style="width:40px">#</th>
+                    <th style="width:60px">Nomor</th>
                     <th>Nama</th>
                     <th>Email</th>
                     <th style="width:110px">Role</th>
@@ -93,7 +97,7 @@
             <tbody id="user-tbody">
                 @forelse($users as $i => $u)
                 <tr data-id="{{ $u->id }}">
-                    <td class="mono">{{ $i + 1 }}</td>
+                    <td class="mono">{{ $users->firstItem() + $i }}</td>
                     <td>
                         <div style="display:flex;align-items:center;gap:9px;">
                             <div class="ini">{{ strtoupper(substr($u->name, 0, 2)) }}</div>
@@ -144,7 +148,7 @@
             </tbody>
         </table>
     </div>
-    <div class="pag" id="pag-info">Menampilkan {{ $users->count() }} pengguna</div>
+    <div class="pag" id="pag-info"></div>
 </div>
 
 {{-- ════════════════════ MODAL TAMBAH ════════════════════ --}}
@@ -329,7 +333,7 @@ function renderRows(users) {
     }
     tbody.innerHTML = users.map((u, i) => `
         <tr data-id="${u.id}">
-            <td class="mono">${i + 1}</td>
+            <td class="mono">${(userCurrentPage - 1) * 15 + i + 1}</td>
             <td>
                 <div style="display:flex;align-items:center;gap:9px;">
                     <div class="ini">${ini(u.name)}</div>
@@ -367,18 +371,46 @@ function filterRole(role) {
     doSearch();
 }
 
+function renderPagination(d, fnName) {
+    if (d.last_page <= 1) return `Menampilkan ${d.total} data`;
+    
+    let html = `<div class="pagination-container">`;
+    if (d.current_page > 1) {
+        html += `<button class="page-btn" onclick="${fnName}(${d.current_page - 1})">«</button>`;
+    }
+    
+    for (let i = 1; i <= d.last_page; i++) {
+        if (i === 1 || i === d.last_page || (i >= d.current_page - 2 && i <= d.current_page + 2)) {
+            let active = i === d.current_page ? 'active' : '';
+            html += `<button class="page-btn ${active}" onclick="${fnName}(${i})">${i}</button>`;
+        } else if (i === d.current_page - 3 || i === d.current_page + 3) {
+            html += `<span class="page-dots">...</span>`;
+        }
+    }
+
+    if (d.current_page < d.last_page) {
+        html += `<button class="page-btn" onclick="${fnName}(${d.current_page + 1})">»</button>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
 // ── Search ────────────────────────────────────────────
-function doSearch() {
+let userCurrentPage = 1;
+function doSearch(page = null) {
+    if (page !== null) userCurrentPage = page;
+    else userCurrentPage = 1;
+
     const kw   = document.getElementById('search-input').value;
     const role = document.getElementById('role-filter').value;
-    const url  = ROUTES.search + '?keyword=' + encodeURIComponent(kw) + '&role=' + encodeURIComponent(role);
+    const url  = ROUTES.search + '?page=' + userCurrentPage + '&keyword=' + encodeURIComponent(kw) + '&role=' + encodeURIComponent(role);
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (d.success) {
                 renderRows(d.data);
                 document.getElementById('result-count').textContent = d.total + ' pengguna';
-                document.getElementById('pag-info').textContent = 'Menampilkan ' + d.total + ' pengguna';
+                document.getElementById('pag-info').innerHTML = renderPagination(d, 'doSearch');
             }
         });
 }
@@ -433,7 +465,7 @@ function submitAdd(e) {
             closeModal('m-add');
             document.getElementById('form-add').reset();
             showFlash(d.message);
-            doSearch();
+            doSearch(userCurrentPage);
         } else {
             showErrors('add', d.errors || {});
         }
@@ -456,7 +488,7 @@ function submitEdit(e) {
         if (d.success) {
             closeModal('m-edit');
             showFlash(d.message);
-            doSearch();
+            doSearch(userCurrentPage);
         } else {
             showErrors('edit', d.errors || {});
         }
@@ -471,7 +503,7 @@ function deleteUser(id, name) {
         function(done) {
             apiFetch(ROUTES.delete + '/' + id, 'DELETE').then(d => {
                 done();
-                if (d.success) { showFlash(d.message); doSearch(); }
+                if (d.success) { showFlash(d.message); doSearch(userCurrentPage); }
                 else showFlash(d.message || 'Gagal menghapus.', 'error');
             }).catch(function() { done(); showFlash('Terjadi kesalahan, coba lagi.', 'error'); });
         }
@@ -527,5 +559,9 @@ function showErrors(prefix, errors) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    doSearch(1);
+});
 </script>
 @endpush
