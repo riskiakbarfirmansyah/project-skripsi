@@ -121,10 +121,10 @@
                     <th style="width:40px">#</th>
                     <th>Nama</th>
                     <th>Instansi</th>
-                    <th style="width:120px">Telepon</th>
+                    <th style="width:120px">Nomor Telepon</th>
                     <th>Tema Wawancara</th>
                     <th style="width:115px">Waktu</th>
-                    <th style="width:185px">Jadwal Talkshow</th>
+                    <th style="width:185px">Jenis Jadwal Talkshow</th>
                     <th style="width:80px">Aksi</th>
                 </tr>
             </thead>
@@ -144,7 +144,7 @@
                     <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
                     <td>
                         <select class="sched-select" onchange="updateSchedule({{ $n->talkshowID }}, this)">
-                            <option value="">— Pilih Jadwal —</option>
+                            <option value="">— Pilih Jenis Jadwal —</option>
                             <option value="pendidikan_kota_kita" {{ $n->talkshow_schedule === 'pendidikan_kota_kita' ? 'selected' : '' }}>Pendidikan Kota Kita</option>
                             <option value="youth_speak_up" {{ $n->talkshow_schedule === 'youth_speak_up' ? 'selected' : '' }}>Youth Speak Up</option>
                             <option value="layanan_publik" {{ $n->talkshow_schedule === 'layanan_publik' ? 'selected' : '' }}>Layanan Publik</option>

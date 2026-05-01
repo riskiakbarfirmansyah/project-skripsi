@@ -438,10 +438,6 @@
     {{-- ── Hero ── --}}
     <section class="hero">
         <div class="hero-text">
-            <div class="hero-badge">
-                <span class="dot"></span>
-                Aplikasi Manajemen Radio
-            </div>
             <h1 class="hero-title">
                 Selamat datang di<br>
                 <em>Aplikasi Manajemen Radio</em>
