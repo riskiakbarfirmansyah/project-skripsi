@@ -265,7 +265,7 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 16px rgba(124,108,224,0.12);
             transition: transform 0.18s, box-shadow 0.2s, background 0.2s;
-            margin-top: 0.75rem;
+            margin-top: 0.15rem;
             animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
         .hero-cta-secondary:hover {
