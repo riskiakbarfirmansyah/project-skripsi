@@ -176,6 +176,7 @@
             font-size: 11px; font-weight: 700; color: #64748b;
             background: #f8fafc; border-bottom: 1px solid #e2e8f0;
             text-transform: uppercase; letter-spacing: .05em;
+            white-space: nowrap;
         }
         tbody tr { border-bottom: 1px solid #f1f5f9; transition: background .1s; }
         tbody tr:last-child { border-bottom: none; }
@@ -349,8 +350,49 @@
         .modal-anim { animation: modalIn .2s ease-out; }
 
         @media (max-width: 768px) {
-            .sb { transform: translateX(-224px); transition: transform .2s; }
+            .sb { transform: translateX(-224px); transition: transform .25s ease; }
+            .sb.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.15); }
             .main { margin-left: 0; }
+            .content { padding: 14px; }
+            .topbar { padding: 10px 14px; }
+            .tb-title { font-size: 13px; }
+            .tb-sub { font-size: 12px; }
+            .tbar { gap: 6px; padding: 10px 12px; }
+            .sw { min-width: 100px; max-width: 100%; }
+            .btn-add { padding: 6px 10px; font-size: 11px; }
+            .btn-add svg { width: 11px; height: 11px; }
+            .fsel { font-size: 11px; padding: 6px 7px; }
+            .modal { width: 95vw; padding: 16px; }
+            .frow { grid-template-columns: 1fr; }
+            table { table-layout: auto; }
+            thead th { font-size: 10px; padding: 7px 8px; }
+            tbody td { font-size: 12px; padding: 8px; }
+            .pag { padding: 8px 12px; font-size: 11px; }
+            .rc { font-size: 11px; }
+        }
+        @media (max-width: 480px) {
+            .tbar { flex-direction: column; align-items: stretch; }
+            .sw { max-width: 100%; }
+            .rc { margin-left: 0; }
+            .btn-add { justify-content: center; width: 100%; }
+        }
+
+        /* ── Hamburger + Overlay ───────────────────────── */
+        .sb-toggle {
+            display: none; background: none; border: none;
+            cursor: pointer; padding: 6px; border-radius: 6px;
+            color: #475569; transition: background .15s;
+        }
+        .sb-toggle:hover { background: #f1f5f9; }
+        .sb-toggle svg { width: 20px; height: 20px; }
+        .sb-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,23,42,.4); z-index: 99;
+            opacity: 0; transition: opacity .25s;
+        }
+        .sb-overlay.active { display: block; opacity: 1; }
+        @media (max-width: 768px) {
+            .sb-toggle { display: flex; align-items: center; justify-content: center; }
         }
     </style>
     @stack('styles')
@@ -417,12 +459,19 @@
     </div>
 </div>
 
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
 {{-- ═══════════════════ MAIN ═══════════════════ --}}
 <div class="main">
     <div class="topbar">
-        <div>
-            <div class="tb-title" id="pg-title">@yield('page-title', 'Dashboard')</div>
-            <div class="tb-sub" id="pg-sub">@yield('page-sub', 'Data narasumber byphone & talkshow')</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" title="Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div>
+                <div class="tb-title" id="pg-title">@yield('page-title', 'Dashboard')</div>
+                <div class="tb-sub" id="pg-sub">@yield('page-sub', 'Data narasumber byphone & talkshow')</div>
+            </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
             <div style="font-size:12px;color:#64748b;" id="clk"></div>
@@ -624,6 +673,14 @@ function confirmDelete() {
     btn.disabled = true;
     document.getElementById('del-modal-btn-text').textContent = 'Menghapus...';
     _deleteCallback(function() { closeDeleteConfirm(); });
+}
+
+function toggleSidebar() {
+    const sb = document.querySelector('.sb');
+    const ov = document.getElementById('sb-overlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('active');
+    document.body.style.overflow = sb.classList.contains('open') ? 'hidden' : '';
 }
 </script>
 @stack('scripts')

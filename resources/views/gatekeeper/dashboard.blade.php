@@ -117,11 +117,9 @@
 
 /* ── Schedule badge (read-only) ── */
 .sched-badge {
-    display:inline-block; padding:2px 8px; border-radius:12px;
-    font-size:10px; font-weight:600;
-    background:#ccfbf1; color:#065f46;
-    white-space:nowrap; max-width:160px;
-    overflow:hidden; text-overflow:ellipsis;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 12px; font-size: 11px;
+    font-weight: 600; background: #ccfbf1; color: #065f46;
 }
 .sched-none { color:#94a3b8; font-size:11px; }
 
@@ -275,7 +273,7 @@
                         <th style="width:60px">Nomor</th>
                         <th style="width:110px">Tanggal</th>
                         <th style="width:80px">Waktu</th>
-                        <th>Keterangan</th>
+                        <th style="min-width:200px">Keterangan</th>
                         <th style="width:110px">Status</th>
                         <th style="width:180px">Aksi</th>
                     </tr>
@@ -381,13 +379,13 @@
                 <thead>
                     <tr>
                         <th style="width:60px">Nomor</th>
-                        <th>Nama</th>
-                        <th>Instansi</th>
-                        <th style="width:120px">Nomor Telepon</th>
-                        <th>Tema Wawancara</th>
+                        <th style="width:140px">Nama</th>
+                        <th style="width:140px">Instansi</th>
+                        <th style="width:120px">No. Telepon</th>
+                        <th style="width:200px">Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
-                        <th style="width:185px">Jenis Jadwal Byphone</th>
-                        <th style="width:80px">Aksi</th>
+                        <th style="width:150px">Status Jadwal</th>
+                        <th style="width:180px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="nr-tbody">

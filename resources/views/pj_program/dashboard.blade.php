@@ -172,13 +172,13 @@
             <thead>
                 <tr>
                     <th style="width:60px">Nomor</th>
-                    <th>Nama</th>
-                    <th>Instansi</th>
-                    <th style="width:120px">Nomor Telepon</th>
-                    <th>Tema Wawancara</th>
+                    <th style="width:140px">Nama</th>
+                    <th style="width:140px">Instansi</th>
+                    <th style="width:120px">No. Telepon</th>
+                    <th style="width:200px">Tema Wawancara</th>
                     <th style="width:115px">Waktu</th>
-                    <th style="width:185px">Jenis Jadwal Talkshow</th>
-                    <th style="width:80px">Aksi</th>
+                    <th style="width:150px">Status Jadwal</th>
+                    <th style="width:180px">Aksi</th>
                 </tr>
             </thead>
             <tbody id="ts-tbody">
