@@ -124,6 +124,62 @@
     overflow:hidden; text-overflow:ellipsis;
 }
 .sched-none { color:#94a3b8; font-size:11px; }
+
+/* ── Custom date filter ── */
+.date-filter-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    color: #374151;
+    white-space: nowrap;
+    transition: border-color .15s, background .15s;
+    min-width: 148px;
+    user-select: none;
+}
+.date-filter-wrap:hover { border-color: #94a3b8; }
+.date-filter-wrap.has-value { border-color: #6366f1; background: #f5f3ff; color: #4338ca; font-weight: 600; }
+.date-filter-wrap input[type="date"] {
+    position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;
+}
+.date-clear-btn {
+    background: none; border: none; cursor: pointer;
+    color: #94a3b8; font-size: 15px; line-height: 1;
+    padding: 0 0 0 4px; margin-left: auto;
+    transition: color .15s;
+}
+.date-clear-btn:hover { color: #ef4444; }
+
+/* ── Date input (form modal) ── */
+.date-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color .15s, box-shadow .15s;
+    user-select: none;
+}
+.date-input-wrap:hover { border-color: #94a3b8; }
+.date-input-wrap.has-value { border-color: #6366f1; }
+.date-input-wrap input[type="date"],
+.date-input-wrap input[type="datetime-local"] {
+    position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;
+}
+.date-disp { font-size: 13px; color: #0f172a; flex: 1; }
+.date-disp.ph { color: #94a3b8; }
 </style>
 @endpush
 
@@ -199,7 +255,12 @@
                 <input type="text" id="siaran-search" placeholder="Cari keterangan…" oninput="debounce(doSearchSiaran, 350)()">
             </div>
             <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
-            <input type="date" class="fsel" id="siaran-tanggal" onchange="doSearchSiaran()">
+            <div class="date-filter-wrap" id="siaran-tanggal-wrap" onclick="triggerDatePicker('siaran-tanggal')">
+                <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                <span id="siaran-tanggal-lbl">Semua tanggal</span>
+                <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('siaran-tanggal','siaran-tanggal-lbl','siaran-tanggal-wrap',doSearchSiaran)">×</button>
+                <input type="date" id="siaran-tanggal" onchange="syncDateDisplay('siaran-tanggal-lbl','siaran-tanggal-wrap',this.value);doSearchSiaran()">
+            </div>
             <span class="rc" id="siaran-count">{{ $siaranList->count() }} data</span>
             <button class="btn-add b-blue" onclick="openModal('m-siaran-add')">
                 <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
@@ -236,7 +297,7 @@
                     @forelse($siaranList as $i => $s)
                     <tr data-id="{{ $s->siaranID }}">
                         <td class="mono">{{ $siaranList->firstItem() + $i }}</td>
-                        <td class="mono">{{ \Carbon\Carbon::parse($s->tanggal)->format('d M Y') }}</td>
+                        <td class="mono">{{ format_tanggal_id($s->tanggal) }}</td>
                         <td class="mono">{{ $s->waktu }}</td>
                         <td class="trunc" style="max-width:220px;">{{ $s->keterangan }}</td>
                         <td>
@@ -295,7 +356,12 @@
                 <input type="text" id="nr-search" placeholder="Cari nama, instansi, tema, jadwal…" oninput="debounce(doSearchNr, 350)()">
             </div>
             <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
-            <input type="date" class="fsel" id="nr-tanggal" onchange="doSearchNr()">
+            <div class="date-filter-wrap" id="nr-tanggal-wrap" onclick="triggerDatePicker('nr-tanggal')">
+                <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                <span id="nr-tanggal-lbl">Semua tanggal</span>
+                <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('nr-tanggal','nr-tanggal-lbl','nr-tanggal-wrap',doSearchNr)">×</button>
+                <input type="date" id="nr-tanggal" onchange="syncDateDisplay('nr-tanggal-lbl','nr-tanggal-wrap',this.value);doSearchNr()">
+            </div>
             <span class="rc" id="nr-count">{{ $narasumberList->count() }} data</span>
             <button class="btn-add b-teal" onclick="openModal('m-nr-add')">
                 <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
@@ -340,7 +406,7 @@
                         <td style="font-size:12px;color:#64748b;">{{ $n->instansi }}</td>
                         <td class="mono"><a href="{{ wa_link($n->nomor_telp) }}" target="_blank" rel="noopener" class="wa-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>{{ $n->nomor_telp }}</a></td>
                         <td>{{ $n->tema_wawancara }}</td>
-                        <td class="mono">{{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('d M Y H:i') }}</td>
+                        <td class="mono">{{ format_tanggal_id($n->waktu_wawancara) }} {{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('H:i') }}</td>
                         <td>
                             @if($n->byphone_schedule)
                                 <span class="sched-badge">{{ \App\Services\JadwalValidationService::SCHEDULES[$n->byphone_schedule] ?? $n->byphone_schedule }}</span>
@@ -383,7 +449,11 @@
             <div class="frow">
                 <div class="fg">
                     <label class="fl">Tanggal</label>
-                    <input type="date" class="fi" id="sa-tanggal" required>
+                    <div class="date-input-wrap" id="sa-tanggal-wrap" onclick="triggerDatePicker('sa-tanggal')">
+                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                        <span class="date-disp ph" id="sa-tanggal-lbl">Pilih tanggal…</span>
+                        <input type="date" id="sa-tanggal" onchange="syncFormDate('sa-tanggal-lbl','sa-tanggal-wrap',this.value)">
+                    </div>
                 </div>
                 <div class="fg">
                     <label class="fl">Waktu</label>
@@ -413,7 +483,11 @@
             <div class="frow">
                 <div class="fg">
                     <label class="fl">Tanggal</label>
-                    <input type="date" class="fi" id="se-tanggal" required>
+                    <div class="date-input-wrap" id="se-tanggal-wrap" onclick="triggerDatePicker('se-tanggal')">
+                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                        <span class="date-disp ph" id="se-tanggal-lbl">Pilih tanggal…</span>
+                        <input type="date" id="se-tanggal" onchange="syncFormDate('se-tanggal-lbl','se-tanggal-wrap',this.value)">
+                    </div>
                 </div>
                 <div class="fg">
                     <label class="fl">Waktu</label>
@@ -476,7 +550,11 @@
                 </div>
                 <div class="fg">
                     <label class="fl">Waktu Wawancara</label>
-                    <input type="datetime-local" class="fi" id="na-waktu" required>
+                    <div class="date-input-wrap" id="na-waktu-wrap" onclick="triggerDatePicker('na-waktu')">
+                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                        <span class="date-disp ph" id="na-waktu-lbl">Pilih tanggal &amp; waktu…</span>
+                        <input type="datetime-local" id="na-waktu" onchange="syncFormDatetime('na-waktu-lbl','na-waktu-wrap',this.value)">
+                    </div>
                 </div>
             </div>
             <div class="fg">
@@ -520,7 +598,11 @@
                 </div>
                 <div class="fg">
                     <label class="fl">Waktu Wawancara</label>
-                    <input type="datetime-local" class="fi" id="ne-waktu" required>
+                    <div class="date-input-wrap" id="ne-waktu-wrap" onclick="triggerDatePicker('ne-waktu')">
+                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                        <span class="date-disp ph" id="ne-waktu-lbl">Pilih tanggal &amp; waktu…</span>
+                        <input type="datetime-local" id="ne-waktu" onchange="syncFormDatetime('ne-waktu-lbl','ne-waktu-wrap',this.value)">
+                    </div>
                 </div>
             </div>
             <div class="fg">
@@ -863,6 +945,7 @@ function editSiaran(id) {
         if (!d.success) return;
         document.getElementById('se-id').value        = d.data.siaranID;
         document.getElementById('se-tanggal').value   = d.data.tanggal;
+        syncFormDate('se-tanggal-lbl', 'se-tanggal-wrap', d.data.tanggal);
         document.getElementById('se-waktu').value      = d.data.waktu;
         document.getElementById('se-keterangan').value = d.data.keterangan;
         openModal('m-siaran-edit');
@@ -940,7 +1023,9 @@ function editNr(id) {
         document.getElementById('ne-instansi').value = n.instansi;
         document.getElementById('ne-nomor').value    = n.nomor_telp;
         document.getElementById('ne-tema').value     = n.tema_wawancara;
-        document.getElementById('ne-waktu').value    = n.waktu_wawancara ? n.waktu_wawancara.replace(' ', 'T').substring(0, 16) : '';
+        const wVal = n.waktu_wawancara ? n.waktu_wawancara.replace(' ', 'T').substring(0, 16) : '';
+        document.getElementById('ne-waktu').value    = wVal;
+        syncFormDatetime('ne-waktu-lbl', 'ne-waktu-wrap', wVal);
         document.getElementById('ne-jadwal').value   = n.byphone_schedule || '';
         document.getElementById('ne-draft').value    = n.draft_pertanyaan || '';
         openModal('m-nr-edit');
@@ -991,16 +1076,18 @@ function deleteNr(id) {
 }
 
 // ── Date helpers ──────────────────────────────────────
+const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 function formatDate(d) {
     if (!d) return '—';
     const dt = new Date(d);
-    return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+    return dt.getDate() + '/' + BULAN_ID[dt.getMonth()] + '/' + dt.getFullYear();
 }
 function formatDateTime(d) {
     if (!d) return '—';
     const dt = new Date(d.replace(' ', 'T'));
-    return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
-        + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+    const tgl = dt.getDate() + '/' + BULAN_ID[dt.getMonth()] + '/' + dt.getFullYear();
+    const jam = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+    return tgl + ' ' + jam;
 }
 
 // ── Export Excel ──────────────────────────────────────
@@ -1045,5 +1132,62 @@ document.addEventListener('DOMContentLoaded', () => {
     doSearchSiaran(1);
     doSearchNr(1);
 });
+
+// ── Form date input helpers ─────────────────────────
+function syncFormDate(lblId, wrapId, val) {
+    const lbl  = document.getElementById(lblId);
+    const wrap = document.getElementById(wrapId);
+    if (val) {
+        const dt = new Date(val + 'T00:00:00');
+        lbl.textContent = dt.getDate() + '/' + BULAN_FILTER[dt.getMonth()] + '/' + dt.getFullYear();
+        lbl.classList.remove('ph');
+        if (wrap) wrap.classList.add('has-value');
+    } else {
+        lbl.textContent = 'Pilih tanggal…';
+        lbl.classList.add('ph');
+        if (wrap) wrap.classList.remove('has-value');
+    }
+}
+function syncFormDatetime(lblId, wrapId, val) {
+    const lbl  = document.getElementById(lblId);
+    const wrap = document.getElementById(wrapId);
+    if (val) {
+        const dt  = new Date(val);
+        const tgl = dt.getDate() + '/' + BULAN_FILTER[dt.getMonth()] + '/' + dt.getFullYear();
+        const jam = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+        lbl.textContent = tgl + ' ' + jam;
+        lbl.classList.remove('ph');
+        if (wrap) wrap.classList.add('has-value');
+    } else {
+        lbl.textContent = 'Pilih tanggal & waktu…';
+        lbl.classList.add('ph');
+        if (wrap) wrap.classList.remove('has-value');
+    }
+}
+const BULAN_FILTER = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function syncDateDisplay(lblId, wrapId, rawValue) {
+    const lbl  = document.getElementById(lblId);
+    const wrap = document.getElementById(wrapId);
+    const btn  = wrap ? wrap.querySelector('.date-clear-btn') : null;
+    if (rawValue) {
+        const dt = new Date(rawValue + 'T00:00:00');
+        lbl.textContent = dt.getDate() + '/' + BULAN_FILTER[dt.getMonth()] + '/' + dt.getFullYear();
+        if (wrap) wrap.classList.add('has-value');
+        if (btn)  btn.style.display = 'inline';
+    } else {
+        lbl.textContent = 'Semua tanggal';
+        if (wrap) wrap.classList.remove('has-value');
+        if (btn)  btn.style.display = 'none';
+    }
+}
+function triggerDatePicker(inputId) {
+    const inp = document.getElementById(inputId);
+    if (inp) { if (inp.showPicker) inp.showPicker(); else inp.click(); }
+}
+function clearDateFilter(inputId, lblId, wrapId, searchFn) {
+    document.getElementById(inputId).value = '';
+    syncDateDisplay(lblId, wrapId, '');
+    searchFn();
+}
 </script>
 @endpush

@@ -58,8 +58,8 @@ class AdminController extends Controller
                 'name'       => $user->name,
                 'email'      => $user->email,
                 'role'       => $user->role,
-                'created_at' => $user->created_at->translatedFormat('d M Y, H:i'),
-                'updated_at' => $user->updated_at->translatedFormat('d M Y, H:i'),
+                'created_at' => format_tanggal_id($user->created_at) . ', ' . $user->created_at->format('H:i'),
+                'updated_at' => format_tanggal_id($user->updated_at) . ', ' . $user->updated_at->format('H:i'),
             ],
         ]);
     }
