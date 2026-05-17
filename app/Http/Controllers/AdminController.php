@@ -221,7 +221,8 @@ class AdminController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users = $query->orderBy('role')->orderBy('name')->paginate(15);
+        $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
+        $users = $query->orderBy('role')->orderBy('name')->paginate($perPage);
 
         return response()->json([
             'success'      => true,

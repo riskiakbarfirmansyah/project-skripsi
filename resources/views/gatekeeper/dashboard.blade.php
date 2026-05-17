@@ -183,55 +183,35 @@
 </style>
 @endpush
 
-@section('content')
-
-{{-- ── Stats ── --}}
-<div class="sg">
-    <div class="sc">
-        <div class="sc-ico" style="background:#dbeafe;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="2.8" stroke="#1e40af" stroke-width="1.3"/>
-                <circle cx="7.5" cy="7.5" r="6" stroke="#1e40af" stroke-width="1.3"/>
-            </svg>
+@section('sidebar-stats')
+<div class="sb-stats">
+    <div class="sb-stats-title">Ringkasan</div>
+    <div class="sb-stats-grid">
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#dbeafe;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2.8" stroke="#1e40af" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="6" stroke="#1e40af" stroke-width="1.3"/></svg></div>
+            <div class="sb-sc-val" id="stat-total-siaran">{{ $stats['total_siaran'] }}</div>
+            <div class="sb-sc-lbl">Siaran</div>
         </div>
-        <div class="sc-lbl">Total Siaran</div>
-        <div class="sc-val" id="stat-total-siaran">{{ $stats['total_siaran'] }}</div>
-        <div class="sc-sub">Semua data siaran</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#d1fae5;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="4.5" r="2.5" stroke="#065f46" stroke-width="1.3"/>
-                <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#065f46" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#d1fae5;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4.5" r="2.5" stroke="#065f46" stroke-width="1.3"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#065f46" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val" id="stat-total-narasumber">{{ $stats['total_narasumber'] }}</div>
+            <div class="sb-sc-lbl">Narasumber</div>
         </div>
-        <div class="sc-lbl">Total Narasumber</div>
-        <div class="sc-val" id="stat-total-narasumber">{{ $stats['total_narasumber'] }}</div>
-        <div class="sc-sub">Narasumber byphone</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#fef3c7;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <rect x="1.5" y="2.5" width="12" height="10" rx="1.5" stroke="#92400e" stroke-width="1.3"/>
-                <path d="M4.5 6h6M4.5 8.5h4" stroke="#92400e" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="10" rx="1.5" stroke="#92400e" stroke-width="1.3"/><path d="M4.5 6h6M4.5 8.5h4" stroke="#92400e" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val" id="stat-siaran-hari-ini">{{ $stats['siaran_hari_ini'] }}</div>
+            <div class="sb-sc-lbl">Siaran Ini</div>
         </div>
-        <div class="sc-lbl">Siaran Hari Ini</div>
-        <div class="sc-val" id="stat-siaran-hari-ini">{{ $stats['siaran_hari_ini'] }}</div>
-        <div class="sc-sub">Jadwal siaran hari ini</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#fce7f3;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/>
-                <path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val" id="stat-wawancara-hari-ini">{{ $stats['wawancara_hari_ini'] }}</div>
+            <div class="sb-sc-lbl">Byphone Ini</div>
         </div>
-        <div class="sc-lbl">Wawancara Hari Ini</div>
-        <div class="sc-val" id="stat-wawancara-hari-ini">{{ $stats['wawancara_hari_ini'] }}</div>
-        <div class="sc-sub">Jadwal wawancara hari ini</div>
     </div>
 </div>
+@endsection
+
+@section('content')
 
 {{-- ── Tabs ── --}}
 <div class="tabs">
@@ -261,6 +241,13 @@
                 <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('siaran-tanggal','siaran-tanggal-lbl','siaran-tanggal-wrap',doSearchSiaran)">×</button>
                 <input type="date" id="siaran-tanggal" onchange="syncDateDisplay('siaran-tanggal-lbl','siaran-tanggal-wrap',this.value);doSearchSiaran()">
             </div>
+            <select class="fsel" id="siaran-limit" onchange="doSearchSiaran()">
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
             <span class="rc" id="siaran-count">{{ $siaranList->count() }} data</span>
             <button class="btn-add b-blue" onclick="openModal('m-siaran-add')">
                 <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
@@ -362,6 +349,13 @@
                 <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('nr-tanggal','nr-tanggal-lbl','nr-tanggal-wrap',doSearchNr)">×</button>
                 <input type="date" id="nr-tanggal" onchange="syncDateDisplay('nr-tanggal-lbl','nr-tanggal-wrap',this.value);doSearchNr()">
             </div>
+            <select class="fsel" id="nr-limit" onchange="doSearchNr()">
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
             <span class="rc" id="nr-count">{{ $narasumberList->count() }} data</span>
             <button class="btn-add b-teal" onclick="openModal('m-nr-add')">
                 <svg width="12" height="12" viewBox="0 0 15 15" fill="none">
@@ -862,14 +856,15 @@ function doSearchSiaran(page = null) {
 
     const kw = document.getElementById('siaran-search').value;
     const tg = document.getElementById('siaran-tanggal').value;
-    const url = RSRSEARCH + '?page=' + siaranCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const lim = document.getElementById('siaran-limit').value;
+    const url = RSRSEARCH + '?page=' + siaranCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '') + '&limit=' + lim;
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((s, i) => `
                 <tr data-id="${s.siaranID}">
-                    <td class="mono">${(siaranCurrentPage - 1) * 15 + i + 1}</td>
+                    <td class="mono">${(siaranCurrentPage - 1) * parseInt(document.getElementById('siaran-limit').value) + i + 1}</td>
                     <td class="mono">${formatDate(s.tanggal)}</td>
                     <td class="mono">${s.waktu}</td>
                     <td class="trunc" style="max-width:220px;">${s.keterangan}</td>
@@ -895,14 +890,15 @@ function doSearchNr(page = null) {
 
     const kw = document.getElementById('nr-search').value;
     const tg = document.getElementById('nr-tanggal').value;
-    const url = RNRSEARCH + '?page=' + nrCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const lim = document.getElementById('nr-limit').value;
+    const url = RNRSEARCH + '?page=' + nrCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '') + '&limit=' + lim;
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${(nrCurrentPage - 1) * 15 + i + 1}</td>
+                    <td class="mono">${(nrCurrentPage - 1) * parseInt(document.getElementById('nr-limit').value) + i + 1}</td>
                     <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
@@ -1076,7 +1072,7 @@ function deleteNr(id) {
 }
 
 // ── Date helpers ──────────────────────────────────────
-const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function formatDate(d) {
     if (!d) return '—';
     const dt = new Date(d);
@@ -1164,7 +1160,7 @@ function syncFormDatetime(lblId, wrapId, val) {
         if (wrap) wrap.classList.remove('has-value');
     }
 }
-const BULAN_FILTER = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_FILTER = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function syncDateDisplay(lblId, wrapId, rawValue) {
     const lbl  = document.getElementById(lblId);
     const wrap = document.getElementById(wrapId);

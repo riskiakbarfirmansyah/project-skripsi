@@ -366,6 +366,32 @@
         .form-textarea { resize: vertical; min-height: 72px; }
         .form-error { font-size: 0.75rem; color: #e05252; }
 
+        /* ── Custom date input (matches dashboard) ── */
+        .date-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.6rem 0.85rem;
+            border: 1.5px solid rgba(124,108,224,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.7);
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.18s, box-shadow 0.18s;
+            user-select: none;
+        }
+        .date-input-wrap:hover { border-color: rgba(124,108,224,0.35); }
+        .date-input-wrap.has-value { border-color: rgba(124,108,224,0.55); box-shadow: 0 0 0 3px rgba(124,108,224,0.1); }
+        .date-input-wrap input[type="datetime-local"] {
+            position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;
+        }
+        .date-disp {
+            font-family: inherit; font-size: 0.88rem; color: var(--text-dark); flex: 1;
+        }
+        .date-disp.ph { color: var(--text-soft); }
+
         .form-btns {
             display: flex; gap: 0.5rem; margin-top: 1rem;
         }
@@ -661,7 +687,11 @@
                     </div>
                     <div class="form-field full">
                         <label class="form-label" for="fieldWaktu">Waktu Wawancara <span style="color:#e05252">*</span></label>
-                        <input type="datetime-local" class="form-input" id="fieldWaktu" name="waktu_wawancara">
+                        <div class="date-input-wrap" id="fieldWaktu-wrap" onclick="triggerDatePicker('fieldWaktu')">
+                            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#8e8ab5" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#8e8ab5" stroke-width="1.3" stroke-linecap="round"/></svg>
+                            <span class="date-disp ph" id="fieldWaktu-lbl">Pilih tanggal &amp; waktu…</span>
+                            <input type="datetime-local" id="fieldWaktu" name="waktu_wawancara" onchange="syncFormDatetime('fieldWaktu-lbl','fieldWaktu-wrap',this.value)">
+                        </div>
                         <span class="form-error" id="errWaktu"></span>
                     </div>
                     <div class="form-field full">
@@ -701,6 +731,27 @@
 </div>
 
 <script>
+const BULAN_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+function syncFormDatetime(lblId, wrapId, val) {
+    const lbl  = document.getElementById(lblId);
+    const wrap = document.getElementById(wrapId);
+    if (val) {
+        const dt  = new Date(val);
+        const tgl = dt.getDate() + '/' + BULAN_ID[dt.getMonth()] + '/' + dt.getFullYear();
+        const jam = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+        lbl.textContent = tgl + ' ' + jam;
+        lbl.classList.remove('ph');
+        if (wrap) wrap.classList.add('has-value');
+    } else {
+        lbl.textContent = 'Pilih tanggal & waktu\u2026';
+        lbl.classList.add('ph');
+        if (wrap) wrap.classList.remove('has-value');
+    }
+}
+function triggerDatePicker(inputId) {
+    const inp = document.getElementById(inputId);
+    if (inp) { if (inp.showPicker) inp.showPicker(); else inp.click(); }
+}
 (function () {
     const overlay      = document.getElementById('modalNarasumber');
     const btnOpen      = document.getElementById('btnDaftarNarasumber');
@@ -733,6 +784,7 @@
         successPanel.classList.remove('show');
         formWrapper.style.display = '';
         form.reset();
+        syncFormDatetime('fieldWaktu-lbl', 'fieldWaktu-wrap', '');
         fieldTipe.value = 'byphone';
         setActiveTab('byphone');
         generateCaptcha();

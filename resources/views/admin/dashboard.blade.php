@@ -4,57 +4,35 @@
 @section('page-title', '')
 @section('page-sub', 'Manajemen pengguna aplikasi')
 
-@section('content')
-
-{{-- ── Stats ── --}}
-<div class="sg">
-    <div class="sc">
-        <div class="sc-ico" style="background:#f5f3ff;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="4.5" r="2.5" stroke="#7c3aed" stroke-width="1.3"/>
-                <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#7c3aed" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+@section('sidebar-stats')
+<div class="sb-stats">
+    <div class="sb-stats-title">Ringkasan</div>
+    <div class="sb-stats-grid">
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#f5f3ff;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4.5" r="2.5" stroke="#7c3aed" stroke-width="1.3"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#7c3aed" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val" id="stat-total">{{ $stats['total_user'] }}</div>
+            <div class="sb-sc-lbl">Total User</div>
         </div>
-        <div class="sc-lbl">Total Pengguna</div>
-        <div class="sc-val" id="stat-total">{{ $stats['total_user'] }}</div>
-        <div class="sc-sub">Gatekeeper + Penyiar + PJ</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#dbeafe;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <path d="M7.5 1L2 3.5v4c0 3 2.5 5.5 5.5 6 3-.5 5.5-3 5.5-6v-4L7.5 1z"
-                      stroke="#1e40af" stroke-width="1.3" stroke-linejoin="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#dbeafe;"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1L2 3.5v4c0 3 2.5 5.5 5.5 6 3-.5 5.5-3 5.5-6v-4L7.5 1z" stroke="#1e40af" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            <div class="sb-sc-val" id="stat-gk">{{ $stats['total_gatekeeper'] }}</div>
+            <div class="sb-sc-lbl">Gatekeeper</div>
         </div>
-        <div class="sc-lbl">Gatekeeper</div>
-        <div class="sc-val" id="stat-gk">{{ $stats['total_gatekeeper'] }}</div>
-        <div class="sc-sub">Pengelola siaran</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#d1fae5;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="2.5" stroke="#065f46" stroke-width="1.3"/>
-                <circle cx="7.5" cy="7.5" r="6" stroke="#065f46" stroke-width="1.3"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#d1fae5;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2.5" stroke="#065f46" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="6" stroke="#065f46" stroke-width="1.3"/></svg></div>
+            <div class="sb-sc-val" id="stat-py">{{ $stats['total_penyiar'] }}</div>
+            <div class="sb-sc-lbl">Penyiar</div>
         </div>
-        <div class="sc-lbl">Penyiar</div>
-        <div class="sc-val" id="stat-py">{{ $stats['total_penyiar'] }}</div>
-        <div class="sc-sub">On-air broadcaster</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#fef3c7;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <rect x="2" y="2" width="11" height="11" rx="1.5" stroke="#92400e" stroke-width="1.3"/>
-                <path d="M5 7.5h5M7.5 5v5" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="#92400e" stroke-width="1.3"/><path d="M5 7.5h5M7.5 5v5" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val" id="stat-pj">{{ $stats['total_pj_program'] }}</div>
+            <div class="sb-sc-lbl">PJ Program</div>
         </div>
-        <div class="sc-lbl">PJ Program</div>
-        <div class="sc-val" id="stat-pj">{{ $stats['total_pj_program'] }}</div>
-        <div class="sc-sub">Penanggungjawab program</div>
     </div>
 </div>
+@endsection
 
-{{-- ── Table ── --}}
+@section('content')
 <div class="tc">
     <div class="tbar">
         <div class="sw">
@@ -69,6 +47,13 @@
             <option value="gatekeeper">Gatekeeper</option>
             <option value="penyiar">Penyiar</option>
             <option value="pj_program">PJ Program</option>
+        </select>
+        <select class="fsel" id="limit-filter" onchange="doSearch()">
+            <option value="10">10</option>
+            <option value="15" selected>15</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
         </select>
         <span class="rc" id="result-count">{{ $users->count() }} pengguna</span>
         <button class="btn-add" onclick="openModal('m-add')">
@@ -333,7 +318,7 @@ function renderRows(users) {
     }
     tbody.innerHTML = users.map((u, i) => `
         <tr data-id="${u.id}">
-            <td class="mono">${(userCurrentPage - 1) * 15 + i + 1}</td>
+            <td class="mono">${(userCurrentPage - 1) * parseInt(document.getElementById('limit-filter').value) + i + 1}</td>
             <td>
                 <div style="display:flex;align-items:center;gap:9px;">
                     <div class="ini">${ini(u.name)}</div>
@@ -403,7 +388,8 @@ function doSearch(page = null) {
 
     const kw   = document.getElementById('search-input').value;
     const role = document.getElementById('role-filter').value;
-    const url  = ROUTES.search + '?page=' + userCurrentPage + '&keyword=' + encodeURIComponent(kw) + '&role=' + encodeURIComponent(role);
+    const lim  = document.getElementById('limit-filter').value;
+    const url  = ROUTES.search + '?page=' + userCurrentPage + '&keyword=' + encodeURIComponent(kw) + '&role=' + encodeURIComponent(role) + '&limit=' + lim;
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {

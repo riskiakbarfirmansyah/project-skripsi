@@ -172,7 +172,8 @@ class InformasiSiaranController extends Controller
             $query->whereDate('tanggal', $request->tanggal);
         }
 
-        $list = $query->orderBy('tanggal', 'desc')->orderBy('waktu', 'desc')->paginate(15);
+        $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
+        $list = $query->orderBy('tanggal', 'desc')->orderBy('waktu', 'desc')->paginate($perPage);
 
         return response()->json([
             'success'      => true,

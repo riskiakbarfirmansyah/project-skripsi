@@ -95,24 +95,37 @@
         .tb-sub { font-size: 14px; font-weight: 600; color: #1e293b; }
         .content { padding: 24px; }
 
-        /* ── Stats grid ───────────────────────────────── */
-        .sg {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 12px; margin-bottom: 24px;
+        /* ── Sidebar stats ────────────────────────────── */
+        .sb-stats {
+            padding: 10px 10px 6px;
+            border-top: 1px solid #e2e8f0;
         }
-        .sc {
-            background: #fff; border-radius: 10px;
-            border: 1px solid #e2e8f0; padding: 16px 18px;
+        .sb-stats-title {
+            font-size: 9px; font-weight: 700; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: .1em;
+            padding: 0 4px 6px;
         }
-        .sc-ico {
-            width: 32px; height: 32px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 10px;
+        .sb-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
         }
-        .sc-lbl { font-size: 12px; color: #64748b; margin-bottom: 4px; }
-        .sc-val { font-size: 26px; font-weight: 700; color: #0f172a; }
-        .sc-sub { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+        .sb-sc {
+            background: #f5f3ff; border-radius: 8px;
+            padding: 10px 10px 8px; text-align: center;
+            border: 1px solid #ede9fe;
+            transition: transform .15s, box-shadow .15s;
+        }
+        .sb-sc:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(124,58,237,.1);
+        }
+        .sb-sc-ico {
+            width: 24px; height: 24px; border-radius: 6px;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin: 0 auto 5px;
+        }
+        .sb-sc-ico svg { width: 12px; height: 12px; }
+        .sb-sc-val { font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+        .sb-sc-lbl { font-size: 9px; color: #64748b; margin-top: 2px; font-weight: 600; letter-spacing: .02em; }
 
         /* ── Table card ───────────────────────────────── */
         .tc {
@@ -367,7 +380,6 @@
             .sb { transform: translateX(-224px); transition: transform .2s; }
             .sb.open { transform: translateX(0); }
             .main { margin-left: 0; }
-            .sg { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
     @stack('styles')
@@ -423,6 +435,8 @@
             <span class="bdg" id="bdg-pj">{{ $stats['total_pj_program'] ?? 0 }}</span>
         </a>
     </div>
+
+    @yield('sidebar-stats')
 
     <div class="sb-foot">
         <div class="av">{{ strtoupper(substr(auth()->user()->name ?? 'AD', 0, 2)) }}</div>

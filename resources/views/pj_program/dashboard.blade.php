@@ -93,55 +93,35 @@
 </style>
 @endpush
 
-@section('content')
-
-{{-- ── Stats ── --}}
-<div class="sg">
-    <div class="sc">
-        <div class="sc-ico" style="background:#fef3c7;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="4.5" r="2.5" stroke="#92400e" stroke-width="1.3"/>
-                <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+@section('sidebar-stats')
+<div class="sb-stats">
+    <div class="sb-stats-title">Ringkasan</div>
+    <div class="sb-stats-grid">
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4.5" r="2.5" stroke="#92400e" stroke-width="1.3"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['total_narasumber'] }}</div>
+            <div class="sb-sc-lbl">Total</div>
         </div>
-        <div class="sc-lbl">Total Narasumber</div>
-        <div class="sc-val">{{ $stats['total_narasumber'] }}</div>
-        <div class="sc-sub">Semua narasumber talkshow</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#fce7f3;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/>
-                <path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['wawancara_hari_ini'] }}</div>
+            <div class="sb-sc-lbl">Hari Ini</div>
         </div>
-        <div class="sc-lbl">Hari Ini</div>
-        <div class="sc-val">{{ $stats['wawancara_hari_ini'] }}</div>
-        <div class="sc-sub">Jadwal wawancara hari ini</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#d1fae5;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <rect x="2" y="2" width="11" height="11" rx="1.5" stroke="#065f46" stroke-width="1.3"/>
-                <path d="M4.5 8l2 2 4-4" stroke="#065f46" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#d1fae5;"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="#065f46" stroke-width="1.3"/><path d="M4.5 8l2 2 4-4" stroke="#065f46" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['wawancara_mendatang'] }}</div>
+            <div class="sb-sc-lbl">Mendatang</div>
         </div>
-        <div class="sc-lbl">Mendatang (7 hari)</div>
-        <div class="sc-val">{{ $stats['wawancara_mendatang'] }}</div>
-        <div class="sc-sub">Wawancara dalam 7 hari ke depan</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#e0e7ff;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="5.5" stroke="#3730a3" stroke-width="1.3"/>
-                <path d="M5 7.5h5" stroke="#3730a3" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#e0e7ff;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#3730a3" stroke-width="1.3"/><path d="M5 7.5h5" stroke="#3730a3" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['wawancara_selesai'] }}</div>
+            <div class="sb-sc-lbl">Selesai</div>
         </div>
-        <div class="sc-lbl">Telah Selesai</div>
-        <div class="sc-val">{{ $stats['wawancara_selesai'] }}</div>
-        <div class="sc-sub">Wawancara sudah berlalu</div>
     </div>
 </div>
+@endsection
+
+@section('content')
 
 {{-- ── Table ── --}}
 <div class="tc">
@@ -160,6 +140,13 @@
             <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('ts-tanggal','ts-tanggal-lbl','ts-tanggal-wrap',doSearch)">×</button>
             <input type="date" id="ts-tanggal" onchange="syncDateDisplay('ts-tanggal-lbl','ts-tanggal-wrap',this.value);doSearch()">
         </div>
+        <select class="fsel" id="ts-limit" onchange="doSearch()">
+            <option value="10">10</option>
+            <option value="15" selected>15</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
         <span class="rc" id="ts-count">{{ $narasumberList->count() }} data</span>
         <button class="btn-add" onclick="openModal('m-add')">
             <svg viewBox="0 0 15 15" fill="none">
@@ -488,14 +475,15 @@ function doSearch(page = null) {
 
     const kw = document.getElementById('ts-search').value;
     const tg = document.getElementById('ts-tanggal').value;
-    const url = RTSEARCH + '?page=' + tsCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const lim = document.getElementById('ts-limit').value;
+    const url = RTSEARCH + '?page=' + tsCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '') + '&limit=' + lim;
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${(tsCurrentPage - 1) * 15 + i + 1}</td>
+                    <td class="mono">${(tsCurrentPage - 1) * parseInt(document.getElementById('ts-limit').value) + i + 1}</td>
                     <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
@@ -588,7 +576,7 @@ function deleteTs(id) {
     );
 }
 
-const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function formatDateTime(d) {
     if (!d) return '—';
     const dt = new Date(d.replace(' ', 'T'));
@@ -638,7 +626,7 @@ function syncFormDatetime(lblId, wrapId, val) {
     }
 }
 // ── Custom date filter helpers ──────────────────────────
-const BULAN_FILTER = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_FILTER = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function syncDateDisplay(lblId, wrapId, rawValue) {
     const lbl  = document.getElementById(lblId);
     const wrap = document.getElementById(wrapId);

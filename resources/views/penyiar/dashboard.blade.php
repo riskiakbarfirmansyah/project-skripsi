@@ -161,6 +161,34 @@
 </style>
 @endpush
 
+@section('sidebar-stats')
+<div class="sb-stats">
+    <div class="sb-stats-title">Ringkasan</div>
+    <div class="sb-stats-grid">
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#d1fae5;"><svg viewBox="0 0 15 15" fill="none"><path d="M5 1.5C4.5 1.5 4 2 4 2.5L3 5c-.5 1 0 2 1 2.5 1.5 1 3.5 3 4.5 4.5.5 1 1.5 1.5 2.5 1L13 12c.5-.5.5-1.5 0-2L11 8.5c-.5-.5-1.5-.5-2 0l-.5.5C8 8.5 7 7.5 6.5 7l.5-.5c.5-.5.5-1.5 0-2L5.5 2c-.5-.5-1-.5-0.5-.5z" stroke="#065f46" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['total_byphone'] }}</div>
+            <div class="sb-sc-lbl">Byphone</div>
+        </div>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#dbeafe;"><svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="1.5" width="12" height="12" rx="1.5" stroke="#1e40af" stroke-width="1.3"/><path d="M4.5 8l2 2 4-4" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['total_talkshow'] }}</div>
+            <div class="sb-sc-lbl">Talkshow</div>
+        </div>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#92400e" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['byphone_hari_ini'] }}</div>
+            <div class="sb-sc-lbl">BP Hari Ini</div>
+        </div>
+        <div class="sb-sc">
+            <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="sb-sc-val">{{ $stats['talkshow_hari_ini'] }}</div>
+            <div class="sb-sc-lbl">TS Hari Ini</div>
+        </div>
+    </div>
+</div>
+@endsection
+
 @section('content')
 
 {{-- ════════════════════ BROADCAST STATUS CARD ════════════════════ --}}
@@ -227,54 +255,6 @@
     <div class="bc-draft-box" id="bc-draft">{{ $isOnAir ? ($activeBroadcast->narasumber_detail?->draft_pertanyaan ?? '(Tidak ada draft pertanyaan)') : '—' }}</div>
 </div>
 
-{{-- ── Stats ── --}}
-<div class="sg">
-    <div class="sc">
-        <div class="sc-ico" style="background:#d1fae5;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <path d="M5 1.5C4.5 1.5 4 2 4 2.5L3 5c-.5 1 0 2 1 2.5 1.5 1 3.5 3 4.5 4.5.5 1 1.5 1.5 2.5 1L13 12c.5-.5.5-1.5 0-2L11 8.5c-.5-.5-1.5-.5-2 0l-.5.5C8 8.5 7 7.5 6.5 7l.5-.5c.5-.5.5-1.5 0-2L5.5 2c-.5-.5-1-.5-0.5-.5z"
-                      stroke="#065f46" stroke-width="1.3" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="sc-lbl">Total Byphone</div>
-        <div class="sc-val">{{ $stats['total_byphone'] }}</div>
-        <div class="sc-sub">Narasumber by phone</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#dbeafe;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <rect x="1.5" y="1.5" width="12" height="12" rx="1.5" stroke="#1e40af" stroke-width="1.3"/>
-                <path d="M4.5 8l2 2 4-4" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="sc-lbl">Total Talkshow</div>
-        <div class="sc-val">{{ $stats['total_talkshow'] }}</div>
-        <div class="sc-sub">Narasumber talkshow</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#fef3c7;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="5.5" stroke="#92400e" stroke-width="1.3"/>
-                <path d="M7.5 4.5v3l2 2" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
-        </div>
-        <div class="sc-lbl">Byphone Hari Ini</div>
-        <div class="sc-val">{{ $stats['byphone_hari_ini'] }}</div>
-        <div class="sc-sub">Jadwal hari ini</div>
-    </div>
-    <div class="sc">
-        <div class="sc-ico" style="background:#fce7f3;">
-            <svg width="16" height="16" viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/>
-                <path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
-        </div>
-        <div class="sc-lbl">Talkshow Hari Ini</div>
-        <div class="sc-val">{{ $stats['talkshow_hari_ini'] }}</div>
-        <div class="sc-sub">Jadwal hari ini</div>
-    </div>
-</div>
-
 {{-- ── Tabs ── --}}
 <div class="tabs">
     <button class="tab-btn active" id="tab-byphone-btn" onclick="showTab('byphone')">
@@ -303,6 +283,13 @@
                 <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('bp-tanggal','bp-tanggal-lbl','bp-tanggal-wrap',doSearchBp)">×</button>
                 <input type="date" id="bp-tanggal" onchange="syncDateDisplay('bp-tanggal-lbl','bp-tanggal-wrap',this.value);doSearchBp()">
             </div>
+            <select class="fsel" id="bp-limit" onchange="doSearchBp()">
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
             <span class="rc" id="bp-count">{{ $byphoneList->count() }} data</span>
         </div>
 
@@ -376,6 +363,13 @@
                 <button type="button" class="date-clear-btn" style="display:none" onclick="event.stopPropagation();clearDateFilter('ts-tanggal','ts-tanggal-lbl','ts-tanggal-wrap',doSearchTs)">×</button>
                 <input type="date" id="ts-tanggal" onchange="syncDateDisplay('ts-tanggal-lbl','ts-tanggal-wrap',this.value);doSearchTs()">
             </div>
+            <select class="fsel" id="ts-limit" onchange="doSearchTs()">
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
             <span class="rc" id="ts-count">{{ $talkshowList->count() }} data</span>
         </div>
 
@@ -638,14 +632,15 @@ function doSearchBp(page = null) {
 
     const kw = document.getElementById('bp-search').value;
     const tg = document.getElementById('bp-tanggal').value;
-    const url = RBPSEARCH + '?page=' + bpCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const lim = document.getElementById('bp-limit').value;
+    const url = RBPSEARCH + '?page=' + bpCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '') + '&limit=' + lim;
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${(bpCurrentPage - 1) * 15 + i + 1}</td>
+                    <td class="mono">${(bpCurrentPage - 1) * parseInt(document.getElementById('bp-limit').value) + i + 1}</td>
                     <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
@@ -670,14 +665,15 @@ function doSearchTs(page = null) {
 
     const kw = document.getElementById('ts-search').value;
     const tg = document.getElementById('ts-tanggal').value;
-    const url = RTSSEARCH + '?page=' + tsCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '');
+    const lim = document.getElementById('ts-limit').value;
+    const url = RTSSEARCH + '?page=' + tsCurrentPage + '&keyword=' + encodeURIComponent(kw) + (tg ? '&tanggal=' + tg : '') + '&limit=' + lim;
     fetch(url, { headers: { Accept: 'application/json' } })
         .then(r => r.json())
         .then(d => {
             if (!d.success) return;
             const rows = d.data.map((n, i) => `
                 <tr>
-                    <td class="mono">${(tsCurrentPage - 1) * 15 + i + 1}</td>
+                    <td class="mono">${(tsCurrentPage - 1) * parseInt(document.getElementById('ts-limit').value) + i + 1}</td>
                     <td><div style="font-weight:600;">${n.nama}</div></td>
                     <td style="font-size:12px;color:#64748b;">${n.instansi}</td>
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
@@ -724,7 +720,7 @@ function viewTs(id) {
     });
 }
 
-const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function formatDateTime(d) {
     if (!d) return '—';
     const dt = new Date(d.replace(' ', 'T'));
@@ -892,7 +888,7 @@ function closeDoneModal() {
 }
 
 // ── Custom date filter helpers ──────────────────────────
-const BULAN_FILTER = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_FILTER = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function syncDateDisplay(lblId, wrapId, rawValue) {
     const lbl  = document.getElementById(lblId);
     const wrap = document.getElementById(wrapId);
