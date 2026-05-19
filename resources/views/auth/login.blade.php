@@ -130,7 +130,7 @@
         .fg { margin-bottom: 1.1rem; }
         .fl {
             display: block; font-size: 0.75rem; font-weight: 600;
-            letter-spacing: 0.07em; text-transform: uppercase;
+            letter-spacing: 0.07em; text-transform: capitalize;
             color: var(--text-mid); margin-bottom: 0.45rem;
         }
         .fi {
@@ -236,7 +236,7 @@
                 @csrf
 
                 <div class="fg">
-                    <label class="fl" for="email">Email</label>
+                    <label class="fl" for="email">Email Address</label>
                     <input id="email" type="email" name="email" class="fi {{ $errors->has('email') ? 'is-invalid' : '' }}"
                            value="{{ old('email') }}" required autofocus autocomplete="username"
                            placeholder="email@example.com">
