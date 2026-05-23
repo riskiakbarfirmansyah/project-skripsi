@@ -192,7 +192,7 @@
         .pag {
             padding: 11px 16px; border-top: 1px solid #e2e8f0;
             font-size: 12px; color: #64748b;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
         }
         .pagination-container { display: flex; align-items: center; gap: 4px; }
         .page-btn {
@@ -203,6 +203,7 @@
         .page-btn:hover:not(.active) { background: #f8fafc; border-color: #cbd5e1; }
         .page-btn.active { background: #d97706; color: #fff; border-color: #d97706; cursor: default; }
         .page-dots { padding: 4px 6px; color: #94a3b8; }
+        .pag-info-text { font-size: 12px; color: #64748b; }
         .empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 13px; }
 
         /* ── Buttons ──────────────────────────────────── */

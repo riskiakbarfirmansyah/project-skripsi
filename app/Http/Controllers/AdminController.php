@@ -227,6 +227,8 @@ class AdminController extends Controller
         return response()->json([
             'success'      => true,
             'total'        => $users->total(),
+            'from'         => $users->firstItem(),
+            'to'           => $users->lastItem(),
             'current_page' => $users->currentPage(),
             'last_page'    => $users->lastPage(),
             'data'         => collect($users->items())->map(fn($u) => [

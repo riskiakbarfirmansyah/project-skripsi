@@ -266,6 +266,8 @@ class NarasumberByphoneController extends Controller
         return response()->json([
             'success'      => true,
             'total'        => $list->total(),
+            'from'         => $list->firstItem(),
+            'to'           => $list->lastItem(),
             'current_page' => $list->currentPage(),
             'last_page'    => $list->lastPage(),
             'data'         => $list->items(),

@@ -599,13 +599,17 @@ function waLinkHTML(phone) {
 }
 
 function renderPagination(d, fnName) {
-    if (d.last_page <= 1) return `Menampilkan ${d.total} data`;
-    
+    const info  = d.total === 0
+        ? `<div class="pag-info-text">Tidak ada data yang ditampilkan</div>`
+        : `<div class="pag-info-text">Menampilkan ${d.from} sampai ${d.to} dari ${d.total} data</div>`;
+
+    if (d.last_page <= 1) return info;
+
     let html = `<div class="pagination-container">`;
     if (d.current_page > 1) {
         html += `<button class="page-btn" onclick="${fnName}(${d.current_page - 1})">«</button>`;
     }
-    
+
     for (let i = 1; i <= d.last_page; i++) {
         if (i === 1 || i === d.last_page || (i >= d.current_page - 2 && i <= d.current_page + 2)) {
             let active = i === d.current_page ? 'active' : '';
@@ -619,7 +623,7 @@ function renderPagination(d, fnName) {
         html += `<button class="page-btn" onclick="${fnName}(${d.current_page + 1})">»</button>`;
     }
     html += `</div>`;
-    return html;
+    return info + html;
 }
 
 // ── Byphone search ─────────────────────────────────────
