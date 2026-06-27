@@ -13,6 +13,7 @@ class narasumbertalkshow extends Model
     protected $primaryKey = 'talkshowID';
 
     protected $fillable = [
+        'user_id',
         'nama',
         'instansi',
         'nomor_telp',
@@ -22,4 +23,10 @@ class narasumbertalkshow extends Model
         'draft_pertanyaan',
         'is_self_registered',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
+

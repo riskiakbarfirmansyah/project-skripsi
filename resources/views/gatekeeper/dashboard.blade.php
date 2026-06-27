@@ -1,8 +1,7 @@
 @extends('layouts.gatekeeper')
 
 @section('title', 'Dashboard')
-@section('page-title', '')
-@section('page-sub', 'Manajemen data siaran dan narasumber')
+@section('page-title', 'Manajemen informasi siaran dan narasumber byphone')
 
 @push('styles')
 <style>
@@ -31,67 +30,15 @@
 .wa-link:hover { color:#15803d; text-decoration:underline; }
 
 /* ── Siaran status badges ── */
-.bdg-pending    { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#f1f5f9;color:#475569; }
-.bdg-active     { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#fef2f2;color:#dc2626; }
-.bdg-completed  { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#d1fae5;color:#065f46; }
+.bdg-pending    { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#f1f5f9;color:#475569;white-space:nowrap; }
+.bdg-active     { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#fef2f2;color:#dc2626;white-space:nowrap; }
+.bdg-completed  { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#d1fae5;color:#065f46;white-space:nowrap; }
 .bdg-active-dot { width:6px;height:6px;border-radius:50%;background:#dc2626;animation:pulse-dot 1.4s infinite;flex-shrink:0; }
 @keyframes pulse-dot {
     0%   { box-shadow:0 0 0 0 rgba(239,68,68,.4); }
     70%  { box-shadow:0 0 0 5px rgba(239,68,68,0); }
     100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
 }
-.btn-mulai {
-    padding: 7px 11px;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    background: linear-gradient(135deg, #10b981, #059669);
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
-    white-space: nowrap;
-}
-.btn-mulai:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
-    filter: brightness(1.05);
-}
-.btn-mulai:active { transform: translateY(0); }
-
-.btn-selesai-s {
-    padding: 7px 11px;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15);
-    animation: pulseRed 1.5s ease-in-out infinite;
-    white-space: nowrap;
-}
-.btn-selesai-s:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
-    animation: none;
-    filter: brightness(1.05);
-}
-.btn-selesai-s:active { transform: translateY(0); }
-@keyframes pulseRed {
-    0%, 100% { box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15); }
-    50% { box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
-}
-.btn-mulai svg, .btn-selesai-s svg { width: 11px; height: 11px; flex-shrink: 0; }
 
 /* ── Export modal options ── */
 .exp-opt {
@@ -178,6 +125,97 @@
 }
 .date-disp { font-size: 13px; color: #0f172a; flex: 1; }
 .date-disp.ph { color: #94a3b8; }
+
+/* ── Broadcast Card (mirip penyiar) ── */
+.gk-bc-card {
+    background:#fff; border-radius:10px; border:1px solid #e2e8f0;
+    padding:20px 24px; margin-bottom:20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.gk-bc-card.on-air {
+    border-color:#059669; background:#f0fdf4;
+}
+.gk-bc-status-dot {
+    width:10px; height:10px; border-radius:50%; background:#94a3b8; flex-shrink:0;
+}
+.gk-bc-status-dot.live {
+    background:#ef4444;
+    animation:gk-pulse-dot 1.4s infinite;
+}
+@keyframes gk-pulse-dot {
+    0%   { box-shadow:0 0 0 0 rgba(239,68,68,.4); }
+    70%  { box-shadow:0 0 0 8px rgba(239,68,68,0); }
+    100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+}
+.gk-bc-info { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.gk-bc-label { font-size:13px; font-weight:700; color:#0f172a; }
+.gk-bc-sub   { font-size:12px; color:#64748b; margin-top:2px; }
+.gk-bc-timer { font-size:20px; font-weight:700; color:#059669; letter-spacing:.04em; font-family:'Courier New',monospace; }
+.gk-btn-siap {
+    padding:12px 28px; font-size:14px; font-weight:600;
+    border-radius:10px; border:none; cursor:pointer; color:#fff;
+    background:linear-gradient(135deg,#059669,#047857);
+    transition:all .2s ease;
+    display:inline-flex; align-items:center; gap:8px;
+    box-shadow:0 2px 8px rgba(5,150,105,.15);
+}
+.gk-btn-siap:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(5,150,105,.3);
+}
+.gk-btn-siap:active { transform:translateY(0); }
+.gk-btn-selesai {
+    padding:12px 28px; font-size:14px; font-weight:600;
+    border-radius:10px; border:none; cursor:pointer; color:#fff;
+    background:linear-gradient(135deg,#dc2626,#b91c1c);
+    transition:all .2s ease;
+    display:inline-flex; align-items:center; gap:8px;
+    box-shadow:0 2px 8px rgba(220,38,38,.15);
+    animation:gk-pulse-red 2s ease-in-out infinite;
+}
+.gk-btn-selesai:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(220,38,38,.4);
+    animation:none;
+}
+.gk-btn-selesai:active { transform:translateY(0); }
+@keyframes gk-pulse-red {
+    0%,100% { box-shadow:0 2px 8px rgba(220,38,38,.15); }
+    50%      { box-shadow:0 2px 16px rgba(220,38,38,.35); }
+}
+.gk-bc-detail {
+    background:#fff; border-radius:10px; border:2px solid #059669;
+    padding:20px 24px; margin-bottom:20px; display:none;
+}
+.gk-bc-detail.visible { display:block; }
+.gk-bc-detail-head {
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+}
+.gk-live-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:#fef2f2; color:#dc2626;
+    font-size:11px; font-weight:700; padding:3px 10px;
+    border-radius:20px; letter-spacing:.04em;
+}
+.gk-bc-info-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    margin-bottom:14px;
+}
+.gk-bc-ng-item { background:#f8fafc; border-radius:8px; padding:10px 14px; }
+.gk-bc-ng-lbl { font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+.gk-bc-ng-val { font-size:13px; color:#0f172a; font-weight:600; }
+.gk-done-check {
+    width:68px; height:68px; border-radius:50%;
+    background:linear-gradient(135deg,#d1fae5,#a7f3d0);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+    box-shadow:0 4px 16px rgba(5,150,105,.2);
+}
+.gk-notes-ta {
+    width:100%; padding:9px 12px; font-size:13px;
+    border:1px solid #cbd5e1; border-radius:7px; outline:none;
+    resize:vertical; min-height:80px; color:#0f172a; box-sizing:border-box;
+}
+.gk-notes-ta:focus { border-color:#6ee7b7; box-shadow:0 0 0 3px #ecfdf5; }
 </style>
 @endpush
 
@@ -197,19 +235,21 @@
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="10" rx="1.5" stroke="#92400e" stroke-width="1.3"/><path d="M4.5 6h6M4.5 8.5h4" stroke="#92400e" stroke-width="1.2" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val" id="stat-siaran-hari-ini">{{ $stats['siaran_hari_ini'] }}</div>
-            <div class="sb-sc-lbl">Siaran Ini</div>
+            <div class="sb-sc-val" id="stat-siaran-hari-ini">{{ $stats['siaran_selesai'] }}</div>
+            <div class="sb-sc-lbl">Siaran Selesai</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val" id="stat-wawancara-hari-ini">{{ $stats['wawancara_hari_ini'] }}</div>
-            <div class="sb-sc-lbl">Byphone Ini</div>
+            <div class="sb-sc-val" id="stat-wawancara-hari-ini">{{ $stats['wawancara_selesai'] }}</div>
+            <div class="sb-sc-lbl">Byphone Selesai</div>
         </div>
     </div>
 </div>
 @endsection
 
 @section('content')
+
+@php $isOnAir = isset($activeSiaran) && $activeSiaran !== null; @endphp
 
 {{-- ── Tabs ── --}}
 <div class="tabs">
@@ -223,6 +263,68 @@
 
 {{-- ════════════════════ TAB: SIARAN ════════════════════ --}}
 <div class="tab-pane active" id="tab-siaran">
+
+{{-- ════════════════════ BROADCAST STATUS CARD (GATEKEEPER) ════════════════════ --}}
+<div class="gk-bc-card {{ $isOnAir ? 'on-air' : '' }}" id="gk-bc-card">
+    <div class="gk-bc-info">
+        <div class="gk-bc-status-dot {{ $isOnAir ? 'live' : '' }}" id="gk-bc-dot"></div>
+        <div>
+            <div class="gk-bc-label" id="gk-bc-label">{{ $isOnAir ? 'Sedang Siaran' : 'Siap Siaran' }}</div>
+            <div class="gk-bc-sub" id="gk-bc-sub">
+                @if($isOnAir)
+                    {{ $activeSiaran->keterangan }}
+                @else
+                    Tekan tombol untuk memulai siaran
+                @endif
+            </div>
+        </div>
+    </div>
+    @if($isOnAir)
+        <div class="gk-bc-timer" id="gk-bc-timer">00:00:00</div>
+        <button class="gk-btn-selesai" onclick="endGkBroadcast()">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/>
+            </svg>
+            Siaran Selesai
+        </button>
+    @else
+        <button class="gk-btn-siap" id="gk-btn-siap" onclick="openGkStartModal()">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <path d="M7.5 1.5a2.5 2.5 0 0 1 2.5 2.5v4a2.5 2.5 0 0 1-5 0V4a2.5 2.5 0 0 1 2.5-2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                <path d="M3 7.5A4.5 4.5 0 0 0 12 7.5M7.5 12v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Siap Siaran
+        </button>
+    @endif
+</div>
+
+{{-- ── Live detail block ── --}}
+<div class="gk-bc-detail {{ $isOnAir ? 'visible' : '' }}" id="gk-bc-detail">
+    <div class="gk-bc-detail-head">
+        <span class="gk-live-badge">
+            <span style="width:7px;height:7px;border-radius:50%;background:#dc2626;display:inline-block;"></span>
+            ON AIR
+        </span>
+        <span style="font-size:14px;font-weight:700;color:#0f172a;">Detail Siaran Berlangsung</span>
+    </div>
+    <div class="gk-bc-info-grid">
+        <div class="gk-bc-ng-item">
+            <div class="gk-bc-ng-lbl">Tanggal</div>
+            <div class="gk-bc-ng-val" id="gk-bc-tanggal">{{ $isOnAir ? \Carbon\Carbon::parse($activeSiaran->tanggal)->translatedFormat('d M Y') : '—' }}</div>
+        </div>
+        <div class="gk-bc-ng-item">
+            <div class="gk-bc-ng-lbl">Waktu</div>
+            <div class="gk-bc-ng-val" id="gk-bc-waktu">{{ $isOnAir ? $activeSiaran->waktu : '—' }}</div>
+        </div>
+        <div class="gk-bc-ng-item">
+            <div class="gk-bc-ng-lbl">Mulai Pada</div>
+            <div class="gk-bc-ng-val" id="gk-bc-mulai">{{ $isOnAir && $activeSiaran->started_at ? \Carbon\Carbon::parse($activeSiaran->started_at)->format('H:i:s') : '—' }}</div>
+        </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Keterangan</div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;font-size:13px;color:#374151;line-height:1.7;white-space:pre-wrap;" id="gk-bc-keterangan">{{ $isOnAir ? $activeSiaran->keterangan : '—' }}</div>
+</div>
+
     <div class="tc">
         <div class="tbar">
             <div class="sw">
@@ -274,8 +376,8 @@
                         <th style="width:110px">Tanggal</th>
                         <th style="width:80px">Waktu</th>
                         <th style="min-width:200px">Keterangan</th>
-                        <th style="width:110px">Status</th>
-                        <th style="width:180px">Aksi</th>
+                        <th style="width:145px">Status</th>
+                        <th style="width:120px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="siaran-tbody">
@@ -296,17 +398,6 @@
                         </td>
                         <td>
                             <div class="abt">
-                                @if($s->status === 'pending')
-                                <button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran({{ $s->siaranID }})">
-                                    <svg viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg>
-                                    Mulai
-                                </button>
-                                @elseif($s->status === 'active')
-                                <button class="btn-selesai-s" title="Selesai Siaran" onclick="selesaiSiaran({{ $s->siaranID }})">
-                                    <svg viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg>
-                                    Selesai
-                                </button>
-                                @endif
                                 <button class="bico" title="Detail" onclick="viewSiaran({{ $s->siaranID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                                 </button>
@@ -338,7 +429,7 @@
                     <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.3"/>
                     <path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
                 </svg>
-                <input type="text" id="nr-search" placeholder="Cari nama, instansi, tema, jadwal…" oninput="debounce(doSearchNr, 350)()">
+                <input type="text" id="nr-search" placeholder="Cari nama, instansi, tema" oninput="debounce(doSearchNr, 350)()">
             </div>
             <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
             <div class="date-filter-wrap" id="nr-tanggal-wrap" onclick="triggerDatePicker('nr-tanggal')">
@@ -384,7 +475,6 @@
                         <th style="width:120px">No. Telepon</th>
                         <th style="width:200px">Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
-                        <th style="width:150px">Status Jadwal</th>
                         <th style="width:180px">Aksi</th>
                     </tr>
                 </thead>
@@ -400,13 +490,6 @@
                         <td>{{ $n->tema_wawancara }}</td>
                         <td class="mono">{{ format_tanggal_id($n->waktu_wawancara) }} {{ \Carbon\Carbon::parse($n->waktu_wawancara)->format('H:i') }}</td>
                         <td>
-                            @if($n->byphone_schedule)
-                                <span class="sched-badge">{{ \App\Services\JadwalValidationService::SCHEDULES[$n->byphone_schedule] ?? $n->byphone_schedule }}</span>
-                            @else
-                                <span class="sched-none">—</span>
-                            @endif
-                        </td>
-                        <td>
                             <div class="abt">
                                 <button class="bico" title="Detail" onclick="viewNr({{ $n->byphoneID }})">
                                     <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -421,12 +504,69 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="8" class="empty">Belum ada data narasumber byphone.</td></tr>
+                    <tr><td colspan="7" class="empty">Belum ada data narasumber byphone.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
         <div class="pag" id="nr-pag"></div>
+    </div>
+</div>
+
+{{-- ════════════════════ MODALS BROADCAST CARD (GATEKEEPER) ════════════════════ --}}
+<div class="mbg" id="gk-m-bc-start">
+    <div class="modal">
+        <div class="mttl">
+            Siap Siaran
+            <button class="mclose" onclick="closeModal('gk-m-bc-start')">×</button>
+        </div>
+        <div class="fg">
+            <label class="fl">Pilih Siaran</label>
+            <select class="fi" id="gk-bc-siaran-sel">
+                <option value="">— Pilih data siaran —</option>
+                @forelse($pendingSiaranList as $ps)
+                    <option value="{{ $ps->siaranID }}" data-tanggal="{{ format_tanggal_id($ps->tanggal) }}" data-waktu="{{ $ps->waktu }}" data-ket="{{ $ps->keterangan }}">
+                        {{ format_tanggal_id($ps->tanggal) }} {{ $ps->waktu }} — {{ Str::limit($ps->keterangan, 60) }}
+                    </option>
+                @empty
+                    <option value="" disabled>Tidak ada siaran yang dijadwalkan</option>
+                @endforelse
+            </select>
+        </div>
+        <div id="gk-bc-preview" style="display:none;background:#f8fafc;border-radius:8px;padding:12px 14px;margin-bottom:13px;font-size:13px;">
+            <div style="font-weight:600;color:#0f172a;margin-bottom:4px;" id="gk-bc-prev-ket">—</div>
+            <div style="color:#64748b;font-size:12px;" id="gk-bc-prev-dt">—</div>
+        </div>
+        <div class="mft">
+            <button class="bcn" onclick="closeModal('gk-m-bc-start')">Batal</button>
+            <button class="bsv" style="padding:10px 24px;border-radius:10px;font-size:14px;background:linear-gradient(135deg,#059669,#047857);box-shadow:0 2px 8px rgba(5,150,105,.2);display:inline-flex;align-items:center;gap:7px;" onclick="startGkBroadcast()">
+                <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+                    <path d="M5 3.5l7 4-7 4V3.5z" fill="currentColor"/>
+                </svg>
+                Mulai Siaran
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div class="mbg" id="gk-m-bc-done">
+    <div class="modal" style="text-align:center;">
+        <div class="gk-done-check">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="11" fill="url(#gk-done-grad)" opacity=".15"/>
+                <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <defs>
+                    <linearGradient id="gk-done-grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#059669"/>
+                        <stop offset="1" stop-color="#047857"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+        <div style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:6px;">Siaran Telah Selesai!</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:20px;" id="gk-bc-done-summary">—</div>
+        <button class="bsv" style="padding:10px 28px;border-radius:10px;font-size:14px;background:linear-gradient(135deg,#059669,#047857);box-shadow:0 2px 8px rgba(5,150,105,.2);" onclick="closeGkDoneModal()">Selesai</button>
     </div>
 </div>
 
@@ -438,18 +578,12 @@
             <button class="mclose" onclick="closeModal('m-siaran-add')">×</button>
         </div>
         <form onsubmit="submitSiaranAdd(event)">
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Tanggal</label>
-                    <div class="date-input-wrap" id="sa-tanggal-wrap" onclick="triggerDatePicker('sa-tanggal')">
-                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
-                        <span class="date-disp ph" id="sa-tanggal-lbl">Pilih tanggal…</span>
-                        <input type="date" id="sa-tanggal" onchange="syncFormDate('sa-tanggal-lbl','sa-tanggal-wrap',this.value)">
-                    </div>
-                </div>
-                <div class="fg">
-                    <label class="fl">Waktu</label>
-                    <input type="time" class="fi" id="sa-waktu" required>
+            <div class="fg">
+                <label class="fl">Tanggal &amp; Waktu</label>
+                <div class="date-input-wrap" id="sa-datetime-wrap" onclick="triggerDatePicker('sa-datetime')">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span class="date-disp ph" id="sa-datetime-lbl">Pilih tanggal &amp; waktu…</span>
+                    <input type="datetime-local" id="sa-datetime" onchange="syncFormDatetime('sa-datetime-lbl','sa-datetime-wrap',this.value)">
                 </div>
             </div>
             <div class="fg">
@@ -472,18 +606,12 @@
         </div>
         <form onsubmit="submitSiaranEdit(event)">
             <input type="hidden" id="se-id">
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Tanggal</label>
-                    <div class="date-input-wrap" id="se-tanggal-wrap" onclick="triggerDatePicker('se-tanggal')">
-                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
-                        <span class="date-disp ph" id="se-tanggal-lbl">Pilih tanggal…</span>
-                        <input type="date" id="se-tanggal" onchange="syncFormDate('se-tanggal-lbl','se-tanggal-wrap',this.value)">
-                    </div>
-                </div>
-                <div class="fg">
-                    <label class="fl">Waktu</label>
-                    <input type="time" class="fi" id="se-waktu" required>
+            <div class="fg">
+                <label class="fl">Tanggal &amp; Waktu</label>
+                <div class="date-input-wrap" id="se-datetime-wrap" onclick="triggerDatePicker('se-datetime')">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span class="date-disp ph" id="se-datetime-lbl">Pilih tanggal &amp; waktu…</span>
+                    <input type="datetime-local" id="se-datetime" onchange="syncFormDatetime('se-datetime-lbl','se-datetime-wrap',this.value)">
                 </div>
             </div>
             <div class="fg">
@@ -525,28 +653,24 @@
             <button class="mclose" onclick="closeModal('m-nr-add')">×</button>
         </div>
         <form onsubmit="submitNrAdd(event)">
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nama</label>
-                    <input type="text" class="fi" id="na-nama" placeholder="Nama lengkap" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Instansi</label>
-                    <input type="text" class="fi" id="na-instansi" placeholder="Nama instansi" required>
-                </div>
+            <div class="fg">
+                <label class="fl">Nama</label>
+                <input type="text" class="fi" id="na-nama" placeholder="Nama lengkap" required>
             </div>
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nomor Telepon</label>
-                    <input type="text" class="fi" id="na-nomor" placeholder="08xx" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Waktu Wawancara</label>
-                    <div class="date-input-wrap" id="na-waktu-wrap" onclick="triggerDatePicker('na-waktu')">
-                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
-                        <span class="date-disp ph" id="na-waktu-lbl">Pilih tanggal &amp; waktu…</span>
-                        <input type="datetime-local" id="na-waktu" onchange="syncFormDatetime('na-waktu-lbl','na-waktu-wrap',this.value)">
-                    </div>
+            <div class="fg">
+                <label class="fl">Instansi</label>
+                <input type="text" class="fi" id="na-instansi" placeholder="Nama instansi" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Nomor Telepon</label>
+                <input type="text" class="fi" id="na-nomor" placeholder="08xx" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Waktu Wawancara</label>
+                <div class="date-input-wrap" id="na-waktu-wrap" onclick="triggerDatePicker('na-waktu')">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span class="date-disp ph" id="na-waktu-lbl">Pilih tanggal &amp; waktu…</span>
+                    <input type="datetime-local" id="na-waktu" onchange="syncFormDatetime('na-waktu-lbl','na-waktu-wrap',this.value)">
                 </div>
             </div>
             <div class="fg">
@@ -573,50 +697,29 @@
         </div>
         <form onsubmit="submitNrEdit(event)">
             <input type="hidden" id="ne-id">
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nama</label>
-                    <input type="text" class="fi" id="ne-nama" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Instansi</label>
-                    <input type="text" class="fi" id="ne-instansi" required>
-                </div>
+            <div class="fg">
+                <label class="fl">Nama</label>
+                <input type="text" class="fi" id="ne-nama" required>
             </div>
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nomor Telepon</label>
-                    <input type="text" class="fi" id="ne-nomor" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Waktu Wawancara</label>
-                    <div class="date-input-wrap" id="ne-waktu-wrap" onclick="triggerDatePicker('ne-waktu')">
-                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
-                        <span class="date-disp ph" id="ne-waktu-lbl">Pilih tanggal &amp; waktu…</span>
-                        <input type="datetime-local" id="ne-waktu" onchange="syncFormDatetime('ne-waktu-lbl','ne-waktu-wrap',this.value)">
-                    </div>
+            <div class="fg">
+                <label class="fl">Instansi</label>
+                <input type="text" class="fi" id="ne-instansi" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Nomor Telepon</label>
+                <input type="text" class="fi" id="ne-nomor" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Waktu Wawancara</label>
+                <div class="date-input-wrap" id="ne-waktu-wrap" onclick="triggerDatePicker('ne-waktu')">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span class="date-disp ph" id="ne-waktu-lbl">Pilih tanggal &amp; waktu…</span>
+                    <input type="datetime-local" id="ne-waktu" onchange="syncFormDatetime('ne-waktu-lbl','ne-waktu-wrap',this.value)">
                 </div>
             </div>
             <div class="fg">
                 <label class="fl">Tema Wawancara</label>
                 <input type="text" class="fi" id="ne-tema" required>
-            </div>
-            <div class="fg">
-                <label class="fl">Jenis Jadwal Byphone <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
-                <select class="fi" id="ne-jadwal">
-                    <option value="">— Pilih Jenis Jadwal —</option>
-                    <option value="pendidikan_kota_kita">Pendidikan Kota Kita</option>
-                    <option value="youth_speak_up">Youth Speak Up</option>
-                    <option value="layanan_publik">Layanan Publik</option>
-                    <option value="anda_dan_keluarga">Anda dan Keluarga</option>
-                    <option value="dinkes_menyapa">Dinkes Menyapa</option>
-                    <option value="komunitas_bicara">Komunitas Bicara</option>
-                    <option value="indie_vibes">Indie Vibes</option>
-                    <option value="kojah_sastra">Kojah Sastra</option>
-                    <option value="inspirasi_bisnis">Inspirasi Bisnis</option>
-                    <option value="obrolan_agama_islam">Obrolan Seputar Agama Islam</option>
-                    <option value="ngosasi">Ngosasi (Ngobrol Asik Sana Sini)</option>
-                </select>
             </div>
             <div class="fg">
                 <label class="fl">Draft Pertanyaan <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
@@ -774,12 +877,12 @@ function updateStats() {
             const s = d.data;
             document.getElementById('stat-total-siaran').textContent       = s.total_siaran;
             document.getElementById('stat-total-narasumber').textContent   = s.total_narasumber;
-            document.getElementById('stat-siaran-hari-ini').textContent    = s.siaran_hari_ini;
-            document.getElementById('stat-wawancara-hari-ini').textContent = s.wawancara_hari_ini;
+            document.getElementById('stat-siaran-hari-ini').textContent    = s.siaran_selesai;
+            document.getElementById('stat-wawancara-hari-ini').textContent = s.wawancara_selesai;
             const bdgS = document.getElementById('bdg-s');
             const bdgN = document.getElementById('bdg-n');
-            if (bdgS) bdgS.textContent = s.total_siaran;
-            if (bdgN) bdgN.textContent = s.total_narasumber;
+            if (bdgS) bdgS.textContent = s.siaran_hari_ini;
+            if (bdgN) bdgN.textContent = s.wawancara_hari_ini;
         });
 }
 
@@ -818,8 +921,6 @@ function siaranStatusBadge(status) {
     return '<span class="bdg-pending">⏰ Dijadwalkan</span>';
 }
 function siaranActionBtn(s) {
-    if (s.status === 'pending')   return `<button class="btn-mulai" title="Mulai Siaran" onclick="mulaiSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M3.5 2.5l9 5-9 5V2.5z" fill="currentColor"/></svg> Mulai</button>`;
-    if (s.status === 'active')    return `<button class="btn-selesai-s" title="Selesai Siaran" onclick="selesaiSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/></svg> Selesai</button>`;
     return '';
 }
 
@@ -872,13 +973,12 @@ function doSearchSiaran(page = null) {
                     <td class="trunc" style="max-width:220px;">${s.keterangan}</td>
                     <td>${siaranStatusBadge(s.status)}</td>
                     <td><div class="abt">
-                        ${siaranActionBtn(s)}
                         <button class="bico" onclick="viewSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         <button class="bico" onclick="editSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
                         <button class="bico del" onclick="deleteSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
-            document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('siaran-count').textContent = d.total + ' data';
             document.getElementById('siaran-pag').innerHTML = renderPagination(d, 'doSearchSiaran');
         });
@@ -906,14 +1006,13 @@ function doSearchNr(page = null) {
                     <td class="mono">${waLinkHTML(n.nomor_telp)}</td>
                     <td>${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
-                    <td>${schedBadgeHTML(n.byphone_schedule)}</td>
                     <td><div class="abt">
                         <button class="bico" onclick="viewNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
                         <button class="bico" onclick="editNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
                         <button class="bico del" onclick="deleteNr(${n.byphoneID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
-            document.getElementById('nr-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('nr-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('nr-count').textContent = d.total + ' data';
             document.getElementById('nr-pag').innerHTML = renderPagination(d, 'doSearchNr');
         });
@@ -941,31 +1040,39 @@ function viewSiaran(id) {
 function editSiaran(id) {
     apiFetch(RSIARAN + '/' + id).then(d => {
         if (!d.success) return;
-        document.getElementById('se-id').value        = d.data.siaranID;
-        document.getElementById('se-tanggal').value   = d.data.tanggal;
-        syncFormDate('se-tanggal-lbl', 'se-tanggal-wrap', d.data.tanggal);
-        document.getElementById('se-waktu').value      = d.data.waktu;
+        document.getElementById('se-id').value         = d.data.siaranID;
+        const dtVal = d.data.tanggal && d.data.waktu
+            ? d.data.tanggal + 'T' + d.data.waktu.substring(0, 5)
+            : '';
+        document.getElementById('se-datetime').value   = dtVal;
+        syncFormDatetime('se-datetime-lbl', 'se-datetime-wrap', dtVal);
         document.getElementById('se-keterangan').value = d.data.keterangan;
         openModal('m-siaran-edit');
     });
 }
 function submitSiaranAdd(e) {
     e.preventDefault();
+    const dtRaw = document.getElementById('sa-datetime').value;
+    const tanggal = dtRaw ? dtRaw.split('T')[0] : '';
+    const waktu   = dtRaw ? dtRaw.split('T')[1].substring(0, 5) : '';
     apiFetch(RSIARAN, 'POST', {
-        tanggal:    document.getElementById('sa-tanggal').value,
-        waktu:      document.getElementById('sa-waktu').value,
+        tanggal,
+        waktu,
         keterangan: document.getElementById('sa-keterangan').value,
     }).then(d => {
-        if (d.success) { closeModal('m-siaran-add'); document.getElementById('sa-tanggal').closest('form').reset(); showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
+        if (d.success) { closeModal('m-siaran-add'); document.getElementById('sa-keterangan').closest('form').reset(); document.getElementById('sa-datetime').value=''; syncFormDatetime('sa-datetime-lbl','sa-datetime-wrap',''); showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
         else showFlash(d.message || 'Gagal menyimpan.', 'error');
     });
 }
 function submitSiaranEdit(e) {
     e.preventDefault();
-    const id = document.getElementById('se-id').value;
+    const id    = document.getElementById('se-id').value;
+    const dtRaw = document.getElementById('se-datetime').value;
+    const tanggal = dtRaw ? dtRaw.split('T')[0] : '';
+    const waktu   = dtRaw ? dtRaw.split('T')[1].substring(0, 5) : '';
     apiFetch(RSIARAN + '/' + id, 'PUT', {
-        tanggal:    document.getElementById('se-tanggal').value,
-        waktu:      document.getElementById('se-waktu').value,
+        tanggal,
+        waktu,
         keterangan: document.getElementById('se-keterangan').value,
     }).then(d => {
         if (d.success) { closeModal('m-siaran-edit'); showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
@@ -975,7 +1082,7 @@ function submitSiaranEdit(e) {
 function deleteSiaran(id) {
     showDeleteConfirm(
         'Hapus Data Siaran',
-        'Apakah Anda yakin ingin menghapus data siaran ini? Tindakan ini tidak dapat dibatalkan.',
+        'Apakah Anda yakin ingin menghapus data siaran ini?',
         function(done) {
             apiFetch(RSIARAN + '/' + id, 'DELETE').then(d => {
                 done();
@@ -985,18 +1092,107 @@ function deleteSiaran(id) {
         }
     );
 }
-function mulaiSiaran(id) {
-    apiFetch(RSIARAN_START(id), 'POST').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
-        else showFlash(d.message || 'Gagal memulai siaran.', 'error');
-    });
+// ══════════════════════════════════════════════════════
+// BROADCAST CARD (GATEKEEPER)
+// ══════════════════════════════════════════════════════
+let gkTimerInterval = null;
+let gkStartedAt     = null;
+
+@if($isOnAir)
+gkStartedAt = new Date('{{ $activeSiaran->started_at->toIso8601String() }}');
+startGkTimer();
+@endif
+
+function startGkTimer() {
+    if (gkTimerInterval) clearInterval(gkTimerInterval);
+    updateGkTimer();
+    gkTimerInterval = setInterval(updateGkTimer, 1000);
 }
-function selesaiSiaran(id) {
-    apiFetch(RSIARAN_END(id), 'POST').then(d => {
-        if (d.success) { showFlash(d.message); doSearchSiaran(siaranCurrentPage); updateStats(); }
-        else showFlash(d.message || 'Gagal mengakhiri siaran.', 'error');
-    });
+function updateGkTimer() {
+    if (!gkStartedAt) return;
+    const elapsed = Math.floor((Date.now() - gkStartedAt.getTime()) / 1000);
+    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    const el = document.getElementById('gk-bc-timer');
+    if (el) el.textContent = `${h}:${m}:${s}`;
 }
+function gkFormatDuration(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h} jam ${m} menit ${s} detik`;
+    if (m > 0) return `${m} menit ${s} detik`;
+    return `${s} detik`;
+}
+
+function openGkStartModal() {
+    const sel = document.getElementById('gk-bc-siaran-sel');
+    sel.value = '';
+    document.getElementById('gk-bc-preview').style.display = 'none';
+    sel.onchange = function() {
+        const opt = sel.options[sel.selectedIndex];
+        if (sel.value) {
+            document.getElementById('gk-bc-prev-ket').textContent = opt.dataset.ket || '—';
+            document.getElementById('gk-bc-prev-dt').textContent  = (opt.dataset.tanggal || '') + ' ' + (opt.dataset.waktu || '');
+            document.getElementById('gk-bc-preview').style.display = 'block';
+        } else {
+            document.getElementById('gk-bc-preview').style.display = 'none';
+        }
+    };
+    openModal('gk-m-bc-start');
+}
+
+function startGkBroadcast() {
+    const id = document.getElementById('gk-bc-siaran-sel').value;
+    if (!id) { showFlash('Pilih data siaran terlebih dahulu.', 'error'); return; }
+    apiFetch(RSIARAN_START(id), 'POST')
+        .then(d => {
+            if (!d.success) { showFlash(d.message || 'Gagal memulai siaran.', 'error'); return; }
+            closeModal('gk-m-bc-start');
+            location.reload();
+        })
+        .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
+}
+
+function endGkBroadcast() {
+    const notes = '';
+    // Ambil ID siaran yang aktif dari kartu detail
+    const activeSiaranId = {{ $isOnAir ? $activeSiaran->siaranID : 'null' }};
+    if (!activeSiaranId) { showFlash('Tidak ada siaran aktif.', 'error'); return; }
+    apiFetch(RSIARAN_END(activeSiaranId), 'POST', { notes })
+        .then(d => {
+            if (!d.success) { showFlash(d.message || 'Gagal mengakhiri siaran.', 'error'); return; }
+            if (gkTimerInterval) clearInterval(gkTimerInterval);
+            const timer = document.getElementById('gk-bc-timer');
+            const elapsed = timer ? timer.textContent : '00:00:00';
+            // Hitung durasi dari elapsed string
+            const parts = elapsed.split(':').map(Number);
+            const totalSec = parts[0]*3600 + parts[1]*60 + parts[2];
+            document.getElementById('gk-bc-done-summary').textContent =
+                `Durasi siaran: ${gkFormatDuration(totalSec)}`;
+            openModal('gk-m-bc-done');
+        })
+        .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
+}
+
+function closeGkDoneModal() {
+    closeModal('gk-m-bc-done');
+    location.reload();
+}
+
+// Pasang backdrop-click listener untuk modal broadcast card
+// (layout script jalan lebih awal, sehingga modal ini perlu didaftarkan manual)
+document.addEventListener('DOMContentLoaded', function() {
+    ['gk-m-bc-start','gk-m-bc-done'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('click', function(e) {
+                if (e.target === this) closeModal(id);
+            });
+        }
+    });
+});
 
 // ── Narasumber Byphone CRUD ───────────────────────────
 function viewNr(id) {
@@ -1024,7 +1220,6 @@ function editNr(id) {
         const wVal = n.waktu_wawancara ? n.waktu_wawancara.replace(' ', 'T').substring(0, 16) : '';
         document.getElementById('ne-waktu').value    = wVal;
         syncFormDatetime('ne-waktu-lbl', 'ne-waktu-wrap', wVal);
-        document.getElementById('ne-jadwal').value   = n.byphone_schedule || '';
         document.getElementById('ne-draft').value    = n.draft_pertanyaan || '';
         openModal('m-nr-edit');
     });
@@ -1052,7 +1247,6 @@ function submitNrEdit(e) {
         nomor_telp:      document.getElementById('ne-nomor').value,
         tema_wawancara:  document.getElementById('ne-tema').value,
         waktu_wawancara: document.getElementById('ne-waktu').value.replace('T', ' '),
-        byphone_schedule: document.getElementById('ne-jadwal').value || null,
         draft_pertanyaan: document.getElementById('ne-draft').value,
     }).then(d => {
         if (d.success) { closeModal('m-nr-edit'); showFlash(d.message); doSearchNr(nrCurrentPage); updateStats(); }
@@ -1061,8 +1255,8 @@ function submitNrEdit(e) {
 }
 function deleteNr(id) {
     showDeleteConfirm(
-        'Hapus Data Narasumber',
-        'Apakah Anda yakin ingin menghapus data narasumber ini? Tindakan ini tidak dapat dibatalkan.',
+        'Hapus Data Narasumber Byphone',
+        'Apakah Anda yakin ingin menghapus data narasumber byphone ini?',
         function(done) {
             apiFetch(RBYPHONE + '/' + id, 'DELETE').then(d => {
                 done();

@@ -230,6 +230,7 @@
             background: #fff; border-radius: 12px;
             border: 1px solid #e2e8f0; padding: 24px;
             width: 500px; max-width: 98vw;
+            max-height: 90vh; overflow-y: auto;
         }
         .mttl {
             font-size: 15px; font-weight: 700; margin-bottom: 18px; color: #0f172a;
@@ -405,11 +406,8 @@
 {{-- ═══════════════════ SIDEBAR ═══════════════════ --}}
 <div class="sb">
     <div class="sb-logo">
-        <div class="sb-ico">
-            <svg viewBox="0 0 14 14" fill="none">
-                <rect x="2" y="2" width="10" height="10" rx="2" stroke="white" stroke-width="1.4"/>
-                <path d="M5 7h4M7 5v4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-ico" style="background: transparent;">
+            <img src="{{ asset('/image/LOGO.png') }}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 8px;">
         </div>
         <div>
             <div class="sb-name">PJ Program</div>
@@ -424,7 +422,7 @@
                 <path d="M4.5 8l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Narasumber Talkshow
-            <span class="bdg" id="bdg-total">{{ $stats['total_narasumber'] ?? 0 }}</span>
+            <span class="bdg" id="bdg-total">{{ $stats['wawancara_hari_ini'] ?? 0 }}</span>
         </a>
     </div>
 
@@ -462,7 +460,6 @@
             </button>
             <div>
                 <div class="tb-title">@yield('page-title', 'Dashboard')</div>
-                <div class="tb-sub">@yield('page-sub', 'Manajemen narasumber talkshow')</div>
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">

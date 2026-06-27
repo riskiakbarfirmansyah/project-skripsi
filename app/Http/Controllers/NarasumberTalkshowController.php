@@ -63,7 +63,7 @@ class NarasumberTalkshowController extends Controller
             'waktu_wawancara.date_format'     => 'Format waktu wawancara tidak valid (gunakan format YYYY-MM-DD HH:MM).',
         ]);
 
-        $narasumber = narasumbertalkshow::create($validated);
+        $narasumber = narasumbertalkshow::create($validated + ['user_id' => auth()->id()]);
 
         return response()->json([
             'success' => true,

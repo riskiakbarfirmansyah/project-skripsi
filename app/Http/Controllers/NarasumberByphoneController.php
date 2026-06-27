@@ -32,11 +32,36 @@ class NarasumberByphoneController extends Controller
         $siaranList   = informasisiaran::orderBy('tanggal', 'desc')->orderBy('waktu', 'desc')->paginate(15);
         $siaranRecent = informasisiaran::orderBy('tanggal', 'desc')->orderBy('waktu', 'desc')->take(5)->get();
 
+        // Siaran yang sedang aktif (untuk kartu status broadcast)
+        $activeSiaran = informasisiaran::where('status', 'active')->latest('started_at')->first();
+
+        // Daftar siaran pending untuk dropdown modal mulai siaran
+        $pendingSiaranList = informasisiaran::where('status', 'pending')
+            ->orderBy('tanggal', 'asc')
+            ->orderBy('waktu', 'asc')
+            ->get();
+
+        // Ambil semua stats siaran dalam 1 query (bukan 3 query terpisah)
+        $siaranStats = informasisiaran::selectRaw("
+            COUNT(*) as total_siaran,
+            SUM(CASE WHEN DATE(tanggal) = CURDATE() THEN 1 ELSE 0 END) as siaran_hari_ini,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as siaran_selesai
+        ")->first();
+
+        // Ambil semua stats narasumber dalam 1 query (bukan 3 query terpisah)
+        $narasumberStats = narasumberbyphone::selectRaw("
+            COUNT(*) as total_narasumber,
+            SUM(CASE WHEN DATE(waktu_wawancara) = CURDATE() THEN 1 ELSE 0 END) as wawancara_hari_ini,
+            SUM(CASE WHEN DATE(waktu_wawancara) < CURDATE() THEN 1 ELSE 0 END) as wawancara_selesai
+        ")->first();
+
         $stats = [
-            'total_siaran'       => informasisiaran::count(),
-            'total_narasumber'   => narasumberbyphone::count(),
-            'siaran_hari_ini'    => informasisiaran::whereDate('tanggal', today())->count(),
-            'wawancara_hari_ini' => narasumberbyphone::whereDate('waktu_wawancara', today())->count(),
+            'total_siaran'       => (int) $siaranStats->total_siaran,
+            'total_narasumber'   => (int) $narasumberStats->total_narasumber,
+            'siaran_hari_ini'    => (int) $siaranStats->siaran_hari_ini,
+            'wawancara_hari_ini' => (int) $narasumberStats->wawancara_hari_ini,
+            'siaran_selesai'     => (int) $siaranStats->siaran_selesai,
+            'wawancara_selesai'  => (int) $narasumberStats->wawancara_selesai,
         ];
 
         return view('gatekeeper.dashboard', compact(
@@ -44,7 +69,9 @@ class NarasumberByphoneController extends Controller
             'narasumberRecent',
             'siaranList',
             'siaranRecent',
-            'stats'
+            'stats',
+            'activeSiaran',
+            'pendingSiaranList'
         ));
     }
 
@@ -66,12 +93,22 @@ class NarasumberByphoneController extends Controller
         $talkshowList   = narasumbertalkshow::orderBy('waktu_wawancara', 'desc')->paginate(15);
         $talkshowRecent = narasumbertalkshow::orderBy('waktu_wawancara', 'desc')->take(5)->get();
 
-        // ── Statistik gabungan ────────────────────────────────────────
+        // Ambil semua stats dalam 2 query (bukan 4 query terpisah)
+        $byphoneStats = narasumberbyphone::selectRaw("
+            COUNT(*) as total_byphone,
+            SUM(CASE WHEN DATE(waktu_wawancara) = CURDATE() THEN 1 ELSE 0 END) as byphone_hari_ini
+        ")->first();
+
+        $talkshowStats = narasumbertalkshow::selectRaw("
+            COUNT(*) as total_talkshow,
+            SUM(CASE WHEN DATE(waktu_wawancara) = CURDATE() THEN 1 ELSE 0 END) as talkshow_hari_ini
+        ")->first();
+
         $stats = [
-            'total_byphone'       => narasumberbyphone::count(),
-            'total_talkshow'      => narasumbertalkshow::count(),
-            'byphone_hari_ini'    => narasumberbyphone::whereDate('waktu_wawancara', today())->count(),
-            'talkshow_hari_ini'   => narasumbertalkshow::whereDate('waktu_wawancara', today())->count(),
+            'total_byphone'     => (int) $byphoneStats->total_byphone,
+            'total_talkshow'    => (int) $talkshowStats->total_talkshow,
+            'byphone_hari_ini'  => (int) $byphoneStats->byphone_hari_ini,
+            'talkshow_hari_ini' => (int) $talkshowStats->talkshow_hari_ini,
         ];
 
         // ── Siaran aktif ──────────────────────────────────────────────
@@ -82,6 +119,38 @@ class NarasumberByphoneController extends Controller
         if ($activeBroadcast) {
             $activeBroadcast->narasumber_detail = $activeBroadcast->narasumber;
         }
+
+        // ── Attach broadcast_status ke byphoneList ────────────────────
+        $bpIds = $byphoneList->pluck('byphoneID')->toArray();
+        $bpSessions = BroadcastSession::where('narasumber_type', 'byphone')
+            ->whereIn('narasumber_id', $bpIds)
+            ->whereDate('started_at', today())
+            ->get()
+            ->groupBy('narasumber_id');
+
+        $byphoneList->getCollection()->transform(function ($n) use ($bpSessions) {
+            $sessions = $bpSessions->get($n->byphoneID, collect());
+            if ($sessions->contains('status', 'active'))         $n->broadcast_status = 'sedang_siaran';
+            elseif ($sessions->contains('status', 'completed'))  $n->broadcast_status = 'sudah_siaran';
+            else                                                  $n->broadcast_status = 'belum_siaran';
+            return $n;
+        });
+
+        // ── Attach broadcast_status ke talkshowList ───────────────────
+        $tsIds = $talkshowList->pluck('talkshowID')->toArray();
+        $tsSessions = BroadcastSession::where('narasumber_type', 'talkshow')
+            ->whereIn('narasumber_id', $tsIds)
+            ->whereDate('started_at', today())
+            ->get()
+            ->groupBy('narasumber_id');
+
+        $talkshowList->getCollection()->transform(function ($n) use ($tsSessions) {
+            $sessions = $tsSessions->get($n->talkshowID, collect());
+            if ($sessions->contains('status', 'active'))         $n->broadcast_status = 'sedang_siaran';
+            elseif ($sessions->contains('status', 'completed'))  $n->broadcast_status = 'sudah_siaran';
+            else                                                  $n->broadcast_status = 'belum_siaran';
+            return $n;
+        });
 
         return view('penyiar.dashboard', compact(
             'byphoneList',
@@ -115,7 +184,7 @@ class NarasumberByphoneController extends Controller
             'waktu_wawancara.date_format'     => 'Format waktu wawancara tidak valid (gunakan format YYYY-MM-DD HH:MM).',
         ]);
 
-        $narasumber = narasumberbyphone::create($validated);
+        $narasumber = narasumberbyphone::create($validated + ['user_id' => auth()->id()]);
 
         return response()->json([
             'success' => true,
@@ -233,9 +302,10 @@ class NarasumberByphoneController extends Controller
             $query->whereDate('waktu_wawancara', today());
         }
 
-        $list = $query->orderBy('waktu_wawancara', 'asc')->get();
+        $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
+        $list = $query->orderBy('waktu_wawancara', 'desc')->paginate($perPage);
 
-        // Tambahkan broadcast_status untuk setiap narasumber
+        // Tambahkan broadcast_status untuk setiap narasumber (efisien: 1 query batch)
         if ($request->boolean('today_only') || $request->filled('tanggal')) {
             $narasumberIds = $list->pluck('byphoneID')->toArray();
 
@@ -245,7 +315,7 @@ class NarasumberByphoneController extends Controller
                 ->get()
                 ->groupBy('narasumber_id');
 
-            $list = $list->map(function ($n) use ($todaySessions) {
+            $list->getCollection()->transform(function ($n) use ($todaySessions) {
                 $sessions = $todaySessions->get($n->byphoneID, collect());
 
                 if ($sessions->contains('status', 'active')) {
@@ -259,9 +329,6 @@ class NarasumberByphoneController extends Controller
                 return $n;
             });
         }
-
-        $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
-        $list = $query->orderBy('waktu_wawancara', 'desc')->paginate($perPage);
 
         return response()->json([
             'success'      => true,
@@ -282,13 +349,28 @@ class NarasumberByphoneController extends Controller
      */
     public function getStats(): JsonResponse
     {
+        // Ambil semua stats dalam 2 query (bukan 6 query terpisah)
+        $siaranStats = informasisiaran::selectRaw("
+            COUNT(*) as total_siaran,
+            SUM(CASE WHEN DATE(tanggal) = CURDATE() THEN 1 ELSE 0 END) as siaran_hari_ini,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as siaran_selesai
+        ")->first();
+
+        $narasumberStats = narasumberbyphone::selectRaw("
+            COUNT(*) as total_narasumber,
+            SUM(CASE WHEN DATE(waktu_wawancara) = CURDATE() THEN 1 ELSE 0 END) as wawancara_hari_ini,
+            SUM(CASE WHEN DATE(waktu_wawancara) < CURDATE() THEN 1 ELSE 0 END) as wawancara_selesai
+        ")->first();
+
         return response()->json([
             'success' => true,
             'data'    => [
-                'total_siaran'       => informasisiaran::count(),
-                'total_narasumber'   => narasumberbyphone::count(),
-                'siaran_hari_ini'    => informasisiaran::whereDate('tanggal', today())->count(),
-                'wawancara_hari_ini' => narasumberbyphone::whereDate('waktu_wawancara', today())->count(),
+                'total_siaran'       => (int) $siaranStats->total_siaran,
+                'total_narasumber'   => (int) $narasumberStats->total_narasumber,
+                'siaran_hari_ini'    => (int) $siaranStats->siaran_hari_ini,
+                'wawancara_hari_ini' => (int) $narasumberStats->wawancara_hari_ini,
+                'siaran_selesai'     => (int) $siaranStats->siaran_selesai,
+                'wawancara_selesai'  => (int) $narasumberStats->wawancara_selesai,
             ],
         ]);
     }

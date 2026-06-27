@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    $isLive = \App\Models\informasisiaran::where('status', 'active')->exists()
+        || \App\Models\BroadcastSession::where('status', 'active')->exists();
+
+    return view('welcome', compact('isLive'));
 });
 
 /*
@@ -27,13 +30,13 @@ Route::get('/dashboard', function () {
     $user = Auth::user();
     if (! $user) {
         return redirect()->route('login');
-    } elseif ($user->is_admin == 1) {
+    } elseif ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
-    } elseif ($user->is_gatekeeper == 1) {
+    } elseif ($user->role === 'gatekeeper') {
         return redirect()->route('gatekeeper.dashboard');
-    } elseif ($user->is_penyiar == 1) {
+    } elseif ($user->role === 'penyiar') {
         return redirect()->route('penyiar.dashboard');
-    } elseif ($user->is_pjprogram == 1) {
+    } elseif ($user->role === 'pj_program') {
         return redirect()->route('pj_program.dashboard');
     }
     return redirect('/');

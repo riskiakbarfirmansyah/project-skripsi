@@ -15,7 +15,7 @@ class IsPenyiar
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user() && auth()->user()->is_penyiar === 1){
+        if(auth()->user() && auth()->user()->role === 'penyiar'){
             return $next($request);
         }
 

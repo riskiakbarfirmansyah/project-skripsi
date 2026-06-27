@@ -236,7 +236,7 @@
                 @csrf
 
                 <div class="fg">
-                    <label class="fl" for="email">Email Address</label>
+                    <label class="fl" for="email">Alamat Email</label>
                     <input id="email" type="email" name="email" class="fi {{ $errors->has('email') ? 'is-invalid' : '' }}"
                            value="{{ old('email') }}" required autofocus autocomplete="username"
                            placeholder="email@example.com">

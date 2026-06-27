@@ -1,8 +1,7 @@
 @extends('layouts.penyiar')
 
 @section('title', 'Dashboard')
-@section('page-title', '')
-@section('page-sub', 'Data narasumber byphone & talkshow')
+@section('page-title', 'Siaran narasumber byphone & talkshow')
 
 @push('styles')
 <style>
@@ -16,6 +15,17 @@
     font-weight: 600; background: #ccfbf1; color: #065f46;
 }
 .sched-none { color:#94a3b8; font-size:11px; }
+
+/* ── Status Siaran badges ── */
+.bdg-siaran-belum   { display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600;background:#f1f5f9;color:#475569;white-space:nowrap; }
+.bdg-siaran-aktif   { display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600;background:#fef2f2;color:#dc2626;white-space:nowrap; }
+.bdg-siaran-selesai { display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600;background:#d1fae5;color:#065f46;white-space:nowrap; }
+.bdg-siaran-dot { width:6px;height:6px;border-radius:50%;background:#dc2626;flex-shrink:0;animation:bdg-pulse 1.4s infinite; }
+@keyframes bdg-pulse {
+    0%   { box-shadow:0 0 0 0 rgba(239,68,68,.4); }
+    70%  { box-shadow:0 0 0 5px rgba(239,68,68,0); }
+    100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+}
 
 /* ── Broadcast card ── */
 .bc-card {
@@ -176,12 +186,12 @@
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#92400e" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/></svg></div>
             <div class="sb-sc-val">{{ $stats['byphone_hari_ini'] }}</div>
-            <div class="sb-sc-lbl">BP Hari Ini</div>
+            <div class="sb-sc-lbl">Byphone Hari Ini</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
             <div class="sb-sc-val">{{ $stats['talkshow_hari_ini'] }}</div>
-            <div class="sb-sc-lbl">TS Hari Ini</div>
+            <div class="sb-sc-lbl">Talkshow Hari Ini</div>
         </div>
     </div>
 </div>
@@ -196,7 +206,7 @@
     <div class="bc-info">
         <div class="bc-status-dot {{ $isOnAir ? 'live' : '' }}" id="bc-dot"></div>
         <div>
-            <div class="bc-label" id="bc-label">{{ $isOnAir ? '🔴 Sedang Siaran' : 'Siap Siaran' }}</div>
+            <div class="bc-label" id="bc-label">{{ $isOnAir ? 'Sedang Siaran' : 'Siap Siaran' }}</div>
             <div class="bc-sub" id="bc-sub">
                 @if($isOnAir)
                     {{ $activeBroadcast->narasumber_detail?->nama ?? '—' }} &middot;
@@ -209,7 +219,7 @@
     </div>
     @if($isOnAir)
         <div class="bc-timer" id="bc-timer">00:00:00</div>
-        <button class="btn-selesai" onclick="openEndModal()">
+        <button class="btn-selesai" onclick="endBroadcast()">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                 <rect x="3" y="3" width="9" height="9" rx="1.5" fill="currentColor"/>
             </svg>
@@ -305,7 +315,8 @@
                         <th style="width:120px">No. Telepon</th>
                         <th style="width:200px">Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
-                        <th style="width:150px">Status Jadwal</th>
+                        <th style="width:150px">Jenis Jadwal</th>
+                        <th style="width:130px">Status Siaran</th>
                         <th style="width:180px">Aksi</th>
                     </tr>
                 </thead>
@@ -328,13 +339,23 @@
                             @endif
                         </td>
                         <td>
+                            @php $bs = $n->broadcast_status ?? 'belum_siaran'; @endphp
+                            @if($bs === 'sedang_siaran')
+                                <span class="bdg-siaran-aktif"><span class="bdg-siaran-dot"></span>Sedang Siaran</span>
+                            @elseif($bs === 'sudah_siaran')
+                                <span class="bdg-siaran-selesai">✅ Sudah Siaran</span>
+                            @else
+                                <span class="bdg-siaran-belum">⏳ Belum Siaran</span>
+                            @endif
+                        </td>
+                        <td>
                             <button class="bico" title="Detail" onclick="viewBp({{ $n->byphoneID }})">
                                 <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                             </button>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="8" class="empty">Belum ada data narasumber byphone.</td></tr>
+                    <tr><td colspan="9" class="empty">Belum ada data narasumber byphone.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -385,7 +406,8 @@
                         <th style="width:120px">No. Telepon</th>
                         <th style="width:200px">Tema Wawancara</th>
                         <th style="width:115px">Waktu</th>
-                        <th style="width:150px">Status Jadwal</th>
+                        <th style="width:150px">Jenis Jadwal</th>
+                        <th style="width:130px">Status Siaran</th>
                         <th style="width:180px">Aksi</th>
                     </tr>
                 </thead>
@@ -408,13 +430,23 @@
                             @endif
                         </td>
                         <td>
+                            @php $bs = $n->broadcast_status ?? 'belum_siaran'; @endphp
+                            @if($bs === 'sedang_siaran')
+                                <span class="bdg-siaran-aktif"><span class="bdg-siaran-dot"></span>Sedang Siaran</span>
+                            @elseif($bs === 'sudah_siaran')
+                                <span class="bdg-siaran-selesai">✅ Sudah Siaran</span>
+                            @else
+                                <span class="bdg-siaran-belum">⏳ Belum Siaran</span>
+                            @endif
+                        </td>
+                        <td>
                             <button class="bico" title="Detail" onclick="viewTs({{ $n->talkshowID }})">
                                 <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                             </button>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="8" class="empty">Belum ada data narasumber talkshow.</td></tr>
+                    <tr><td colspan="9" class="empty">Belum ada data narasumber talkshow.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -435,7 +467,6 @@
         <div class="dr"><span class="dl">Nomor Telepon</span><span class="dv" id="bv-nomor">—</span></div>
         <div class="dr"><span class="dl">Tema Wawancara</span><span class="dv" id="bv-tema">—</span></div>
         <div class="dr"><span class="dl">Waktu Wawancara</span><span class="dv" id="bv-waktu">—</span></div>
-        <div class="dr"><span class="dl">Jadwal Byphone</span><span class="dv" id="bv-jadwal">—</span></div>
         <div class="dr" style="flex-direction:column;">
             <span class="dl">Draft Pertanyaan</span>
             <div class="dbox" id="bv-draft">—</div>
@@ -504,29 +535,7 @@
     </div>
 </div>
 
-{{-- ════════════════════ MODAL SELESAI SIARAN ════════════════════ --}}
-<div class="mbg" id="m-bc-end">
-    <div class="modal">
-        <div class="mttl">
-            Akhiri Siaran
-            <button class="mclose" onclick="closeModal('m-bc-end')">×</button>
-        </div>
-        <p style="font-size:13px;color:#64748b;margin-bottom:14px;">Apakah Anda yakin ingin mengakhiri siaran?</p>
-        <div class="fg">
-            <label class="fl">Catatan Siaran <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
-            <textarea class="notes-ta" id="bc-notes" placeholder="Tambahkan catatan siaran…"></textarea>
-        </div>
-        <div class="mft">
-            <button class="bcn" onclick="closeModal('m-bc-end')">Batal</button>
-            <button class="btn-selesai" style="animation:none;" onclick="endBroadcast()">
-                <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
-                    <path d="M12.5 4.5l-7 7-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Ya, Akhiri Siaran
-            </button>
-        </div>
-    </div>
-</div>
+
 
 {{-- ════════════════════ MODAL SIARAN SELESAI ════════════════════ --}}
 <div class="mbg" id="m-bc-done">
@@ -577,6 +586,12 @@ const SCHEDULE_LABELS = {
 function schedBadgeHTML(key) {
     if (!key) return '<span class="sched-none">—</span>';
     return `<span class="sched-badge">${SCHEDULE_LABELS[key] || key}</span>`;
+}
+
+function bcastStatusBadge(status) {
+    if (status === 'sedang_siaran') return '<span class="bdg-siaran-aktif"><span class="bdg-siaran-dot"></span>Sedang Siaran</span>';
+    if (status === 'sudah_siaran')  return '<span class="bdg-siaran-selesai">✅ Sudah Siaran</span>';
+    return '<span class="bdg-siaran-belum">⏳ Belum Siaran</span>';
 }
 
 function debounce(fn, delay) {
@@ -649,11 +664,12 @@ function doSearchBp(page = null) {
                     <td>${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
                     <td>${schedBadgeHTML(n.byphone_schedule)}</td>
+                    <td>${bcastStatusBadge(n.broadcast_status || 'belum_siaran')}</td>
                     <td><button class="bico" onclick="viewBp(${n.byphoneID})">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                     </button></td>
                 </tr>`).join('');
-            document.getElementById('bp-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('bp-tbody').innerHTML = rows || '<tr><td colspan="9" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('bp-count').textContent = d.total + ' data';
             document.getElementById('bp-pag').innerHTML = renderPagination(d, 'doSearchBp');
         });
@@ -682,11 +698,12 @@ function doSearchTs(page = null) {
                     <td>${n.tema_wawancara}</td>
                     <td class="mono">${formatDateTime(n.waktu_wawancara)}</td>
                     <td>${schedBadgeHTML(n.talkshow_schedule)}</td>
+                    <td>${bcastStatusBadge(n.broadcast_status || 'belum_siaran')}</td>
                     <td><button class="bico" onclick="viewTs(${n.talkshowID})">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1 7.5 1 7.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
                     </button></td>
                 </tr>`).join('');
-            document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('ts-tbody').innerHTML = rows || '<tr><td colspan="9" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('ts-count').textContent = d.total + ' data';
             document.getElementById('ts-pag').innerHTML = renderPagination(d, 'doSearchTs');
         });
@@ -702,7 +719,6 @@ function viewBp(id) {
         document.getElementById('bv-nomor').innerHTML      = waLinkHTML(n.nomor_telp);
         document.getElementById('bv-tema').textContent     = n.tema_wawancara;
         document.getElementById('bv-waktu').textContent    = formatDateTime(n.waktu_wawancara);
-        document.getElementById('bv-jadwal').innerHTML     = schedBadgeHTML(n.byphone_schedule);
         document.getElementById('bv-draft').textContent    = n.draft_pertanyaan || '(kosong)';
         openModal('m-bp-view');
     });
@@ -860,19 +876,12 @@ function startBroadcast() {
         .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
 }
 
-// Open end modal
-function openEndModal() {
-    document.getElementById('bc-notes').value = '';
-    openModal('m-bc-end');
-}
-
 // End broadcast
 function endBroadcast() {
-    const notes = document.getElementById('bc-notes').value;
+    const notes = '';
     apiFetch(RBROADCAST_END, 'POST', { notes })
         .then(d => {
             if (!d.success) { showFlash(d.message || 'Gagal mengakhiri siaran.', 'error'); return; }
-            closeModal('m-bc-end');
             if (bcTimerInterval) clearInterval(bcTimerInterval);
             const sess = d.data;
             const nar  = sess.narasumber || {};
@@ -915,5 +924,10 @@ function clearDateFilter(inputId, lblId, wrapId, searchFn) {
     syncDateDisplay(lblId, wrapId, '');
     searchFn();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    doSearchBp(1);
+    doSearchTs(1);
+});
 </script>
 @endpush

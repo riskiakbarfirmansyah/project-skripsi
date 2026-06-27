@@ -1,8 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'Dashboard')
-@section('page-title', '')
-@section('page-sub', 'Manajemen pengguna aplikasi')
+@section('page-title', 'Manajemen pengguna aplikasi')
 
 @section('sidebar-stats')
 <div class="sb-stats">
@@ -84,12 +83,7 @@
                 <tr data-id="{{ $u->id }}">
                     <td class="mono">{{ $users->firstItem() + $i }}</td>
                     <td>
-                        <div style="display:flex;align-items:center;gap:9px;">
-                            <div class="ini">{{ strtoupper(substr($u->name, 0, 2)) }}</div>
-                            <div>
-                                <div style="font-weight:600;font-size:13px;">{{ $u->name }}</div>
-                            </div>
-                        </div>
+                        <div style="font-weight:600;font-size:13px;">{{ $u->name }}</div>
                     </td>
                     <td class="trunc" style="max-width:200px;font-size:12px;color:#64748b;">{{ $u->email }}</td>
                     <td>
@@ -108,15 +102,7 @@
                                     <path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-                            <button class="bico" title="Reset Password"
-                                    data-id="{{ $u->id }}" data-name="{{ $u->name }}"
-                                    onclick="resetPasswordUser(this.dataset.id, this.dataset.name)">
-                                <svg viewBox="0 0 15 15" fill="none">
-                                    <path d="M2 7.5C2 4.5 4.5 2 7.5 2c2 0 3.7 1 4.7 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M13 7.5c0 3-2.5 5.5-5.5 5.5-2 0-3.7-1-4.7-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M10.5 2l2 2.5-2.5.5M4.5 13l-2-2.5 2.5-.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
+
                             <button class="bico del" title="Hapus"
                                     data-id="{{ $u->id }}" data-name="{{ $u->name }}"
                                     onclick="deleteUser(this.dataset.id, this.dataset.name)">
@@ -210,6 +196,18 @@
                     <option value="pj_program">PJ Program</option>
                 </select>
             </div>
+            
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 16px 0;">
+            <div style="font-size:12px; font-weight:600; color:#64748b; margin-bottom:12px;">Ubah Password (Opsional)</div>
+            <div class="fg">
+                <label class="fl">Password Baru <span style="color:#94a3b8;font-weight:400;">(kosongkan jika tidak diubah)</span></label>
+                <input type="password" class="fi" id="edit-password" placeholder="Min. 8 karakter">
+                <div class="err-txt" id="err-edit-password"></div>
+            </div>
+            <div class="fg">
+                <label class="fl">Ulangi Password Baru</label>
+                <input type="password" class="fi" id="edit-password-confirmation" placeholder="Ulangi password baru">
+            </div>
             <div class="mft">
                 <button type="button" class="bcn" onclick="closeModal('m-edit')">Batal</button>
                 <button type="submit" class="bsv" id="btn-edit-save">Simpan Perubahan</button>
@@ -256,34 +254,7 @@
     </div>
 </div>
 
-{{-- ════════════════════ MODAL RESET PASSWORD ════════════════════ --}}
-<div class="mbg" id="m-reset">
-    <div class="modal">
-        <div class="mttl">
-            Reset Password
-            <button class="mclose" onclick="closeModal('m-reset')">×</button>
-        </div>
-        <div style="font-size:13px;color:#475569;margin-bottom:16px;">
-            Reset password untuk: <strong id="reset-name">—</strong>
-        </div>
-        <form id="form-reset" onsubmit="submitReset(event)">
-            <input type="hidden" id="reset-id">
-            <div class="fg">
-                <label class="fl">Password Baru</label>
-                <input type="password" class="fi" id="reset-password" placeholder="Min. 8 karakter" required>
-                <div class="err-txt" id="err-reset-password"></div>
-            </div>
-            <div class="fg">
-                <label class="fl">Konfirmasi Password Baru</label>
-                <input type="password" class="fi" id="reset-password-confirmation" placeholder="Ulangi password" required>
-            </div>
-            <div class="mft">
-                <button type="button" class="bcn" onclick="closeModal('m-reset')">Batal</button>
-                <button type="submit" class="bsv bdel">Reset Password</button>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 @endsection
 
@@ -320,10 +291,7 @@ function renderRows(users) {
         <tr data-id="${u.id}">
             <td class="mono">${(userCurrentPage - 1) * parseInt(document.getElementById('limit-filter').value) + i + 1}</td>
             <td>
-                <div style="display:flex;align-items:center;gap:9px;">
-                    <div class="ini">${ini(u.name)}</div>
-                    <div style="font-weight:600;font-size:13px;">${u.name}</div>
-                </div>
+                <div style="font-weight:600;font-size:13px;">${u.name}</div>
             </td>
             <td style="font-size:12px;color:#64748b;">${u.email}</td>
             <td>${roleBadge(u.role)}</td>
@@ -335,11 +303,7 @@ function renderRows(users) {
                     <button class="bico" title="Edit" onclick="editUser(${u.id})">
                         <svg viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
                     </button>
-                    <button class="bico" title="Reset Password"
-                            data-id="${u.id}" data-name="${u.name}"
-                            onclick="resetPasswordUser(this.dataset.id, this.dataset.name)">
-                        <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5C2 4.5 4.5 2 7.5 2c2 0 3.7 1 4.7 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13 7.5c0 3-2.5 5.5-5.5 5.5-2 0-3.7-1-4.7-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10.5 2l2 2.5-2.5.5M4.5 13l-2-2.5 2.5-.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
+
                     <button class="bico del" title="Hapus"
                             data-id="${u.id}" data-name="${u.name}"
                             onclick="deleteUser(this.dataset.id, this.dataset.name)">
@@ -429,7 +393,9 @@ function editUser(id) {
         document.getElementById('edit-name').value  = u.name;
         document.getElementById('edit-email').value = u.email;
         document.getElementById('edit-role').value  = u.role;
-        ['name','email'].forEach(f => {
+        document.getElementById('edit-password').value = '';
+        document.getElementById('edit-password-confirmation').value = '';
+        ['name','email','role','password'].forEach(f => {
             const el = document.getElementById('err-edit-' + f);
             if (el) { el.style.display = 'none'; el.textContent = ''; }
         });
@@ -473,6 +439,11 @@ function submitEdit(e) {
         email: document.getElementById('edit-email').value,
         role:  document.getElementById('edit-role').value,
     };
+    const pwd = document.getElementById('edit-password').value;
+    if (pwd) {
+        body.password = pwd;
+        body.password_confirmation = document.getElementById('edit-password-confirmation').value;
+    }
     apiFetch(ROUTES.update + '/' + id, 'PUT', body).then(d => {
         btn.disabled = false; btn.textContent = 'Simpan Perubahan';
         if (d.success) {
@@ -489,7 +460,7 @@ function submitEdit(e) {
 function deleteUser(id, name) {
     showDeleteConfirm(
         'Hapus Akun Pengguna',
-        'Apakah Anda yakin ingin menghapus akun "' + name + '"? Tindakan ini tidak dapat dibatalkan.',
+        'Apakah Anda yakin ingin menghapus akun "' + name + '"?',
         function(done) {
             apiFetch(ROUTES.delete + '/' + id, 'DELETE').then(d => {
                 done();
@@ -500,36 +471,7 @@ function deleteUser(id, name) {
     );
 }
 
-// ── Reset Password ────────────────────────────────────
-function resetPasswordUser(id, name) {
-    document.getElementById('reset-id').value = id;
-    document.getElementById('reset-name').textContent = name;
-    document.getElementById('reset-password').value = '';
-    document.getElementById('reset-password-confirmation').value = '';
-    const err = document.getElementById('err-reset-password');
-    if (err) { err.style.display = 'none'; err.textContent = ''; }
-    openModal('m-reset');
-}
-function submitReset(e) {
-    e.preventDefault();
-    const id  = document.getElementById('reset-id').value;
-    const body = {
-        password:              document.getElementById('reset-password').value,
-        password_confirmation: document.getElementById('reset-password-confirmation').value,
-    };
-    apiFetch(ROUTES.reset + '/' + id + '/reset-password', 'POST', body).then(d => {
-        if (d.success) { closeModal('m-reset'); showFlash(d.message); }
-        else {
-            const err = document.getElementById('err-reset-password');
-            if (err && d.errors && d.errors.password) {
-                err.textContent = d.errors.password[0];
-                err.style.display = 'block';
-            } else {
-                showFlash(d.message || 'Gagal reset password.', 'error');
-            }
-        }
-    });
-}
+
 
 // ── Show inline errors ────────────────────────────────
 function showErrors(prefix, errors) {

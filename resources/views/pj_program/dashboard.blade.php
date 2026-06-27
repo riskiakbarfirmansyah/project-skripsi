@@ -1,8 +1,7 @@
 @extends('layouts.pjprogram')
 
 @section('title', 'Dashboard')
-@section('page-title', '')
-@section('page-sub', 'Manajemen narasumber talkshow')
+@section('page-title', 'Manajemen narasumber talkshow')
 
 @push('styles')
 <style>
@@ -131,7 +130,7 @@
                 <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.3"/>
                 <path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
-            <input type="text" id="ts-search" placeholder="Cari nama, instansi, tema, jadwal…" oninput="debounce(doSearch, 350)()">
+            <input type="text" id="ts-search" placeholder="Cari nama, instansi, tema, jenis jadwal…" oninput="debounce(doSearch, 350)()">
         </div>
         <span style="font-size:12px;color:#64748b;white-space:nowrap;">Filter tanggal:</span>
         <div class="date-filter-wrap" id="ts-tanggal-wrap" onclick="triggerDatePicker('ts-tanggal')">
@@ -177,7 +176,7 @@
                     <th style="width:120px">No. Telepon</th>
                     <th style="width:200px">Tema Wawancara</th>
                     <th style="width:115px">Waktu</th>
-                    <th style="width:150px">Status Jadwal</th>
+                    <th style="width:150px">Jenis Jadwal Talkshow</th>
                     <th style="width:180px">Aksi</th>
                 </tr>
             </thead>
@@ -227,36 +226,49 @@
     <div class="modal">
         <div class="mttl">
             Tambah Narasumber Talkshow
-            <button class="mclose" onclick="closeModal('m-add')">×</button>
+            <!-- <button class="mclose" onclick="closeModal('m-add')">×</button> -->
         </div>
         <form onsubmit="submitAdd(event)">
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nama</label>
-                    <input type="text" class="fi" id="a-nama" placeholder="Nama lengkap" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Instansi</label>
-                    <input type="text" class="fi" id="a-instansi" placeholder="Nama instansi" required>
-                </div>
+            <div class="fg">
+                <label class="fl">Nama</label>
+                <input type="text" class="fi" id="a-nama" placeholder="Nama lengkap" required>
             </div>
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nomor Telepon</label>
-                    <input type="text" class="fi" id="a-nomor" placeholder="08xx" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Waktu Wawancara</label>
-                    <div class="date-input-wrap" id="a-waktu-wrap" onclick="triggerDatePicker('a-waktu')">
-                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
-                        <span class="date-disp ph" id="a-waktu-lbl">Pilih tanggal &amp; waktu…</span>
-                        <input type="datetime-local" id="a-waktu" onchange="syncFormDatetime('a-waktu-lbl','a-waktu-wrap',this.value)">
-                    </div>
+            <div class="fg">
+                <label class="fl">Instansi</label>
+                <input type="text" class="fi" id="a-instansi" placeholder="Nama instansi" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Nomor Telepon</label>
+                <input type="text" class="fi" id="a-nomor" placeholder="08xx" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Waktu Wawancara</label>
+                <div class="date-input-wrap" id="a-waktu-wrap" onclick="triggerDatePicker('a-waktu')">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span class="date-disp ph" id="a-waktu-lbl">Pilih tanggal &amp; waktu…</span>
+                    <input type="datetime-local" id="a-waktu" onchange="syncFormDatetime('a-waktu-lbl','a-waktu-wrap',this.value)">
                 </div>
             </div>
             <div class="fg">
                 <label class="fl">Tema Wawancara</label>
                 <input type="text" class="fi" id="a-tema" placeholder="Topik wawancara" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Jenis Jadwal Talkshow</label>
+                <select class="fi" id="a-jadwal">
+                    <option value="">— Pilih Jenis Jadwal —</option>
+                    <option value="pendidikan_kota_kita">Pendidikan Kota Kita</option>
+                    <option value="youth_speak_up">Youth Speak Up</option>
+                    <option value="layanan_publik">Layanan Publik</option>
+                    <option value="anda_dan_keluarga">Anda dan Keluarga</option>
+                    <option value="dinkes_menyapa">Dinkes Menyapa</option>
+                    <option value="komunitas_bicara">Komunitas Bicara</option>
+                    <option value="indie_vibes">Indie Vibes</option>
+                    <option value="kojah_sastra">Kojah Sastra</option>
+                    <option value="inspirasi_bisnis">Inspirasi Bisnis</option>
+                    <option value="obrolan_agama_islam">Obrolan Seputar Agama Islam</option>
+                    <option value="ngosasi">Ngosasi (Ngobrol Asik Sana Sini)</option>
+                </select>
             </div>
             <div class="fg">
                 <label class="fl">Draft Pertanyaan <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
@@ -279,28 +291,24 @@
         </div>
         <form onsubmit="submitEdit(event)">
             <input type="hidden" id="e-id">
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nama</label>
-                    <input type="text" class="fi" id="e-nama" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Instansi</label>
-                    <input type="text" class="fi" id="e-instansi" required>
-                </div>
+            <div class="fg">
+                <label class="fl">Nama</label>
+                <input type="text" class="fi" id="e-nama" required>
             </div>
-            <div class="frow">
-                <div class="fg">
-                    <label class="fl">Nomor Telepon</label>
-                    <input type="text" class="fi" id="e-nomor" required>
-                </div>
-                <div class="fg">
-                    <label class="fl">Waktu Wawancara</label>
-                    <div class="date-input-wrap" id="e-waktu-wrap" onclick="triggerDatePicker('e-waktu')">
-                        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
-                        <span class="date-disp ph" id="e-waktu-lbl">Pilih tanggal &amp; waktu…</span>
-                        <input type="datetime-local" id="e-waktu" onchange="syncFormDatetime('e-waktu-lbl','e-waktu-wrap',this.value)">
-                    </div>
+            <div class="fg">
+                <label class="fl">Instansi</label>
+                <input type="text" class="fi" id="e-instansi" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Nomor Telepon</label>
+                <input type="text" class="fi" id="e-nomor" required>
+            </div>
+            <div class="fg">
+                <label class="fl">Waktu Wawancara</label>
+                <div class="date-input-wrap" id="e-waktu-wrap" onclick="triggerDatePicker('e-waktu')">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="#94a3b8" stroke-width="1.3"/><path d="M5 1v3M10 1v3M1.5 6h12" stroke="#94a3b8" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span class="date-disp ph" id="e-waktu-lbl">Pilih tanggal &amp; waktu…</span>
+                    <input type="datetime-local" id="e-waktu" onchange="syncFormDatetime('e-waktu-lbl','e-waktu-wrap',this.value)">
                 </div>
             </div>
             <div class="fg">
@@ -308,7 +316,7 @@
                 <input type="text" class="fi" id="e-tema" required>
             </div>
             <div class="fg">
-                <label class="fl">Jenis Jadwal Talkshow <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
+                <label class="fl">Jenis Jadwal Talkshow</label>
                 <select class="fi" id="e-jadwal">
                     <option value="">— Pilih Jenis Jadwal —</option>
                     <option value="pendidikan_kota_kita">Pendidikan Kota Kita</option>
@@ -539,12 +547,13 @@ function editTs(id) {
 function submitAdd(e) {
     e.preventDefault();
     apiFetch(RTALKSHOW, 'POST', {
-        nama:             document.getElementById('a-nama').value,
-        instansi:         document.getElementById('a-instansi').value,
-        nomor_telp:       document.getElementById('a-nomor').value,
-        tema_wawancara:   document.getElementById('a-tema').value,
-        waktu_wawancara:  document.getElementById('a-waktu').value.replace('T', ' '),
-        draft_pertanyaan: document.getElementById('a-draft').value,
+        nama:              document.getElementById('a-nama').value,
+        instansi:          document.getElementById('a-instansi').value,
+        nomor_telp:        document.getElementById('a-nomor').value,
+        tema_wawancara:    document.getElementById('a-tema').value,
+        waktu_wawancara:   document.getElementById('a-waktu').value.replace('T', ' '),
+        talkshow_schedule: document.getElementById('a-jadwal').value || null,
+        draft_pertanyaan:  document.getElementById('a-draft').value,
     }).then(d => {
         if (d.success) { closeModal('m-add'); document.getElementById('a-nama').closest('form').reset(); showFlash(d.message); doSearch(tsCurrentPage); }
         else showFlash(d.message || 'Gagal menyimpan.', 'error');
@@ -569,7 +578,7 @@ function submitEdit(e) {
 function deleteTs(id) {
     showDeleteConfirm(
         'Hapus Data Narasumber Talkshow',
-        'Apakah Anda yakin ingin menghapus data narasumber talkshow ini? Tindakan ini tidak dapat dibatalkan.',
+        'Apakah Anda yakin ingin menghapus data narasumber talkshow ini?',
         function(done) {
             apiFetch(RTALKSHOW + '/' + id, 'DELETE').then(d => {
                 done();

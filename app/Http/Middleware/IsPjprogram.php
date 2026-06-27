@@ -15,7 +15,7 @@ class IsPjprogram
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user() && auth()->user()->is_pjprogram === 1){
+        if(auth()->user() && auth()->user()->role === 'pj_program'){
             return $next($request);
         }
 

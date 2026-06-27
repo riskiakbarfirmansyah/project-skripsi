@@ -236,6 +236,7 @@
             background: #fff; border-radius: 12px;
             border: 1px solid #e2e8f0; padding: 24px;
             width: 500px; max-width: 98vw;
+            max-height: 90vh; overflow-y: auto;
         }
         .mttl { font-size: 15px; font-weight: 700; margin-bottom: 18px; color: #0f172a; }
         .fg { margin-bottom: 13px; }
@@ -402,11 +403,8 @@
 {{-- ═══════════════════ SIDEBAR ═══════════════════ --}}
 <div class="sb">
     <div class="sb-logo">
-        <div class="sb-ico">
-            <svg viewBox="0 0 14 14" fill="none">
-                <path d="M7 1L1.5 3.5v4C1.5 10.5 4 13 7 13.5 10 13 12.5 10.5 12.5 7.5v-4L7 1z"
-                      stroke="white" stroke-width="1.4" stroke-linejoin="round"/>
-            </svg>
+        <div class="sb-ico" style="background: transparent;">
+            <img src="{{ asset('/image/LOGO.png') }}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 8px;">
         </div>
         <div>
             <div class="sb-name">Gatekeeper</div>
@@ -425,7 +423,7 @@
                       stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
             Informasi Siaran
-            <span class="bdg" id="bdg-s">{{ $stats['total_siaran'] }}</span>
+            <span class="bdg" id="bdg-s">{{ $stats['siaran_hari_ini'] ?? 0 }}</span>
         </a>
         <a href="{{ route('gatekeeper.dashboard') }}#narasumber"
            class="ni {{ request()->routeIs('gatekeeper.dashboard') && request()->get('tab') === 'narasumber' ? 'active' : '' }}"
@@ -436,7 +434,7 @@
                       stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
             Narasumber Byphone
-            <span class="bdg" id="bdg-n">{{ $stats['total_narasumber'] }}</span>
+            <span class="bdg" id="bdg-n">{{ $stats['wawancara_hari_ini'] ?? 0 }}</span>
         </a>
     </div>
 
@@ -474,7 +472,6 @@
             </button>
             <div>
                 <div class="tb-title" id="pg-title">@yield('page-title', 'Dashboard')</div>
-                <div class="tb-sub" id="pg-sub">@yield('page-sub', 'Ringkasan data siaran dan narasumber')</div>
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">

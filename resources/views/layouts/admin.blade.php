@@ -431,11 +431,8 @@
 {{-- ═══════════════════ SIDEBAR ═══════════════════ --}}
 <div class="sb">
     <div class="sb-logo">
-        <div class="sb-ico">
-            <svg viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="5.5" stroke="white" stroke-width="1.4"/>
-                <path d="M4 7l2 2 4-4" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+        <div class="sb-ico" style="background: transparent;">
+            <img src="{{ asset('/image/LOGO.png') }}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 8px;">
         </div>
         <div>
             <div class="sb-name">Admin Panel</div>
@@ -444,37 +441,12 @@
     </div>
 
     <div class="sb-nav">
-        <a href="{{ route('admin.dashboard') }}#users" class="ni" onclick="filterRole('');return false;">
+        <a href="{{ route('admin.dashboard') }}#users" class="ni active" onclick="filterRole('');return false;">
             <svg viewBox="0 0 15 15" fill="none">
                 <circle cx="7.5" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
                 <path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
             Semua User
-            <span class="bdg" id="bdg-total">{{ $stats['total_user'] ?? 0 }}</span>
-        </a>
-        <a href="#" class="ni" onclick="filterRole('gatekeeper');return false;">
-            <svg viewBox="0 0 15 15" fill="none">
-                <path d="M7.5 1L2 3.5v4c0 3 2.5 5.5 5.5 6 3-.5 5.5-3 5.5-6v-4L7.5 1z"
-                      stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-            </svg>
-            Gatekeeper
-            <span class="bdg" id="bdg-gk">{{ $stats['total_gatekeeper'] ?? 0 }}</span>
-        </a>
-        <a href="#" class="ni" onclick="filterRole('penyiar');return false;">
-            <svg viewBox="0 0 15 15" fill="none">
-                <circle cx="7.5" cy="7.5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
-                <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.3"/>
-            </svg>
-            Penyiar
-            <span class="bdg" id="bdg-py">{{ $stats['total_penyiar'] ?? 0 }}</span>
-        </a>
-        <a href="#" class="ni" onclick="filterRole('pj_program');return false;">
-            <svg viewBox="0 0 15 15" fill="none">
-                <rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
-                <path d="M5 7.5h5M7.5 5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
-            PJ Program
-            <span class="bdg" id="bdg-pj">{{ $stats['total_pj_program'] ?? 0 }}</span>
         </a>
     </div>
 
@@ -512,7 +484,6 @@
             </button>
             <div>
                 <div class="tb-title">@yield('page-title', 'Dashboard')</div>
-                <div class="tb-sub">@yield('page-sub', 'Selamat datang di panel admin')</div>
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">

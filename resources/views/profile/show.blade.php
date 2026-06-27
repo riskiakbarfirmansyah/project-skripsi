@@ -1,8 +1,7 @@
-@extends('layouts.admin')
+@extends('layouts.' . $layout)
 
 @section('title', 'Profile')
 @section('page-title', 'Profile Saya')
-@section('page-sub', 'Kelola informasi akun Anda')
 
 @section('content')
 
@@ -10,22 +9,18 @@
 
     {{-- ── Info Card ── --}}
     <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:24px;text-align:center;">
-        <div style="width:64px;height:64px;border-radius:50%;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#6d28d9;margin:0 auto 14px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:{{ $roleAvatarBg }};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:{{ $roleColor }};margin:0 auto 14px;">
             {{ strtoupper(substr($user->name, 0, 2)) }}
         </div>
         <div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:3px;">{{ $user->name }}</div>
         <div style="font-size:12px;color:#64748b;margin-bottom:12px;">{{ $user->email }}</div>
-        <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#ede9fe;color:#4c1d95;">
-            Administrator
+        <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:{{ $roleBadgeBg }};color:{{ $roleBadgeText }};">
+            {{ $roleLabel }}
         </span>
         <div style="margin-top:16px;border-top:1px solid #f1f5f9;padding-top:14px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:7px;">
                 <span style="font-size:11px;color:#64748b;">Bergabung</span>
                 <span style="font-size:11px;color:#0f172a;font-weight:600;">{{ $user->created_at->format('d M Y') }}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;">
-                <span style="font-size:11px;color:#64748b;">Status</span>
-                <span style="font-size:11px;color:#059669;font-weight:600;">Aktif</span>
             </div>
         </div>
     </div>
@@ -62,7 +57,7 @@
                     @endif
                 </div>
                 <div style="display:flex;justify-content:flex-end;">
-                    <button type="submit" class="bsv">Simpan Perubahan</button>
+                    <button type="submit" class="bsv" style="background:{{ $roleColor }};">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -103,7 +98,7 @@
                     </div>
                 </div>
                 <div style="display:flex;justify-content:flex-end;">
-                    <button type="submit" class="bsv">Perbarui Password</button>
+                    <button type="submit" class="bsv" style="background:{{ $roleColor }};">Perbarui Password</button>
                 </div>
             </form>
         </div>

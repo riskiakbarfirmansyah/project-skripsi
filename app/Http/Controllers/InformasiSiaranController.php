@@ -29,7 +29,7 @@ class InformasiSiaranController extends Controller
             'keterangan.max'      => 'Keterangan maksimal 500 karakter.',
         ]);
 
-        $siaran = informasisiaran::create($validated);
+        $siaran = informasisiaran::create($validated + ['user_id' => auth()->id()]);
 
         return response()->json([
             'success' => true,

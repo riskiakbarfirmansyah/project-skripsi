@@ -13,10 +13,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('role')->default('user')->after('password')->nullable();
-            $table->integer('is_admin')->default(0)->after('role')->nullable();
-            $table->integer('is_penyiar')->default(0)->after('role')->nullable();
-            $table->integer('is_gatekeeper')->default(0)->after('role')->nullable();
-            $table->integer('is_pjprogram')->default(0)->after('role')->nullable();
         });
     }
 

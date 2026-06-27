@@ -23,10 +23,6 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'is_admin',
-        'is_penyiar',
-        'is_gatekeeper',
-        'is_pjprogram',
     ];
 
     /**
@@ -51,4 +47,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function informasiSiarans()
+    {
+        return $this->hasMany(informasisiaran::class, 'user_id');
+    }
+
+    public function narasumberByphones()
+    {
+        return $this->hasMany(narasumberbyphone::class, 'user_id');
+    }
+
+    public function narasumberTalkshows()
+    {
+        return $this->hasMany(narasumbertalkshow::class, 'user_id');
+    }
 }
+

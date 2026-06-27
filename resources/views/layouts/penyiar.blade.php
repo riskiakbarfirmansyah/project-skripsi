@@ -403,12 +403,8 @@
 {{-- ═══════════════════ SIDEBAR ═══════════════════ --}}
 <div class="sb">
     <div class="sb-logo">
-        <div class="sb-ico">
-            <svg viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="2.8" stroke="white" stroke-width="1.4"/>
-                <circle cx="7" cy="7" r="5.5" stroke="white" stroke-width="1.4"/>
-                <path d="M2 7h1.5M10.5 7H12M7 2v1.5M7 10.5V12" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
+        <div class="sb-ico" style="background: transparent;">
+            <img src="{{ asset('/image/LOGO.png') }}" alt="Logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 8px;">
         </div>
         <div>
             <div class="sb-name">Penyiar</div>
@@ -424,7 +420,7 @@
                       stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
             </svg>
             Narasumber Byphone
-            <span class="bdg">{{ $stats['total_byphone'] ?? 0 }}</span>
+            <span class="bdg">{{ $stats['byphone_hari_ini'] ?? 0 }}</span>
         </a>
         <a href="{{ route('penyiar.dashboard') }}#talkshow"
            class="ni" onclick="showTab('talkshow');return false;">
@@ -433,7 +429,7 @@
                 <path d="M4.5 8l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Narasumber Talkshow
-            <span class="bdg">{{ $stats['total_talkshow'] ?? 0 }}</span>
+            <span class="bdg">{{ $stats['talkshow_hari_ini'] ?? 0 }}</span>
         </a>
     </div>
 
@@ -471,7 +467,6 @@
             </button>
             <div>
                 <div class="tb-title" id="pg-title">@yield('page-title', 'Dashboard')</div>
-                <div class="tb-sub" id="pg-sub">@yield('page-sub', 'Data narasumber byphone & talkshow')</div>
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">

@@ -15,7 +15,7 @@ class IsGatekeeper
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user() && auth()->user()->is_gatekeeper === 1){
+        if(auth()->user() && auth()->user()->role === 'gatekeeper'){
             return $next($request);
         }
 

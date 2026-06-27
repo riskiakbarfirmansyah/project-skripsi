@@ -14,6 +14,7 @@ class informasisiaran extends Model
 
     protected $fillable = [
         'siaranID',
+        'user_id',
         'tanggal',
         'waktu',
         'keterangan',
@@ -26,4 +27,10 @@ class informasisiaran extends Model
         'started_at' => 'datetime',
         'ended_at'   => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
+
