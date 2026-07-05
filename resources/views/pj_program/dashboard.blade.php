@@ -98,22 +98,22 @@
     <div class="sb-stats-grid">
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4.5" r="2.5" stroke="#92400e" stroke-width="1.3"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#92400e" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val">{{ $stats['total_narasumber'] }}</div>
+            <div class="sb-sc-val">{{ format_angka_id($stats['total_narasumber']) }}</div>
             <div class="sb-sc-lbl">Total</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val">{{ $stats['wawancara_hari_ini'] }}</div>
+            <div class="sb-sc-val">{{ format_angka_id($stats['wawancara_hari_ini']) }}</div>
             <div class="sb-sc-lbl">Hari Ini</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#d1fae5;"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="#065f46" stroke-width="1.3"/><path d="M4.5 8l2 2 4-4" stroke="#065f46" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="sb-sc-val">{{ $stats['wawancara_mendatang'] }}</div>
+            <div class="sb-sc-val">{{ format_angka_id($stats['wawancara_mendatang']) }}</div>
             <div class="sb-sc-lbl">Mendatang</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#e0e7ff;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#3730a3" stroke-width="1.3"/><path d="M5 7.5h5" stroke="#3730a3" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val">{{ $stats['wawancara_selesai'] }}</div>
+            <div class="sb-sc-val">{{ format_angka_id($stats['wawancara_selesai']) }}</div>
             <div class="sb-sc-lbl">Selesai</div>
         </div>
     </div>

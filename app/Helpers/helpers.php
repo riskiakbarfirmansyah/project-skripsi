@@ -74,3 +74,39 @@ if (! function_exists('wa_link')) {
         return 'https://wa.me/' . $formatted;
     }
 }
+
+if (! function_exists('format_angka_id')) {
+    /**
+     * Format angka dengan pemisah ribuan gaya Indonesia (titik).
+     * Angka >= 10.000 disingkat agar tidak overflow di kartu statistik kecil.
+     *
+     * Contoh:
+     *   999      → "999"
+     *   1500     → "1.500"
+     *   10500    → "10,5rb"
+     *   1200000  → "1,2jt"
+     *
+     * @param  int|float|null  $number
+     * @return string
+     */
+    function format_angka_id(int|float|null $number): string
+    {
+        if ($number === null) {
+            return '0';
+        }
+
+        if ($number >= 1_000_000) {
+            $val = $number / 1_000_000;
+            $formatted = rtrim(rtrim(number_format($val, 1, ',', '.'), '0'), ',');
+            return $formatted . 'jt';
+        }
+
+        if ($number >= 10_000) {
+            $val = $number / 1_000;
+            $formatted = rtrim(rtrim(number_format($val, 1, ',', '.'), '0'), ',');
+            return $formatted . 'rb';
+        }
+
+        return number_format($number, 0, ',', '.');
+    }
+}

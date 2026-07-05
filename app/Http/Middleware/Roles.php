@@ -13,12 +13,12 @@ class Roles
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if(in_array(auth()->user()->role, $roles)){
+        if (auth()->user() && in_array(auth()->user()->role, $roles)) {
             return $next($request);
         }
-        
-        abort('403', "Kamu tidak memiliki izin mengakses halaman ini");
+
+        abort(403, 'Kamu tidak memiliki izin mengakses halaman ini.');
     }
 }

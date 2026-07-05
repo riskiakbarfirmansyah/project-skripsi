@@ -26,7 +26,7 @@ class NarasumberSelfRegistrationController extends Controller
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
             'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string',
+            'draft_pertanyaan' => 'nullable|string|max:3000',
         ], [
             'tipe.required'                   => 'Tipe narasumber wajib dipilih.',
             'tipe.in'                         => 'Tipe narasumber tidak valid.',

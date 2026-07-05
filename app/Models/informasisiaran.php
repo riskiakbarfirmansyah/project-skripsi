@@ -13,7 +13,6 @@ class informasisiaran extends Model
     protected $primaryKey = 'siaranID';
 
     protected $fillable = [
-        'siaranID',
         'user_id',
         'tanggal',
         'waktu',

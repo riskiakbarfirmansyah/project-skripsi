@@ -86,6 +86,15 @@ class InformasiSiaranController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $siaran = informasisiaran::findOrFail($id);
+
+        // BUG-03 FIX: Tidak boleh menghapus siaran yang sedang aktif
+        if ($siaran->status === 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat menghapus siaran yang sedang berlangsung. Akhiri siaran terlebih dahulu.',
+            ], 422);
+        }
+
         $siaran->delete();
 
         return response()->json([

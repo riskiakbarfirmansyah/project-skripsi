@@ -258,6 +258,19 @@
 
 @endsection
 
+@push('styles')
+<style>
+    /* Hilangkan scrollbar pada modal detail dan edit admin */
+    #m-view, #m-edit {
+        overflow-y: hidden !important;
+    }
+    #m-view .modal, #m-edit .modal {
+        overflow: hidden !important;
+        max-height: none !important;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 const ROUTES = {

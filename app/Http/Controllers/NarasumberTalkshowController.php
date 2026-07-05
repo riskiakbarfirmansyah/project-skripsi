@@ -28,8 +28,9 @@ class NarasumberTalkshowController extends Controller
         $stats = [
             'total_narasumber'    => narasumbertalkshow::count(),
             'wawancara_hari_ini'  => narasumbertalkshow::whereDate('waktu_wawancara', today())->count(),
+            // BUG-05 FIX: Gunakan now()->copy()->addDays(7) agar tidak mutasi objek today()
             'wawancara_mendatang' => narasumbertalkshow::whereDate('waktu_wawancara', '>', today())
-                                        ->whereDate('waktu_wawancara', '<=', today()->addDays(7))
+                                        ->whereDate('waktu_wawancara', '<=', now()->copy()->addDays(7)->toDateString())
                                         ->count(),
             'wawancara_selesai'   => narasumbertalkshow::whereDate('waktu_wawancara', '<', today())->count(),
         ];
@@ -53,7 +54,7 @@ class NarasumberTalkshowController extends Controller
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
             'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string',
+            'draft_pertanyaan' => 'nullable|string|max:3000',
         ], [
             'nama.required'                   => 'Nama narasumber wajib diisi.',
             'instansi.required'               => 'Instansi wajib diisi.',
@@ -100,7 +101,7 @@ class NarasumberTalkshowController extends Controller
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
             'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string',
+            'draft_pertanyaan' => 'nullable|string|max:3000',
             'talkshow_schedule'=> ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
         ], [
             'nama.required'                   => 'Nama narasumber wajib diisi.',
@@ -141,6 +142,20 @@ class NarasumberTalkshowController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $narasumber = narasumbertalkshow::findOrFail($id);
+
+        // BUG-04 FIX: Cek apakah narasumber sedang dalam sesi siaran aktif
+        $activeBroadcast = BroadcastSession::where('narasumber_type', 'talkshow')
+            ->where('narasumber_id', $id)
+            ->where('status', 'active')
+            ->exists();
+
+        if ($activeBroadcast) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat menghapus narasumber yang sedang dalam sesi siaran aktif.',
+            ], 422);
+        }
+
         $narasumber->delete();
 
         return response()->json([
@@ -181,9 +196,10 @@ class NarasumberTalkshowController extends Controller
             $query->whereDate('waktu_wawancara', today());
         }
 
-        $list = $query->orderBy('waktu_wawancara', 'asc')->get();
+        $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
+        $list = $query->orderBy('waktu_wawancara', 'desc')->paginate($perPage);
 
-        // Tambahkan broadcast_status untuk setiap narasumber
+        // Tambahkan broadcast_status untuk setiap narasumber (efisien: 1 query batch)
         if ($request->boolean('today_only') || $request->filled('tanggal')) {
             $narasumberIds = $list->pluck('talkshowID')->toArray();
 
@@ -193,7 +209,7 @@ class NarasumberTalkshowController extends Controller
                 ->get()
                 ->groupBy('narasumber_id');
 
-            $list = $list->map(function ($n) use ($todaySessions) {
+            $list->getCollection()->transform(function ($n) use ($todaySessions) {
                 $sessions = $todaySessions->get($n->talkshowID, collect());
 
                 if ($sessions->contains('status', 'active')) {
@@ -207,9 +223,6 @@ class NarasumberTalkshowController extends Controller
                 return $n;
             });
         }
-
-        $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
-        $list = $query->orderBy('waktu_wawancara', 'desc')->paginate($perPage);
 
         return response()->json([
             'success'      => true,

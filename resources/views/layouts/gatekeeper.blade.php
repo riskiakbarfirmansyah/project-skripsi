@@ -271,6 +271,7 @@
             background: #f8fafc; border-radius: 8px;
             padding: 10px 13px; line-height: 1.65;
             white-space: pre-wrap; margin-top: 5px;
+            max-height: 220px; overflow-y: auto;
         }
 
         /* ── Alert / Toast ────────────────────────────── */

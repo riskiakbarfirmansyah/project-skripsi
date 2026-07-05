@@ -124,7 +124,7 @@
             margin: 0 auto 5px;
         }
         .sb-sc-ico svg { width: 12px; height: 12px; }
-        .sb-sc-val { font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+        .sb-sc-val { font-size: clamp(13px, 3.2vw, 18px); font-weight: 800; color: #0f172a; line-height: 1.2; word-break: break-word; min-width: 0; }
         .sb-sc-lbl { font-size: 9px; color: #64748b; margin-top: 2px; font-weight: 600; letter-spacing: .02em; }
 
         /* ── Table card ───────────────────────────────── */
@@ -237,10 +237,8 @@
             display: flex; align-items: center; justify-content: space-between;
         }
         .mclose {
-            background: none; border: none; cursor: pointer;
-            color: #94a3b8; font-size: 18px; padding: 0; line-height: 1;
+            display: none !important;
         }
-        .mclose:hover { color: #0f172a; }
         .fg { margin-bottom: 13px; }
         .fl { font-size: 12px; color: #475569; margin-bottom: 5px; display: block; font-weight: 500; }
         .fi {
@@ -298,6 +296,7 @@
             background: #f8fafc; border-radius: 8px;
             padding: 10px 13px; line-height: 1.65;
             white-space: pre-wrap; margin-top: 5px;
+            max-height: 220px; overflow-y: auto;
         }
 
         /* ── Alert / Toast ────────────────────────────── */

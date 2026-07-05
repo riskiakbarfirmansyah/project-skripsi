@@ -174,7 +174,7 @@ class NarasumberByphoneController extends Controller
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
             'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string',
+            'draft_pertanyaan' => 'nullable|string|max:3000',
         ], [
             'nama.required'                   => 'Nama narasumber wajib diisi.',
             'instansi.required'               => 'Instansi wajib diisi.',
@@ -221,7 +221,7 @@ class NarasumberByphoneController extends Controller
             'nomor_telp'       => 'required|string|max:20',
             'tema_wawancara'   => 'required|string|max:255',
             'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string',
+            'draft_pertanyaan' => 'nullable|string|max:3000',
             'byphone_schedule' => ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
         ], [
             'nama.required'                   => 'Nama narasumber wajib diisi.',
@@ -262,6 +262,20 @@ class NarasumberByphoneController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $narasumber = narasumberbyphone::findOrFail($id);
+
+        // BUG-04 FIX: Cek apakah narasumber sedang dalam sesi siaran aktif
+        $activeBroadcast = BroadcastSession::where('narasumber_type', 'byphone')
+            ->where('narasumber_id', $id)
+            ->where('status', 'active')
+            ->exists();
+
+        if ($activeBroadcast) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat menghapus narasumber yang sedang dalam sesi siaran aktif.',
+            ], 422);
+        }
+
         $narasumber->delete();
 
         return response()->json([

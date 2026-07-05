@@ -22,10 +22,8 @@
 .tab-pane.active { display: block; }
 .mttl { display: flex; justify-content: space-between; align-items: center; }
 .mclose {
-    background: none; border: none; cursor: pointer;
-    color: #94a3b8; font-size: 18px; padding: 0; line-height: 1;
+    display: none !important;
 }
-.mclose:hover { color: #0f172a; }
 .wa-link { display:inline-flex; align-items:center; gap:4px; color:#16a34a; text-decoration:none; font-weight:500; transition:color .15s; }
 .wa-link:hover { color:#15803d; text-decoration:underline; }
 
@@ -225,22 +223,22 @@
     <div class="sb-stats-grid">
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#dbeafe;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2.8" stroke="#1e40af" stroke-width="1.3"/><circle cx="7.5" cy="7.5" r="6" stroke="#1e40af" stroke-width="1.3"/></svg></div>
-            <div class="sb-sc-val" id="stat-total-siaran">{{ $stats['total_siaran'] }}</div>
+            <div class="sb-sc-val" id="stat-total-siaran">{{ format_angka_id($stats['total_siaran']) }}</div>
             <div class="sb-sc-lbl">Siaran</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#d1fae5;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="4.5" r="2.5" stroke="#065f46" stroke-width="1.3"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#065f46" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val" id="stat-total-narasumber">{{ $stats['total_narasumber'] }}</div>
+            <div class="sb-sc-val" id="stat-total-narasumber">{{ format_angka_id($stats['total_narasumber']) }}</div>
             <div class="sb-sc-lbl">Narasumber</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fef3c7;"><svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="10" rx="1.5" stroke="#92400e" stroke-width="1.3"/><path d="M4.5 6h6M4.5 8.5h4" stroke="#92400e" stroke-width="1.2" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val" id="stat-siaran-hari-ini">{{ $stats['siaran_selesai'] }}</div>
+            <div class="sb-sc-val" id="stat-siaran-hari-ini">{{ format_angka_id($stats['siaran_selesai']) }}</div>
             <div class="sb-sc-lbl">Siaran Selesai</div>
         </div>
         <div class="sb-sc">
             <div class="sb-sc-ico" style="background:#fce7f3;"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#9d174d" stroke-width="1.3"/><path d="M7.5 4.5v3l2 2" stroke="#9d174d" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-            <div class="sb-sc-val" id="stat-wawancara-hari-ini">{{ $stats['wawancara_selesai'] }}</div>
+            <div class="sb-sc-val" id="stat-wawancara-hari-ini">{{ format_angka_id($stats['wawancara_selesai']) }}</div>
             <div class="sb-sc-lbl">Byphone Selesai</div>
         </div>
     </div>
@@ -679,7 +677,7 @@
             </div>
             <div class="fg">
                 <label class="fl">Draft Pertanyaan <span style="color:#94a3b8;font-weight:400;">(opsional)</span></label>
-                <textarea class="fi" id="na-draft" rows="3" placeholder="Daftar pertanyaan…"></textarea>
+                <textarea class="fi" id="na-draft" rows="4" maxlength="3000" placeholder="Daftar pertanyaan…"></textarea>
             </div>
             <div class="mft">
                 <button type="button" class="bcn" onclick="closeModal('m-nr-add')">Batal</button>
