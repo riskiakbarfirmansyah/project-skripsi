@@ -260,7 +260,6 @@
 
 @push('styles')
 <style>
-    /* Hilangkan scrollbar pada modal detail dan edit admin */
     #m-view, #m-edit {
         overflow-y: hidden !important;
     }

@@ -124,14 +124,18 @@ class NarasumberByphoneController extends Controller
         $bpIds = $byphoneList->pluck('byphoneID')->toArray();
         $bpSessions = BroadcastSession::where('narasumber_type', 'byphone')
             ->whereIn('narasumber_id', $bpIds)
-            ->whereDate('started_at', today())
             ->get()
             ->groupBy('narasumber_id');
 
         $byphoneList->getCollection()->transform(function ($n) use ($bpSessions) {
             $sessions = $bpSessions->get($n->byphoneID, collect());
-            if ($sessions->contains('status', 'active'))         $n->broadcast_status = 'sedang_siaran';
-            elseif ($sessions->contains('status', 'completed'))  $n->broadcast_status = 'sudah_siaran';
+            $nDate = \Carbon\Carbon::parse($n->waktu_wawancara)->toDateString();
+            $matchingSessions = $sessions->filter(function ($s) use ($nDate) {
+                return \Carbon\Carbon::parse($s->started_at)->toDateString() === $nDate;
+            });
+
+            if ($matchingSessions->contains('status', 'active'))         $n->broadcast_status = 'sedang_siaran';
+            elseif ($matchingSessions->contains('status', 'completed'))  $n->broadcast_status = 'sudah_siaran';
             else                                                  $n->broadcast_status = 'belum_siaran';
             return $n;
         });
@@ -140,14 +144,18 @@ class NarasumberByphoneController extends Controller
         $tsIds = $talkshowList->pluck('talkshowID')->toArray();
         $tsSessions = BroadcastSession::where('narasumber_type', 'talkshow')
             ->whereIn('narasumber_id', $tsIds)
-            ->whereDate('started_at', today())
             ->get()
             ->groupBy('narasumber_id');
 
         $talkshowList->getCollection()->transform(function ($n) use ($tsSessions) {
             $sessions = $tsSessions->get($n->talkshowID, collect());
-            if ($sessions->contains('status', 'active'))         $n->broadcast_status = 'sedang_siaran';
-            elseif ($sessions->contains('status', 'completed'))  $n->broadcast_status = 'sudah_siaran';
+            $nDate = \Carbon\Carbon::parse($n->waktu_wawancara)->toDateString();
+            $matchingSessions = $sessions->filter(function ($s) use ($nDate) {
+                return \Carbon\Carbon::parse($s->started_at)->toDateString() === $nDate;
+            });
+
+            if ($matchingSessions->contains('status', 'active'))         $n->broadcast_status = 'sedang_siaran';
+            elseif ($matchingSessions->contains('status', 'completed'))  $n->broadcast_status = 'sudah_siaran';
             else                                                  $n->broadcast_status = 'belum_siaran';
             return $n;
         });
@@ -247,6 +255,15 @@ class NarasumberByphoneController extends Controller
             }
         }
 
+        $oldWaktu = \Carbon\Carbon::parse($narasumber->waktu_wawancara)->format('Y-m-d H:i');
+        $newWaktu = \Carbon\Carbon::parse($validated['waktu_wawancara'])->format('Y-m-d H:i');
+
+        if ($oldWaktu !== $newWaktu) {
+            BroadcastSession::where('narasumber_type', 'byphone')
+                ->where('narasumber_id', $narasumber->byphoneID)
+                ->delete();
+        }
+
         $narasumber->update($validated);
 
         return response()->json([
@@ -320,29 +337,30 @@ class NarasumberByphoneController extends Controller
         $list = $query->orderBy('waktu_wawancara', 'desc')->paginate($perPage);
 
         // Tambahkan broadcast_status untuk setiap narasumber (efisien: 1 query batch)
-        if ($request->boolean('today_only') || $request->filled('tanggal')) {
-            $narasumberIds = $list->pluck('byphoneID')->toArray();
+        $narasumberIds = $list->pluck('byphoneID')->toArray();
 
-            $todaySessions = BroadcastSession::where('narasumber_type', 'byphone')
-                ->whereIn('narasumber_id', $narasumberIds)
-                ->whereDate('started_at', today())
-                ->get()
-                ->groupBy('narasumber_id');
+        $sessions = BroadcastSession::where('narasumber_type', 'byphone')
+            ->whereIn('narasumber_id', $narasumberIds)
+            ->get()
+            ->groupBy('narasumber_id');
 
-            $list->getCollection()->transform(function ($n) use ($todaySessions) {
-                $sessions = $todaySessions->get($n->byphoneID, collect());
-
-                if ($sessions->contains('status', 'active')) {
-                    $n->broadcast_status = 'sedang_siaran';
-                } elseif ($sessions->contains('status', 'completed')) {
-                    $n->broadcast_status = 'sudah_siaran';
-                } else {
-                    $n->broadcast_status = 'belum_siaran';
-                }
-
-                return $n;
+        $list->getCollection()->transform(function ($n) use ($sessions) {
+            $nSess = $sessions->get($n->byphoneID, collect());
+            $nDate = \Carbon\Carbon::parse($n->waktu_wawancara)->toDateString();
+            $matchingSessions = $nSess->filter(function ($s) use ($nDate) {
+                return \Carbon\Carbon::parse($s->started_at)->toDateString() === $nDate;
             });
-        }
+
+            if ($matchingSessions->contains('status', 'active')) {
+                $n->broadcast_status = 'sedang_siaran';
+            } elseif ($matchingSessions->contains('status', 'completed')) {
+                $n->broadcast_status = 'sudah_siaran';
+            } else {
+                $n->broadcast_status = 'belum_siaran';
+            }
+
+            return $n;
+        });
 
         return response()->json([
             'success'      => true,

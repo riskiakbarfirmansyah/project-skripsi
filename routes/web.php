@@ -83,7 +83,7 @@ Route::group(['middleware' => 'isAdmin', 'prefix' => 'admin', 'as' => 'admin.'],
 */
 Route::group(['middleware' => 'isGatekeeper', 'prefix' => 'gatekeeper', 'as' => 'gatekeeper.'], function () {
  
-    // Dashboard terpadu gatekeeper
+    // Dashboard gatekeeper
     Route::get('/dashboard', [NarasumberByphoneController::class, 'dashboardGatekeeper'])
         ->name('dashboard');
  

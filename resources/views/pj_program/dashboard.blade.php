@@ -255,7 +255,7 @@
             </div>
             <div class="fg">
                 <label class="fl">Jenis Jadwal Talkshow</label>
-                <select class="fi" id="a-jadwal">
+                <select class="fi" id="a-jadwal" required>
                     <option value="">— Pilih Jenis Jadwal —</option>
                     <option value="pendidikan_kota_kita">Pendidikan Kota Kita</option>
                     <option value="youth_speak_up">Youth Speak Up</option>
@@ -317,7 +317,7 @@
             </div>
             <div class="fg">
                 <label class="fl">Jenis Jadwal Talkshow</label>
-                <select class="fi" id="e-jadwal">
+                <select class="fi" id="e-jadwal" required>
                     <option value="">— Pilih Jenis Jadwal —</option>
                     <option value="pendidikan_kota_kita">Pendidikan Kota Kita</option>
                     <option value="youth_speak_up">Youth Speak Up</option>
@@ -552,7 +552,7 @@ function submitAdd(e) {
         nomor_telp:        document.getElementById('a-nomor').value,
         tema_wawancara:    document.getElementById('a-tema').value,
         waktu_wawancara:   document.getElementById('a-waktu').value.replace('T', ' '),
-        talkshow_schedule: document.getElementById('a-jadwal').value || null,
+        talkshow_schedule: document.getElementById('a-jadwal').value,
         draft_pertanyaan:  document.getElementById('a-draft').value,
     }).then(d => {
         if (d.success) { closeModal('m-add'); document.getElementById('a-nama').closest('form').reset(); showFlash(d.message); doSearch(tsCurrentPage); }
@@ -568,7 +568,7 @@ function submitEdit(e) {
         nomor_telp:       document.getElementById('e-nomor').value,
         tema_wawancara:   document.getElementById('e-tema').value,
         waktu_wawancara:  document.getElementById('e-waktu').value.replace('T', ' '),
-        talkshow_schedule: document.getElementById('e-jadwal').value || null,
+        talkshow_schedule: document.getElementById('e-jadwal').value,
         draft_pertanyaan: document.getElementById('e-draft').value,
     }).then(d => {
         if (d.success) { closeModal('m-edit'); showFlash(d.message); doSearch(tsCurrentPage); }

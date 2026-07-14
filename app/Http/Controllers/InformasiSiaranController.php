@@ -71,6 +71,15 @@ class InformasiSiaranController extends Controller
             'keterangan.max'      => 'Keterangan maksimal 500 karakter.',
         ]);
 
+        $isRescheduled = ($siaran->tanggal !== $validated['tanggal']) || 
+                         (\Carbon\Carbon::parse($siaran->waktu)->format('H:i') !== $validated['waktu']);
+        
+        if ($isRescheduled) {
+            $validated['status'] = 'pending';
+            $validated['started_at'] = null;
+            $validated['ended_at'] = null;
+        }
+
         $siaran->update($validated);
 
         return response()->json([

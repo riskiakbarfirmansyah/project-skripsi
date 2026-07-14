@@ -44,17 +44,20 @@ class NarasumberTalkshowController extends Controller
 
     /**
      * Simpan data narasumber talkshow baru.
-     * Digunakan oleh pj_program dan penyiar.
+     * Digunakan oleh pj_program.
      */
     public function store(Request $request): JsonResponse
     {
+        $validSchedules = array_keys(\App\Services\JadwalValidationService::SCHEDULES);
+
         $validated = $request->validate([
-            'nama'             => 'required|string|max:150',
-            'instansi'         => 'required|string|max:150',
-            'nomor_telp'       => 'required|string|max:20',
-            'tema_wawancara'   => 'required|string|max:255',
-            'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string|max:3000',
+            'nama'              => 'required|string|max:150',
+            'instansi'          => 'required|string|max:150',
+            'nomor_telp'        => 'required|string|max:20',
+            'tema_wawancara'    => 'required|string|max:255',
+            'waktu_wawancara'   => 'required|date_format:Y-m-d H:i',
+            'talkshow_schedule' => ['required', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
+            'draft_pertanyaan'  => 'nullable|string|max:3000',
         ], [
             'nama.required'                   => 'Nama narasumber wajib diisi.',
             'instansi.required'               => 'Instansi wajib diisi.',
@@ -62,6 +65,8 @@ class NarasumberTalkshowController extends Controller
             'tema_wawancara.required'         => 'Tema wawancara wajib diisi.',
             'waktu_wawancara.required'        => 'Waktu wawancara wajib diisi.',
             'waktu_wawancara.date_format'     => 'Format waktu wawancara tidak valid (gunakan format YYYY-MM-DD HH:MM).',
+            'talkshow_schedule.required'      => 'Jenis jadwal talkshow wajib diisi.',
+            'talkshow_schedule.in'            => 'Jenis jadwal talkshow tidak valid.',
         ]);
 
         $narasumber = narasumbertalkshow::create($validated + ['user_id' => auth()->id()]);
@@ -96,13 +101,13 @@ class NarasumberTalkshowController extends Controller
         $validSchedules = array_keys(\App\Services\JadwalValidationService::SCHEDULES);
 
         $validated = $request->validate([
-            'nama'             => 'required|string|max:150',
-            'instansi'         => 'required|string|max:150',
-            'nomor_telp'       => 'required|string|max:20',
-            'tema_wawancara'   => 'required|string|max:255',
-            'waktu_wawancara'  => 'required|date_format:Y-m-d H:i',
-            'draft_pertanyaan' => 'nullable|string|max:3000',
-            'talkshow_schedule'=> ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
+            'nama'              => 'required|string|max:150',
+            'instansi'          => 'required|string|max:150',
+            'nomor_telp'        => 'required|string|max:20',
+            'tema_wawancara'    => 'required|string|max:255',
+            'waktu_wawancara'   => 'required|date_format:Y-m-d H:i',
+            'draft_pertanyaan'  => 'nullable|string|max:3000',
+            'talkshow_schedule' => ['required', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
         ], [
             'nama.required'                   => 'Nama narasumber wajib diisi.',
             'instansi.required'               => 'Instansi wajib diisi.',
@@ -110,21 +115,30 @@ class NarasumberTalkshowController extends Controller
             'tema_wawancara.required'         => 'Tema wawancara wajib diisi.',
             'waktu_wawancara.required'        => 'Waktu wawancara wajib diisi.',
             'waktu_wawancara.date_format'     => 'Format waktu wawancara tidak valid (gunakan format YYYY-MM-DD HH:MM).',
+            'talkshow_schedule.required'      => 'Jenis jadwal talkshow wajib diisi.',
+            'talkshow_schedule.in'            => 'Jenis jadwal talkshow tidak valid.',
         ]);
 
-        $newSchedule = $validated['talkshow_schedule'] ?? null;
-        if ($newSchedule !== null) {
-            $svc = new \App\Services\JadwalValidationService();
-            $jam     = $svc->extractJam($validated['waktu_wawancara']);
-            $tanggal = $svc->extractTanggal($validated['waktu_wawancara']);
-            $result  = $svc->isJamTalkshowAvailable($jam, $tanggal, (int) $narasumber->talkshowID);
+        $newSchedule = $validated['talkshow_schedule'];
+        $svc = new \App\Services\JadwalValidationService();
+        $jam     = $svc->extractJam($validated['waktu_wawancara']);
+        $tanggal = $svc->extractTanggal($validated['waktu_wawancara']);
+        $result  = $svc->isJamTalkshowAvailable($jam, $tanggal, (int) $narasumber->talkshowID);
 
-            if ($result !== true) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $result,
-                ], 422);
-            }
+        if ($result !== true) {
+            return response()->json([
+                'success' => false,
+                'message' => $result,
+            ], 422);
+        }
+
+        $oldWaktu = \Carbon\Carbon::parse($narasumber->waktu_wawancara)->format('Y-m-d H:i');
+        $newWaktu = \Carbon\Carbon::parse($validated['waktu_wawancara'])->format('Y-m-d H:i');
+
+        if ($oldWaktu !== $newWaktu) {
+            BroadcastSession::where('narasumber_type', 'talkshow')
+                ->where('narasumber_id', $narasumber->talkshowID)
+                ->delete();
         }
 
         $narasumber->update($validated);
@@ -199,30 +213,31 @@ class NarasumberTalkshowController extends Controller
         $perPage = in_array((int) $request->input('limit', 15), [10, 15, 25, 50, 100]) ? (int) $request->input('limit', 15) : 15;
         $list = $query->orderBy('waktu_wawancara', 'desc')->paginate($perPage);
 
-        // Tambahkan broadcast_status untuk setiap narasumber (efisien: 1 query batch)
-        if ($request->boolean('today_only') || $request->filled('tanggal')) {
-            $narasumberIds = $list->pluck('talkshowID')->toArray();
+        // Tambahkan broadcast_status untuk setiap narasumber
+        $narasumberIds = $list->pluck('talkshowID')->toArray();
 
-            $todaySessions = BroadcastSession::where('narasumber_type', 'talkshow')
-                ->whereIn('narasumber_id', $narasumberIds)
-                ->whereDate('started_at', today())
-                ->get()
-                ->groupBy('narasumber_id');
+        $sessions = BroadcastSession::where('narasumber_type', 'talkshow')
+            ->whereIn('narasumber_id', $narasumberIds)
+            ->get()
+            ->groupBy('narasumber_id');
 
-            $list->getCollection()->transform(function ($n) use ($todaySessions) {
-                $sessions = $todaySessions->get($n->talkshowID, collect());
-
-                if ($sessions->contains('status', 'active')) {
-                    $n->broadcast_status = 'sedang_siaran';
-                } elseif ($sessions->contains('status', 'completed')) {
-                    $n->broadcast_status = 'sudah_siaran';
-                } else {
-                    $n->broadcast_status = 'belum_siaran';
-                }
-
-                return $n;
+        $list->getCollection()->transform(function ($n) use ($sessions) {
+            $nSess = $sessions->get($n->talkshowID, collect());
+            $nDate = \Carbon\Carbon::parse($n->waktu_wawancara)->toDateString();
+            $matchingSessions = $nSess->filter(function ($s) use ($nDate) {
+                return \Carbon\Carbon::parse($s->started_at)->toDateString() === $nDate;
             });
-        }
+
+            if ($matchingSessions->contains('status', 'active')) {
+                $n->broadcast_status = 'sedang_siaran';
+            } elseif ($matchingSessions->contains('status', 'completed')) {
+                $n->broadcast_status = 'sudah_siaran';
+            } else {
+                $n->broadcast_status = 'belum_siaran';
+            }
+
+            return $n;
+        });
 
         return response()->json([
             'success'      => true,
@@ -276,25 +291,22 @@ class NarasumberTalkshowController extends Controller
         $validSchedules = array_keys(JadwalValidationService::SCHEDULES);
 
         $validated = $request->validate([
-            'talkshow_schedule' => ['nullable', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
+            'talkshow_schedule' => ['required', 'string', \Illuminate\Validation\Rule::in($validSchedules)],
         ]);
 
         $narasumber = narasumbertalkshow::findOrFail($id);
 
-        // Anti-collision: only validate when setting a schedule (not when clearing)
-        $newSchedule = $validated['talkshow_schedule'] ?? null;
-        if ($newSchedule !== null) {
-            $svc = new JadwalValidationService();
-            $jam     = $svc->extractJam($narasumber->waktu_wawancara);
-            $tanggal = $svc->extractTanggal($narasumber->waktu_wawancara);
-            $result  = $svc->isJamTalkshowAvailable($jam, $tanggal, (int) $narasumber->talkshowID);
+        $newSchedule = $validated['talkshow_schedule'];
+        $svc = new JadwalValidationService();
+        $jam     = $svc->extractJam($narasumber->waktu_wawancara);
+        $tanggal = $svc->extractTanggal($narasumber->waktu_wawancara);
+        $result  = $svc->isJamTalkshowAvailable($jam, $tanggal, (int) $narasumber->talkshowID);
 
-            if ($result !== true) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $result,
-                ], 422);
-            }
+        if ($result !== true) {
+            return response()->json([
+                'success' => false,
+                'message' => $result,
+            ], 422);
         }
 
         $narasumber->update(['talkshow_schedule' => $newSchedule]);
