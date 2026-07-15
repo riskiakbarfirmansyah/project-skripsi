@@ -862,9 +862,26 @@ function startBroadcast() {
         .then(d => {
             if (!d.success) { showFlash(d.message || 'Gagal memulai siaran.', 'error'); return; }
             closeModal('m-bc-start');
-            location.reload();
+
+            // Buka aplikasi Sound Recorder Windows via URI protocol
+            openSoundRecorder();
+
+            // Delay reload agar browser sempat memproses URI protocol
+            setTimeout(() => location.reload(), 1500);
         })
         .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
+}
+
+/**
+ * Buka aplikasi Sound Recorder / Voice Recorder bawaan Windows
+ * melalui URI protocol menggunakan hidden iframe.
+ */
+function openSoundRecorder() {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = 'ms-voicerecorder:';
+    document.body.appendChild(iframe);
+    setTimeout(() => document.body.removeChild(iframe), 2000);
 }
 
 // End broadcast

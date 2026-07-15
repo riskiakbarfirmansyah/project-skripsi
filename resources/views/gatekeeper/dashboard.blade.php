@@ -976,7 +976,7 @@ function doSearchSiaran(page = null) {
                         <button class="bico del" onclick="deleteSiaran(${s.siaranID})"><svg viewBox="0 0 15 15" fill="none"><path d="M2.5 4.5h10M6 4.5V3h3v1.5M5.5 4.5v7h4v-7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                     </div></td>
                 </tr>`).join('');
-            document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data.</td></tr>';
+            document.getElementById('siaran-tbody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data.</td></tr>';
             document.getElementById('siaran-count').textContent = d.total + ' data';
             document.getElementById('siaran-pag').innerHTML = renderPagination(d, 'doSearchSiaran');
         });
@@ -1148,9 +1148,26 @@ function startGkBroadcast() {
         .then(d => {
             if (!d.success) { showFlash(d.message || 'Gagal memulai siaran.', 'error'); return; }
             closeModal('gk-m-bc-start');
-            location.reload();
+
+            // Buka aplikasi Sound Recorder Windows via URI protocol
+            openSoundRecorder();
+
+            // Delay reload agar browser sempat memproses URI protocol
+            setTimeout(() => location.reload(), 1500);
         })
         .catch(() => showFlash('Terjadi kesalahan, coba lagi.', 'error'));
+}
+
+/**
+ * Buka aplikasi Sound Recorder / Voice Recorder bawaan Windows
+ * melalui URI protocol menggunakan hidden iframe.
+ */
+function openSoundRecorder() {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = 'ms-voicerecorder:';
+    document.body.appendChild(iframe);
+    setTimeout(() => document.body.removeChild(iframe), 2000);
 }
 
 function endGkBroadcast() {
