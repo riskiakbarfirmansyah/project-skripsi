@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Radio RKB') }} — Sistem Manajemen</title>
+    <title>{{ config('app.name', 'Radio RKB') }} — Aplikasi Manajemen</title>
     <link rel="icon" type="image/png" href="{{ asset('/image/LOGO.png') }}">
     <link rel="shortcut icon" href="{{ asset('/image/LOGO.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
